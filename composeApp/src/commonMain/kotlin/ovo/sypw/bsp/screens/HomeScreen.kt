@@ -1,0 +1,86 @@
+package ovo.sypw.bsp.screens
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
+import bproject.composeapp.generated.resources.Res
+import bproject.composeapp.generated.resources.compose_multiplatform
+import ovo.sypw.bsp.Greeting
+
+/**
+ * 首页屏幕组件
+ * 显示应用的主要内容和欢迎信息
+ */
+@Composable
+fun HomeScreen(
+    modifier: Modifier = Modifier
+) {
+    var showContent by remember { mutableStateOf(false) }
+    val greeting = remember { Greeting().greet() }
+    
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // 页面标题
+        Text(
+            text = "欢迎使用应用",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+        
+        // 交互按钮
+        Button(
+            onClick = { showContent = !showContent },
+            modifier = Modifier.fillMaxWidth(0.6f)
+        ) {
+            Text(if (showContent) "隐藏内容" else "显示内容")
+        }
+        
+        // 动画显示内容
+        androidx.compose.animation.AnimatedVisibility(showContent) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.compose_multiplatform),
+                        contentDescription = "Compose Multiplatform Logo",
+                        modifier = Modifier.size(120.dp)
+                    )
+                    Text(
+                        text = "Compose: $greeting",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = "这是一个跨平台应用示例",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
+        // 底部信息
+        Text(
+            text = "Kotlin Multiplatform 强力驱动",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
