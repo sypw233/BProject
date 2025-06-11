@@ -11,7 +11,12 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import ovo.sypw.bsp.navigation.*
 import ovo.sypw.bsp.screens.*
+
+import ovo.sypw.bsp.screens.auth.AuthDemoScreen
 import ovo.sypw.bsp.utils.FontUtils
+import ovo.sypw.bsp.di.KoinInitializer
+import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
+import org.koin.compose.koinInject
 
 /**
  * 创建自定义字体排版
@@ -45,8 +50,8 @@ private fun createCustomTypography(fontFamily: FontFamily): Typography {
  * 根据窗口宽度自适应显示导航界面
  */
 @Composable
-@Preview
 fun App() {
+    
     // 加载自定义字体并创建自定义主题
     val contentFontFamily = FontUtils.getDefaultFontFamily()
     val customTypography = createCustomTypography(contentFontFamily)
@@ -146,16 +151,48 @@ private fun MainContent(
     modifier: Modifier = Modifier
 ) {
     val currentScreen by navigationManager.currentScreen
+    val authViewModel: AuthViewModel = koinInject()
     
     when (currentScreen) {
         AppScreen.HOME.route -> {
             HomeScreen(modifier = modifier)
+        }
+        AppScreen.API_TEST.route -> {
+            ApiTestScreen(modifier = modifier)
         }
         AppScreen.PROFILE.route -> {
             ProfileScreen(modifier = modifier)
         }
         AppScreen.SETTINGS.route -> {
             SettingsScreen(modifier = modifier)
+        }
+        AppScreen.AUTH_DEMO.route -> {
+            AuthDemoScreen(
+                navigationManager = navigationManager,
+                modifier = modifier
+            )
+        }
+        AppScreen.LOGIN.route -> {
+            LoginScreen(
+                authViewModel = authViewModel,
+                onNavigateToRegister = {
+                    navigationManager.navigateTo(AppScreen.REGISTER.route)
+                },
+                onLoginSuccess = {
+                    navigationManager.navigateTo(AppScreen.HOME.route)
+                }
+            )
+        }
+        AppScreen.REGISTER.route -> {
+            RegisterScreen(
+                authViewModel = authViewModel,
+                onNavigateToLogin = {
+                    navigationManager.navigateTo(AppScreen.LOGIN.route)
+                },
+                onRegisterSuccess = {
+                    navigationManager.navigateTo(AppScreen.HOME.route)
+                },
+            )
         }
         else -> {
             // 默认显示首页

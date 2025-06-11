@@ -61,6 +61,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             // Android平台特定的Ktor客户端
             implementation(libs.ktor.client.android)
+            // Koin Android扩展
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -78,6 +80,11 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.logging)
+            // Koin依赖注入
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            // 跨平台日期时间库
+            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -123,8 +130,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
