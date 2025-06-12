@@ -81,6 +81,7 @@ kotlin {
             // Koin依赖注入
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
             // 跨平台日期时间库
             implementation(libs.kotlinx.datetime)
         }

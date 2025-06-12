@@ -9,8 +9,12 @@ import org.koin.dsl.module
 val appModule = module {
     // 包含网络模块
     includes(networkModule)
+    // 包含认证模块
+    includes(authModule)
     // 包含ViewModel模块
     includes(viewModelModule)
+    // 包含存储模块
+    includes(storageModule)
 }
 
 /**
@@ -19,5 +23,7 @@ val appModule = module {
  */
 fun getAllModules() = listOf(
     networkModule,
-    viewModelModule
+    authModule,
+    viewModelModule,
+    storageModule
 )

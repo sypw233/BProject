@@ -9,10 +9,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinApplication
+import org.koin.compose.viewmodel.koinViewModel
+
 import ovo.sypw.bsp.navigation.*
 import ovo.sypw.bsp.screens.*
+import ovo.sypw.bsp.screens.auth.*
 import ovo.sypw.bsp.utils.FontUtils
-import ovo.sypw.bsp.di.KoinInitializer
+import ovo.sypw.bsp.di.getAllModules
+import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 
 /**
  * 创建自定义字体排版
@@ -46,36 +51,119 @@ private fun createCustomTypography(fontFamily: FontFamily): Typography {
  * 根据窗口宽度自适应显示导航界面
  */
 @Composable
-@Preview
 fun App() {
-    // 初始化Koin依赖注入
-    LaunchedEffect(Unit) {
-        KoinInitializer.init(enableLogging = true)
+    KoinApplication(application = {
+        modules(getAllModules())
+    }){
+        // 加载自定义字体并创建自定义主题
+        val contentFontFamily = FontUtils.getDefaultFontFamily()
+        val customTypography = createCustomTypography(contentFontFamily)
+        MaterialTheme(
+            typography = customTypography
+        ) {
+            AppContent()
+        }
     }
     
-    // 加载自定义字体并创建自定义主题
-    val contentFontFamily = FontUtils.getDefaultFontFamily()
-    val customTypography = createCustomTypography(contentFontFamily)
+
     
-    MaterialTheme(
-        typography = customTypography
-    ) {
+
+}
+
+@Composable
+private fun AppContent() {
+    val authViewModel: AuthViewModel = koinViewModel()
+    val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
+    val isLoading by authViewModel.isLoading.collectAsState()
+    
+    // 显示加载状态
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = androidx.compose.ui.Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+    
+    // 根据登录状态显示不同内容
+    if (isLoggedIn) {
+        // 已登录，显示主应用界面
+        MainAppContent()
+    } else {
+        // 未登录，显示登录界面
         val navigationManager = rememberNavigationManager()
         
-        // 使用BoxWithConstraints获取窗口尺寸
-        BoxWithConstraints(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            val screenWidth = maxWidth
-            val useRailNavigation = screenWidth >= 840.dp // Material Design 3 推荐的断点
-            
-            if (useRailNavigation) {
-                // 宽屏：使用侧边导航布局
-                RailNavigationLayout(navigationManager = navigationManager)
-            } else {
-                // 窄屏：使用底部导航布局
-                BottomNavigationLayout(navigationManager = navigationManager)
-            }
+        // 设置初始路由为登录页面
+        LaunchedEffect(Unit) {
+            navigationManager.navigateTo(AppScreen.LOGIN.route)
+        }
+        
+        AuthContent(navigationManager = navigationManager)
+    }
+}
+
+/**
+ * 认证相关内容（登录/注册界面）
+ * @param navigationManager 导航管理器
+ */
+@Composable
+private fun AuthContent(
+    navigationManager: NavigationManager
+) {
+    val currentScreen by navigationManager.currentScreen
+    
+    when (currentScreen) {
+        AppScreen.LOGIN.route -> {
+            LoginScreen(
+                onLoginSuccess = {
+                    // 登录成功后不需要手动导航，AuthViewModel会更新isLoggedIn状态
+                },
+                onNavigateToRegister = {
+                    navigationManager.navigateTo(AppScreen.REGISTER.route)
+                }
+            )
+        }
+        AppScreen.REGISTER.route -> {
+            // TODO: 创建注册界面
+            LoginScreen(
+                onNavigateToRegister = {
+                    navigationManager.navigateTo(AppScreen.LOGIN.route)
+                }
+            )
+        }
+        else -> {
+            // 默认显示登录界面
+            LoginScreen(
+                onNavigateToRegister = {
+                    navigationManager.navigateTo(AppScreen.REGISTER.route)
+                }
+            )
+        }
+    }
+}
+
+/**
+ * 主应用内容（已登录状态）
+ */
+@Composable
+private fun MainAppContent() {
+    val navigationManager = rememberNavigationManager()
+    
+    // 使用BoxWithConstraints获取窗口尺寸
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        val screenWidth = maxWidth
+        val useRailNavigation = screenWidth >= 840.dp // Material Design 3 推荐的断点
+        
+        if (useRailNavigation) {
+            // 宽屏：使用侧边导航布局
+            RailNavigationLayout(navigationManager = navigationManager)
+        } else {
+            // 窄屏：使用底部导航布局
+            BottomNavigationLayout(navigationManager = navigationManager)
         }
     }
 }
@@ -165,6 +253,20 @@ private fun MainContent(
         }
         AppScreen.SETTINGS.route -> {
             SettingsScreen(modifier = modifier)
+        }
+        AppScreen.LOGIN.route -> {
+            // 在主应用中不应该显示登录界面，重定向到首页
+            LaunchedEffect(Unit) {
+                navigationManager.navigateTo(AppScreen.HOME.route)
+            }
+            HomeScreen(modifier = modifier)
+        }
+        AppScreen.REGISTER.route -> {
+            // 在主应用中不应该显示注册界面，重定向到首页
+            LaunchedEffect(Unit) {
+                navigationManager.navigateTo(AppScreen.HOME.route)
+            }
+            HomeScreen(modifier = modifier)
         }
         else -> {
             // 默认显示首页

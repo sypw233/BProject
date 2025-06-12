@@ -26,7 +26,9 @@ enum class AppScreen(val route: String) {
     HOME("home"),
     PROFILE("profile"),
     SETTINGS("settings"),
-    API_TEST("api_test")
+    API_TEST("api_test"),
+    LOGIN("login"),
+    REGISTER("register")
 }
 
 /**
