@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
@@ -14,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
+import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 
 /**
  * 个人资料屏幕组件
@@ -21,8 +25,13 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun ProfileScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToChangePassword: () -> Unit = {},
+    onNavigateToLogin: () -> Unit = {},
+    authViewModel: AuthViewModel = koinInject()
 ) {
+    val userInfo by authViewModel.userInfo.collectAsState()
+    val isLoading by authViewModel.isLoading.collectAsState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -36,7 +45,7 @@ fun ProfileScreen(
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         // 头像区域
         Box(
             modifier = Modifier
@@ -52,13 +61,13 @@ fun ProfileScreen(
                 tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
-        
+
         // 用户名
         Text(
-            text = "用户名",
+            text = userInfo?.username ?: "用户名",
             style = MaterialTheme.typography.headlineSmall
         )
-        
+
         // 个人信息卡片
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -73,41 +82,71 @@ fun ProfileScreen(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                
+
                 ProfileInfoItem(
                     icon = Icons.Default.Email,
                     label = "邮箱",
-                    value = "user@example.com"
+                    value = userInfo?.email ?: "未设置"
                 )
-                
+
                 ProfileInfoItem(
                     icon = Icons.Default.Phone,
                     label = "电话",
-                    value = "+86 138 0000 0000"
+                    value = userInfo?.phone ?: "未设置"
                 )
             }
         }
-        
+
         // 操作按钮
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Button(
-                onClick = { /* 编辑资料逻辑 */ },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("编辑资料")
-            }
-            
+
+            // 修改密码按钮
             OutlinedButton(
-                onClick = { /* 退出登录逻辑 */ },
+                onClick = onNavigateToChangePassword,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("修改密码")
+            }
+
+            // 退出登录按钮
+            Button(
+                onClick = {
+                    authViewModel.logout()
+                    onNavigateToLogin()
+
+                },
+                enabled = !isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        color = MaterialTheme.colorScheme.onError
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.ExitToApp,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
                 Text("退出登录")
             }
         }
-        
+
         Spacer(modifier = Modifier.weight(1f))
     }
 }

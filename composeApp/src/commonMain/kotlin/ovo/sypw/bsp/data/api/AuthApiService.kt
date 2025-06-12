@@ -95,32 +95,111 @@ class AuthApiService : BaseApiService() {
     
     /**
      * 忘记密码 - 发送重置邮件
-     * @param email 邮箱地址
+     * @param forgotPasswordRequest 忘记密码请求参数
      * @return 发送结果
      */
-    suspend fun forgotPassword(email: String): NetworkResult<SaResult> {
+    suspend fun forgotPassword(forgotPasswordRequest: ForgotPasswordRequest): NetworkResult<SaResult> {
         return post(
             endpoint = "$path/forgot-password",
-            body = mapOf("email" to email)
+            body = forgotPasswordRequest
         )
     }
     
     /**
      * 重置密码
-     * @param token 重置令牌
-     * @param newPassword 新密码
+     * @param resetPasswordRequest 重置密码请求参数
      * @return 重置结果
      */
     suspend fun resetPassword(
-        token: String,
-        newPassword: String
+        resetPasswordRequest: ResetPasswordRequest
     ): NetworkResult<SaResult> {
         return post(
             endpoint = "$path/reset-password",
-            body = mapOf(
-                "token" to token,
-                "newPassword" to newPassword
-            )
+            body = resetPasswordRequest
+        )
+    }
+    
+    /**
+     * 发送邮箱验证码
+     * @param sendCodeRequest 发送验证码请求参数
+     * @return 发送结果
+     */
+    suspend fun sendEmailCode(sendCodeRequest: SendCodeRequest): NetworkResult<SaResult> {
+        return post(
+            endpoint = "$path/send-email-code",
+            body = sendCodeRequest
+        )
+    }
+    
+    /**
+     * 发送手机验证码
+     * @param sendCodeRequest 发送验证码请求参数
+     * @return 发送结果
+     */
+    suspend fun sendSmsCode(sendCodeRequest: SendCodeRequest): NetworkResult<SaResult> {
+        return post(
+            endpoint = "$path/send-sms-code",
+            body = sendCodeRequest
+        )
+    }
+    
+    /**
+     * 验证邮箱验证码
+     * @param verifyCodeRequest 验证码验证请求参数
+     * @return 验证结果
+     */
+    suspend fun verifyEmailCode(verifyCodeRequest: VerifyCodeRequest): NetworkResult<SaResult> {
+        return post(
+            endpoint = "$path/verify-email-code",
+            body = verifyCodeRequest
+        )
+    }
+    
+    /**
+     * 验证手机验证码
+     * @param verifyCodeRequest 验证码验证请求参数
+     * @return 验证结果
+     */
+    suspend fun verifySmsCode(verifyCodeRequest: VerifyCodeRequest): NetworkResult<SaResult> {
+        return post(
+            endpoint = "$path/verify-sms-code",
+            body = verifyCodeRequest
+        )
+    }
+    
+    /**
+     * 更新用户信息
+     * @param updateUserRequest 更新用户信息请求参数
+     * @return 更新结果
+     */
+    suspend fun updateUserInfo(updateUserRequest: UpdateUserRequest): NetworkResult<SaResult> {
+        return post(
+            endpoint = "$path/update-profile",
+            body = updateUserRequest
+        )
+    }
+    
+    /**
+     * 绑定邮箱
+     * @param bindEmailRequest 绑定邮箱请求参数
+     * @return 绑定结果
+     */
+    suspend fun bindEmail(bindEmailRequest: BindEmailRequest): NetworkResult<SaResult> {
+        return post(
+            endpoint = "$path/bind-email",
+            body = bindEmailRequest
+        )
+    }
+    
+    /**
+     * 绑定手机号
+     * @param bindPhoneRequest 绑定手机号请求参数
+     * @return 绑定结果
+     */
+    suspend fun bindPhone(bindPhoneRequest: BindPhoneRequest): NetworkResult<SaResult> {
+        return post(
+            endpoint = "$path/bind-phone",
+            body = bindPhoneRequest
         )
     }
 }

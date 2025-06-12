@@ -73,4 +73,13 @@ val authModule = module {
             authRepository = get()
         )
     }
+    
+    /**
+     * 提供修改密码用例
+     */
+    single<ChangePasswordUseCase> {
+        ChangePasswordUseCase(
+            authRepository = get()
+        )
+    }
 }

@@ -37,7 +37,6 @@ class LoginUseCase(
         return authRepository.login(
             username = username.trim(),
             password = password,
-            rememberMe = rememberMe
         )
     }
     

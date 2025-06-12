@@ -25,10 +25,10 @@ data class NavigationItem(
 enum class AppScreen(val route: String) {
     HOME("home"),
     PROFILE("profile"),
-    SETTINGS("settings"),
     API_TEST("api_test"),
     LOGIN("login"),
-    REGISTER("register")
+    REGISTER("register"),
+    CHANGE_PASSWORD("change_password")
 }
 
 /**
@@ -52,10 +52,5 @@ fun getNavigationItems(): List<NavigationItem> {
             title = "个人",
             icon = Icons.Default.Person
         ),
-        NavigationItem(
-            route = AppScreen.SETTINGS.route,
-            title = "设置",
-            icon = Icons.Default.Settings
-        )
     )
 }

@@ -19,26 +19,17 @@ interface AuthRepository {
     suspend fun login(
         username: String,
         password: String,
-        rememberMe: Boolean = false
     ): NetworkResult<LoginResponse>
     
     /**
      * 用户注册
      * @param username 用户名
      * @param password 密码
-     * @param confirmPassword 确认密码
-     * @param email 邮箱（可选）
-     * @param phone 手机号（可选）
-     * @param nickname 昵称（可选）
      * @return 注册结果
      */
     suspend fun register(
         username: String,
-        password: String,
-        confirmPassword: String,
-        email: String? = null,
-        phone: String? = null,
-        nickname: String? = null
+        password: String
     ): NetworkResult<LoginResponse>
     
     /**
@@ -46,7 +37,7 @@ interface AuthRepository {
      * @return 登出结果
      */
     suspend fun logout(): NetworkResult<Unit>
-    
+
     /**
      * 刷新访问令牌
      * @return 刷新结果

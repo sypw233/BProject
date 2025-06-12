@@ -24,12 +24,10 @@ class AuthRepositoryImpl(
     override suspend fun login(
         username: String,
         password: String,
-        rememberMe: Boolean
     ): NetworkResult<LoginResponse> {
         val loginRequest = LoginRequest(
             username = username,
-            password = password,
-            rememberMe = rememberMe
+            password = password
         )
         
         return when (val result = authApiService.login(loginRequest)) {
@@ -70,19 +68,11 @@ class AuthRepositoryImpl(
      */
     override suspend fun register(
         username: String,
-        password: String,
-        confirmPassword: String,
-        email: String?,
-        phone: String?,
-        nickname: String?
+        password: String
     ): NetworkResult<LoginResponse> {
         val registerRequest = RegisterRequest(
             username = username,
-            password = password,
-            confirmPassword = confirmPassword,
-            email = email,
-            phone = phone,
-            nickname = nickname
+            password = password
         )
         
         return when (val result = authApiService.register(registerRequest)) {
@@ -96,7 +86,7 @@ class AuthRepositoryImpl(
                         user = UserInfo(
                             id = "1",
                             username = username,
-                            email = email ?: "$username@example.com"
+                            email = "$username@example.com"
                         )
                     )
                     // 注册成功后自动保存登录信息
@@ -124,10 +114,10 @@ class AuthRepositoryImpl(
         
         // 先调用服务端登出接口
         val result = authApiService.logout(logoutRequest)
-        
+
         // 无论服务端登出是否成功，都清除本地存储
         clearAuthData()
-        
+
         return when (result) {
             is NetworkResult.Success -> {
                 val saResult = result.data
@@ -301,15 +291,16 @@ class AuthRepositoryImpl(
      * 忘记密码 - 发送重置邮件
      */
     override suspend fun forgotPassword(email: String): NetworkResult<Unit> {
-        return when (val result = authApiService.forgotPassword(email)) {
+        val forgotPasswordRequest = ForgotPasswordRequest(email = email)
+        return when (val result = authApiService.forgotPassword(forgotPasswordRequest)) {
             is NetworkResult.Success -> {
                 val saResult = result.data
                 if (saResult.isSuccess()) {
                     NetworkResult.Success(Unit)
                 } else {
                     NetworkResult.Error(
-                        exception = Exception("发送重置密码邮件失败"),
-                        message = "发送重置密码邮件失败"
+                        exception = Exception(saResult.getErrorMessage() ?: "发送重置密码邮件失败"),
+                        message = saResult.getErrorMessage() ?: "发送重置密码邮件失败"
                     )
                 }
             }
@@ -326,19 +317,121 @@ class AuthRepositoryImpl(
         token: String,
         newPassword: String
     ): NetworkResult<Unit> {
-        return when (val result = authApiService.resetPassword(token, newPassword)) {
+        val resetPasswordRequest = ResetPasswordRequest(
+            token = token,
+            newPassword = newPassword
+        )
+        return when (val result = authApiService.resetPassword(resetPasswordRequest)) {
             is NetworkResult.Success -> {
                 val saResult = result.data
                 if (saResult.isSuccess()) {
                     NetworkResult.Success(Unit)
                 } else {
                     NetworkResult.Error(
-                        exception = Exception("重置密码失败"),
-                        message = "重置密码失败"
+                        exception = Exception(saResult.getErrorMessage() ?: "重置密码失败"),
+                        message = saResult.getErrorMessage() ?: "重置密码失败"
                     )
                 }
             }
             is NetworkResult.Error -> result
+            is NetworkResult.Loading -> result
+            is NetworkResult.Idle -> result
+        }
+    }
+    
+    /**
+     * 发送邮箱验证码
+     */
+    suspend fun sendEmailCode(email: String, type: String = "register"): NetworkResult<Unit> {
+        val sendCodeRequest = SendCodeRequest(target = email, type = type)
+        return when (val result = authApiService.sendEmailCode(sendCodeRequest)) {
+            is NetworkResult.Success -> {
+                val saResult = result.data
+                if (saResult.isSuccess()) {
+                    NetworkResult.Success(Unit)
+                } else {
+                    NetworkResult.Error(
+                        exception = Exception(saResult.getErrorMessage() ?: "发送邮箱验证码失败"),
+                        message = saResult.getErrorMessage() ?: "发送邮箱验证码失败"
+                    )
+                }
+            }
+            is NetworkResult.Error -> result
+            is NetworkResult.Loading -> result
+            is NetworkResult.Idle -> result
+        }
+    }
+    
+    /**
+     * 发送手机验证码
+     */
+    suspend fun sendSmsCode(phone: String, type: String = "register"): NetworkResult<Unit> {
+        val sendCodeRequest = SendCodeRequest(target = phone, type = type)
+        return when (val result = authApiService.sendSmsCode(sendCodeRequest)) {
+            is NetworkResult.Success -> {
+                val saResult = result.data
+                if (saResult.isSuccess()) {
+                    NetworkResult.Success(Unit)
+                } else {
+                    NetworkResult.Error(
+                        exception = Exception(saResult.getErrorMessage() ?: "发送手机验证码失败"),
+                        message = saResult.getErrorMessage() ?: "发送手机验证码失败"
+                    )
+                }
+            }
+            is NetworkResult.Error -> result
+            is NetworkResult.Loading -> result
+            is NetworkResult.Idle -> result
+        }
+    }
+    
+    /**
+     * 验证邮箱验证码
+     */
+    suspend fun verifyEmailCode(email: String, code: String, type: String = "register"): NetworkResult<Boolean> {
+        val verifyCodeRequest = VerifyCodeRequest(target = email, code = code, type = type)
+        return when (val result = authApiService.verifyEmailCode(verifyCodeRequest)) {
+            is NetworkResult.Success -> {
+                val saResult = result.data
+                if (saResult.isSuccess()) {
+                    NetworkResult.Success(true)
+                } else {
+                    NetworkResult.Error(
+                        exception = Exception(saResult.getErrorMessage() ?: "验证码验证失败"),
+                        message = saResult.getErrorMessage() ?: "验证码验证失败"
+                    )
+                }
+            }
+            is NetworkResult.Error -> NetworkResult.Error(
+                exception = result.exception,
+                message = result.message
+            )
+            is NetworkResult.Loading -> result
+            is NetworkResult.Idle -> result
+        }
+    }
+    
+    /**
+     * 验证手机验证码
+     */
+    suspend fun verifySmsCode(phone: String, code: String, type: String = "register"): NetworkResult<Boolean> {
+        val verifyCodeRequest = VerifyCodeRequest(target = phone, code = code, type = type)
+        return when (val result = authApiService.verifySmsCode(verifyCodeRequest)) {
+            is NetworkResult.Success -> {
+                val saResult = result.data
+                if (saResult.isSuccess()) {
+                    NetworkResult.Success(true)
+                } else {
+                    NetworkResult.Error(
+                        exception = Exception(saResult.getErrorMessage() ?: "验证码验证失败"),
+                        message = saResult.getErrorMessage() ?: "验证码验证失败"
+                    )
+                }
+            }
+            is NetworkResult.Error -> NetworkResult.Error(
+                exception = result.exception,
+                message = result.message
+            )
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }

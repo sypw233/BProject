@@ -1,8 +1,10 @@
 package ovo.sypw.bsp.screens.auth
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -25,22 +27,23 @@ import ovo.sypw.bsp.domain.model.NetworkResult
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 
 /**
- * 登录界面
- * 提供用户登录功能，包含用户名、密码输入和登录验证
+ * 注册界面
+ * 提供用户注册功能，包含用户名、密码、邮箱等信息输入和注册验证
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(
+fun RegisterScreen(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel = koinViewModel(),
-    onLoginSuccess: () -> Unit = {},
-    onNavigateToRegister: () -> Unit = {}
+    onRegisterSuccess: () -> Unit = {},
+    onNavigateToLogin: () -> Unit = {}
 ) {
     // 状态管理
-    var username by remember { mutableStateOf("sypw") }
-    var password by remember { mutableStateOf("123456") }
-    var rememberMe by remember { mutableStateOf(false) }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
     
     // ViewModel状态观察
     val isLoading by authViewModel.isLoading.collectAsState()
@@ -50,11 +53,18 @@ fun LoginScreen(
     
     // 焦点管理
     val focusManager = LocalFocusManager.current
+    val scrollState = rememberScrollState()
     
-    // 监听登录状态变化
+    // 表单验证
+    val isFormValid = username.isNotBlank() && 
+                     password.isNotBlank() && 
+                     confirmPassword.isNotBlank() && 
+                     password == confirmPassword
+    
+    // 监听注册状态变化
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
-            onLoginSuccess()
+            onRegisterSuccess()
         }
     }
     
@@ -68,13 +78,15 @@ fun LoginScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .padding(24.dp)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(32.dp))
+        
         // 标题
         Text(
-            text = "欢迎登录",
+            text = "创建账号",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -82,7 +94,7 @@ fun LoginScreen(
         )
         
         Text(
-            text = "请输入您的账号信息",
+            text = "请填写以下信息完成注册",
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 32.dp)
@@ -92,8 +104,8 @@ fun LoginScreen(
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("用户名") },
-            placeholder = { Text("请输入用户名或邮箱") },
+            label = { Text("用户名 *") },
+            placeholder = { Text("请输入用户名") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -108,25 +120,22 @@ fun LoginScreen(
             enabled = !isLoading
         )
         
+
+        
         // 密码输入框
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("密码") },
+            label = { Text("密码 *") },
             placeholder = { Text("请输入密码") },
             singleLine = true,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                    if (username.isNotBlank() && password.isNotBlank()) {
-                        authViewModel.login(username, password, rememberMe)
-                    }
-                }
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
             trailingIcon = {
                 IconButton(
@@ -144,23 +153,58 @@ fun LoginScreen(
             enabled = !isLoading
         )
         
-        // 记住我选项
-        Row(
+        // 确认密码输入框
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text("确认密码 *") },
+            placeholder = { Text("请再次输入密码") },
+            singleLine = true,
+            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                    if (isFormValid) {
+                        authViewModel.register(
+                            username = username,
+                            password = password
+                        )
+                    }
+                }
+            ),
+            trailingIcon = {
+                IconButton(
+                    onClick = { confirmPasswordVisible = !confirmPasswordVisible }
+                ) {
+                    Icon(
+                        imageVector = if (confirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (confirmPasswordVisible) "隐藏密码" else "显示密码"
+                    )
+                }
+            },
+            isError = confirmPassword.isNotBlank() && password != confirmPassword,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = rememberMe,
-                onCheckedChange = { rememberMe = it },
-                enabled = !isLoading
-            )
+                .padding(bottom = 8.dp),
+            enabled = !isLoading
+        )
+        
+        // 密码不匹配提示
+        if (confirmPassword.isNotBlank() && password != confirmPassword) {
             Text(
-                text = "记住我",
-                modifier = Modifier.padding(start = 8.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = "两次输入的密码不一致",
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 12.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, bottom = 16.dp)
             )
+        } else {
+            Spacer(modifier = Modifier.height(16.dp))
         }
         
         // 错误信息显示
@@ -182,16 +226,19 @@ fun LoginScreen(
             }
         }
         
-        // 登录按钮
+        // 注册按钮
         Button(
             onClick = {
                 focusManager.clearFocus()
-                authViewModel.login(username, password, rememberMe)
+                authViewModel.register(
+                    username = username,
+                    password = password
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            enabled = !isLoading && username.isNotBlank() && password.isNotBlank()
+            enabled = !isLoading && isFormValid
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
@@ -200,48 +247,50 @@ fun LoginScreen(
                     strokeWidth = 2.dp
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("登录中...")
+                Text("注册中...")
             } else {
                 Text(
-                    text = "登录",
+                    text = "注册",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
         }
         
-        // 注册链接
+        // 登录链接
         Spacer(modifier = Modifier.height(24.dp))
         
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "还没有账号？",
+                text = "已有账号？",
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             TextButton(
-                onClick = onNavigateToRegister,
+                onClick = onNavigateToLogin,
                 enabled = !isLoading
             ) {
                 Text(
-                    text = "立即注册",
+                    text = "立即登录",
                     fontWeight = FontWeight.Medium
                 )
             }
         }
+        
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
 /**
- * 登录界面预览
+ * 注册界面预览
  */
 @Composable
-fun LoginScreenPreview() {
+fun RegisterScreenPreview() {
     MaterialTheme {
         Surface {
             // 注意：预览时无法使用koinViewModel，需要提供mock数据
-            // LoginScreen()
+            // RegisterScreen()
         }
     }
 }

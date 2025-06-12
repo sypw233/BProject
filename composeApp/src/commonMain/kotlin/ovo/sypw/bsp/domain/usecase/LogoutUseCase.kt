@@ -15,22 +15,11 @@ class LogoutUseCase(
      * 执行登出操作
      * @return 登出结果
      */
-    suspend operator fun invoke(): NetworkResult<Unit> {
-        return try {
-            // 检查是否已登录
-            if (!authRepository.isLoggedIn()) {
-                return NetworkResult.Success(Unit)
-            }
-            
-            // 执行登出
+    suspend operator fun invoke() {
+        try {
             authRepository.logout()
         } catch (e: Exception) {
-            // 即使登出失败，也清除本地数据
-            authRepository.clearAuthData()
-            NetworkResult.Error(
-                exception = e,
-                message = "登出失败: ${e.message}"
-            )
+            throw e
         }
     }
 }

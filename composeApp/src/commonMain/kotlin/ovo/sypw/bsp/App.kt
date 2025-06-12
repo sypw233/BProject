@@ -15,6 +15,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import ovo.sypw.bsp.navigation.*
 import ovo.sypw.bsp.screens.*
 import ovo.sypw.bsp.screens.auth.*
+import ovo.sypw.bsp.presentation.screen.ChangePasswordScreen
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.di.getAllModules
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
@@ -255,10 +256,23 @@ private fun MainContent(
             ApiTestScreen(modifier = modifier)
         }
         AppScreen.PROFILE.route -> {
-            ProfileScreen(modifier = modifier)
+            ProfileScreen(
+                modifier = modifier,
+                onNavigateToChangePassword = {
+                    navigationManager.navigateTo(AppScreen.CHANGE_PASSWORD.route)
+                },
+                onNavigateToLogin = {
+                    // 退出登录后跳转到登录页面
+                    navigationManager.navigateTo(AppScreen.LOGIN.route)
+                }
+            )
         }
-        AppScreen.SETTINGS.route -> {
-            SettingsScreen(modifier = modifier)
+        AppScreen.CHANGE_PASSWORD.route -> {
+            ChangePasswordScreen(
+                onNavigateBack = {
+                    navigationManager.navigateTo(AppScreen.LOGIN.route)
+                }
+            )
         }
         AppScreen.LOGIN.route -> {
             // 在主应用中不应该显示登录界面，重定向到首页
