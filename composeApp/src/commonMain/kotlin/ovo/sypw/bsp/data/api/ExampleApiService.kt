@@ -2,6 +2,7 @@ package ovo.sypw.bsp.data.api
 
 import ovo.sypw.bsp.domain.model.NetworkResult
 import kotlinx.serialization.Serializable
+import ovo.sypw.bsp.data.dto.SaResult
 
 /**
  * 示例API服务类
@@ -9,8 +10,8 @@ import kotlinx.serialization.Serializable
  */
 class ExampleApiService : BaseApiService() {
 
-    suspend fun getWeiboData():NetworkResult<String>{
-        val resWeibo: NetworkResult<String> = get(
+    suspend fun getWeiboData():NetworkResult<SaResult>{
+        val resWeibo: NetworkResult<SaResult> = get(
             endpoint = "weibohot",
         )
         return resWeibo

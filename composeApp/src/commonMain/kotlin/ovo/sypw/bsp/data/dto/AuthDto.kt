@@ -188,3 +188,35 @@ data class LogoutRequest(
      */
     val accessToken: String? = null
 )
+
+/**
+ * 修改密码请求数据传输对象
+ */
+@Serializable
+data class ChangePasswordRequest(
+    /**
+     * 旧密码
+     */
+    val oldPassword: String,
+    
+    /**
+     * 新密码
+     */
+    val newPassword: String
+)
+
+/**
+ * 令牌验证结果数据传输对象
+ */
+@Serializable
+data class TokenValidationResult(
+    /**
+     * 令牌是否有效
+     */
+    val isValid: Boolean,
+    
+    /**
+     * 令牌过期时间戳
+     */
+    val expiresAt: Long? = null
+)

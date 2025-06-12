@@ -8,15 +8,16 @@ import ovo.sypw.bsp.domain.model.NetworkResult
  * 提供登录、注册、登出等网络请求功能
  */
 class AuthApiService : BaseApiService() {
+    private val path = "auth"
     
     /**
      * 用户登录
      * @param loginRequest 登录请求参数
-     * @return 登录响应结果
+     * @return 登录结果
      */
-    suspend fun login(loginRequest: LoginRequest): NetworkResult<ApiResponse<LoginResponse>> {
+    suspend fun login(loginRequest: LoginRequest): NetworkResult<SaResult> {
         return post(
-            endpoint = "/auth/login",
+            endpoint = "$path/login",
             body = loginRequest
         )
     }
@@ -26,9 +27,9 @@ class AuthApiService : BaseApiService() {
      * @param registerRequest 注册请求参数
      * @return 注册响应结果
      */
-    suspend fun register(registerRequest: RegisterRequest): NetworkResult<ApiResponse<LoginResponse>> {
+    suspend fun register(registerRequest: RegisterRequest): NetworkResult<SaResult> {
         return post(
-            endpoint = "/auth/register",
+            endpoint = "$path/register",
             body = registerRequest
         )
     }
@@ -38,9 +39,9 @@ class AuthApiService : BaseApiService() {
      * @param refreshTokenRequest 刷新令牌请求参数
      * @return 刷新令牌响应结果
      */
-    suspend fun refreshToken(refreshTokenRequest: RefreshTokenRequest): NetworkResult<ApiResponse<RefreshTokenResponse>> {
+    suspend fun refreshToken(refreshTokenRequest: RefreshTokenRequest): NetworkResult<SaResult> {
         return post(
-            endpoint = "/auth/refresh",
+            endpoint = "$path/refresh",
             body = refreshTokenRequest
         )
     }
@@ -50,9 +51,9 @@ class AuthApiService : BaseApiService() {
      * @param logoutRequest 登出请求参数
      * @return 登出响应结果
      */
-    suspend fun logout(logoutRequest: LogoutRequest): NetworkResult<ApiResponse<Unit>> {
+    suspend fun logout(logoutRequest: LogoutRequest): NetworkResult<SaResult> {
         return post(
-            endpoint = "/auth/logout",
+            endpoint = "$path/logout",
             body = logoutRequest
         )
     }
@@ -61,9 +62,9 @@ class AuthApiService : BaseApiService() {
      * 获取当前用户信息
      * @return 用户信息响应结果
      */
-    suspend fun getCurrentUser(): NetworkResult<ApiResponse<UserInfo>> {
+    suspend fun getCurrentUser(): NetworkResult<SaResult> {
         return get(
-            endpoint = "/auth/me"
+            endpoint = "$path/me"
         )
     }
     
@@ -71,9 +72,9 @@ class AuthApiService : BaseApiService() {
      * 验证令牌有效性
      * @return 验证结果
      */
-    suspend fun validateToken(): NetworkResult<ApiResponse<Boolean>> {
+    suspend fun validateToken(): NetworkResult<SaResult> {
         return get(
-            endpoint = "/auth/validate"
+            endpoint = "$path/validate"
         )
     }
     
@@ -84,15 +85,11 @@ class AuthApiService : BaseApiService() {
      * @return 修改密码响应结果
      */
     suspend fun changePassword(
-        oldPassword: String,
-        newPassword: String
-    ): NetworkResult<ApiResponse<Unit>> {
+        changePasswordRequest: ChangePasswordRequest
+    ): NetworkResult<SaResult> {
         return post(
-            endpoint = "/auth/change-password",
-            body = mapOf(
-                "oldPassword" to oldPassword,
-                "newPassword" to newPassword
-            )
+            endpoint = "$path/change-password",
+            body = changePasswordRequest
         )
     }
     
@@ -101,9 +98,9 @@ class AuthApiService : BaseApiService() {
      * @param email 邮箱地址
      * @return 发送结果
      */
-    suspend fun forgotPassword(email: String): NetworkResult<ApiResponse<Unit>> {
+    suspend fun forgotPassword(email: String): NetworkResult<SaResult> {
         return post(
-            endpoint = "/auth/forgot-password",
+            endpoint = "$path/forgot-password",
             body = mapOf("email" to email)
         )
     }
@@ -117,9 +114,9 @@ class AuthApiService : BaseApiService() {
     suspend fun resetPassword(
         token: String,
         newPassword: String
-    ): NetworkResult<ApiResponse<Unit>> {
+    ): NetworkResult<SaResult> {
         return post(
-            endpoint = "/auth/reset-password",
+            endpoint = "$path/reset-password",
             body = mapOf(
                 "token" to token,
                 "newPassword" to newPassword

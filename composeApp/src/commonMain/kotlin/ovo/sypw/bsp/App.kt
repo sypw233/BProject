@@ -18,6 +18,13 @@ import ovo.sypw.bsp.screens.auth.*
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.di.getAllModules
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
+import ovo.sypw.bsp.utils.Logger
+
+/**
+ * 平台特定的 Koin 应用初始化
+ */
+@Composable
+expect fun PlatformKoinApplication(content: @Composable () -> Unit)
 
 /**
  * 创建自定义字体排版
@@ -52,9 +59,8 @@ private fun createCustomTypography(fontFamily: FontFamily): Typography {
  */
 @Composable
 fun App() {
-    KoinApplication(application = {
-        modules(getAllModules())
-    }){
+    Logger.i("APP START ON ${getPlatform().name}")
+    PlatformKoinApplication {
         // 加载自定义字体并创建自定义主题
         val contentFontFamily = FontUtils.getDefaultFontFamily()
         val customTypography = createCustomTypography(contentFontFamily)
@@ -86,22 +92,22 @@ private fun AppContent() {
         }
         return
     }
-    
+    MainAppContent()
     // 根据登录状态显示不同内容
-    if (isLoggedIn) {
-        // 已登录，显示主应用界面
-        MainAppContent()
-    } else {
-        // 未登录，显示登录界面
-        val navigationManager = rememberNavigationManager()
-        
-        // 设置初始路由为登录页面
-        LaunchedEffect(Unit) {
-            navigationManager.navigateTo(AppScreen.LOGIN.route)
-        }
-        
-        AuthContent(navigationManager = navigationManager)
-    }
+//    if (isLoggedIn) {
+//        // 已登录，显示主应用界面
+//        MainAppContent()
+//    } else {
+//        // 未登录，显示登录界面
+//        val navigationManager = rememberNavigationManager()
+//
+//        // 设置初始路由为登录页面
+//        LaunchedEffect(Unit) {
+//            navigationManager.navigateTo(AppScreen.LOGIN.route)
+//        }
+//
+//        AuthContent(navigationManager = navigationManager)
+//    }
 }
 
 /**

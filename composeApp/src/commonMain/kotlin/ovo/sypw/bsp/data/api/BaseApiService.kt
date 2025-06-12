@@ -5,11 +5,11 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import ovo.sypw.bsp.data.dto.ApiResponse
-import ovo.sypw.bsp.data.dto.ErrorResponse
+import ovo.sypw.bsp.data.dto.SaResult
 import ovo.sypw.bsp.domain.model.NetworkResult
 import ovo.sypw.bsp.data.api.NetworkConfig
 import ovo.sypw.bsp.data.api.HttpClientConfig
+import ovo.sypw.bsp.utils.Logger
 
 /**
  * 基础API服务类
@@ -30,11 +30,11 @@ abstract class BaseApiService {
      * @param parameters 请求参数
      * @return 网络请求结果
      */
-    protected suspend inline fun <reified T> get(
+    protected suspend fun get(
         endpoint: String,
         parameters: Map<String, Any> = emptyMap()
-    ): NetworkResult<T> {
-        println(NetworkConfig.getApiUrl(endpoint))
+    ): NetworkResult<SaResult> {
+        Logger.d("BaseApiService", "API请求URL: ${NetworkConfig.getApiUrl(endpoint)}")
         return safeApiCall {
             httpClient.get(NetworkConfig.getApiUrl(endpoint)) {
                 parameters.forEach { (key, value) ->
@@ -51,11 +51,11 @@ abstract class BaseApiService {
      * @param parameters 请求参数
      * @return 网络请求结果
      */
-    protected suspend inline fun <reified T> post(
+    protected suspend fun post(
         endpoint: String,
         body: Any? = null,
         parameters: Map<String, Any> = emptyMap()
-    ): NetworkResult<T> {
+    ): NetworkResult<SaResult> {
         return safeApiCall {
             httpClient.post(NetworkConfig.getApiUrl(endpoint)) {
                 contentType(ContentType.Application.Json)
@@ -74,11 +74,11 @@ abstract class BaseApiService {
      * @param parameters 请求参数
      * @return 网络请求结果
      */
-    protected suspend inline fun <reified T> put(
+    protected suspend fun put(
         endpoint: String,
         body: Any? = null,
         parameters: Map<String, Any> = emptyMap()
-    ): NetworkResult<T> {
+    ): NetworkResult<SaResult> {
         return safeApiCall {
             httpClient.put(NetworkConfig.getApiUrl(endpoint)) {
                 contentType(ContentType.Application.Json)
@@ -96,10 +96,10 @@ abstract class BaseApiService {
      * @param parameters 请求参数
      * @return 网络请求结果
      */
-    protected suspend inline fun <reified T> delete(
+    protected suspend fun delete(
         endpoint: String,
         parameters: Map<String, Any> = emptyMap()
-    ): NetworkResult<T> {
+    ): NetworkResult<SaResult> {
         return safeApiCall {
             httpClient.delete(NetworkConfig.getApiUrl(endpoint)) {
                 parameters.forEach { (key, value) ->
@@ -110,25 +110,26 @@ abstract class BaseApiService {
     }
     
     /**
-     * 安全的API调用，处理异常和错误
+     * 安全的API调用方法
+     * 统一处理网络请求异常和响应解析
      * @param apiCall API调用函数
      * @return 网络请求结果
      */
-    protected suspend inline fun <reified T> safeApiCall(
+    protected suspend inline fun safeApiCall(
         crossinline apiCall: suspend () -> HttpResponse
-    ): NetworkResult<T> {
+    ): NetworkResult<SaResult> {
         return try {
             val response = apiCall()
             
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    val apiResponse = response.body<ApiResponse<T>>()
-                    if (apiResponse.success && apiResponse.data != null) {
-                        NetworkResult.Success(apiResponse.data)
-                    } else {
+                    try {
+                        val saResult = response.body<SaResult>()
+                        NetworkResult.Success(saResult)
+                    } catch (e: Exception) {
                         NetworkResult.Error(
-                            Exception(apiResponse.message),
-                            apiResponse.message
+                            e,
+                            "响应格式解析失败: ${e.message}"
                         )
                     }
                 }
@@ -157,17 +158,9 @@ abstract class BaseApiService {
                     )
                 }
                 else -> {
-                    val errorResponse = try {
-                        response.body<ErrorResponse>()
-                    } catch (e: Exception) {
-                        ErrorResponse(
-                            errorCode = response.status.value.toString(),
-                            errorMessage = response.status.description
-                        )
-                    }
                     NetworkResult.Error(
-                        Exception(errorResponse.errorMessage),
-                        errorResponse.errorMessage
+                        Exception("HTTP ${response.status.value}"),
+                        "请求失败: ${response.status.description}"
                     )
                 }
             }
