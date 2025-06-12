@@ -17,7 +17,7 @@ class LogoutUseCase(
      */
     suspend operator fun invoke() {
         try {
-            authRepository.logout()
+            authRepository.clearAuthData()
         } catch (e: Exception) {
             throw e
         }

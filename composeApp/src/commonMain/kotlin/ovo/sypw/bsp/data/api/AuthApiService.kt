@@ -33,31 +33,7 @@ class AuthApiService : BaseApiService() {
             body = registerRequest
         )
     }
-    
-    /**
-     * 刷新访问令牌
-     * @param refreshTokenRequest 刷新令牌请求参数
-     * @return 刷新令牌响应结果
-     */
-    suspend fun refreshToken(refreshTokenRequest: RefreshTokenRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/refresh",
-            body = refreshTokenRequest
-        )
-    }
-    
-    /**
-     * 用户登出
-     * @param logoutRequest 登出请求参数
-     * @return 登出响应结果
-     */
-    suspend fun logout(logoutRequest: LogoutRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/logout",
-            body = logoutRequest
-        )
-    }
-    
+
     /**
      * 获取当前用户信息
      * @return 用户信息响应结果
@@ -68,20 +44,10 @@ class AuthApiService : BaseApiService() {
         )
     }
     
-    /**
-     * 验证令牌有效性
-     * @return 验证结果
-     */
-    suspend fun validateToken(): NetworkResult<SaResult> {
-        return get(
-            endpoint = "$path/validate"
-        )
-    }
-    
+
     /**
      * 修改密码
-     * @param oldPassword 旧密码
-     * @param newPassword 新密码
+     * @param changePasswordRequest 旧密码
      * @return 修改密码响应结果
      */
     suspend fun changePassword(
@@ -92,114 +58,5 @@ class AuthApiService : BaseApiService() {
             body = changePasswordRequest
         )
     }
-    
-    /**
-     * 忘记密码 - 发送重置邮件
-     * @param forgotPasswordRequest 忘记密码请求参数
-     * @return 发送结果
-     */
-    suspend fun forgotPassword(forgotPasswordRequest: ForgotPasswordRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/forgot-password",
-            body = forgotPasswordRequest
-        )
-    }
-    
-    /**
-     * 重置密码
-     * @param resetPasswordRequest 重置密码请求参数
-     * @return 重置结果
-     */
-    suspend fun resetPassword(
-        resetPasswordRequest: ResetPasswordRequest
-    ): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/reset-password",
-            body = resetPasswordRequest
-        )
-    }
-    
-    /**
-     * 发送邮箱验证码
-     * @param sendCodeRequest 发送验证码请求参数
-     * @return 发送结果
-     */
-    suspend fun sendEmailCode(sendCodeRequest: SendCodeRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/send-email-code",
-            body = sendCodeRequest
-        )
-    }
-    
-    /**
-     * 发送手机验证码
-     * @param sendCodeRequest 发送验证码请求参数
-     * @return 发送结果
-     */
-    suspend fun sendSmsCode(sendCodeRequest: SendCodeRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/send-sms-code",
-            body = sendCodeRequest
-        )
-    }
-    
-    /**
-     * 验证邮箱验证码
-     * @param verifyCodeRequest 验证码验证请求参数
-     * @return 验证结果
-     */
-    suspend fun verifyEmailCode(verifyCodeRequest: VerifyCodeRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/verify-email-code",
-            body = verifyCodeRequest
-        )
-    }
-    
-    /**
-     * 验证手机验证码
-     * @param verifyCodeRequest 验证码验证请求参数
-     * @return 验证结果
-     */
-    suspend fun verifySmsCode(verifyCodeRequest: VerifyCodeRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/verify-sms-code",
-            body = verifyCodeRequest
-        )
-    }
-    
-    /**
-     * 更新用户信息
-     * @param updateUserRequest 更新用户信息请求参数
-     * @return 更新结果
-     */
-    suspend fun updateUserInfo(updateUserRequest: UpdateUserRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/update-profile",
-            body = updateUserRequest
-        )
-    }
-    
-    /**
-     * 绑定邮箱
-     * @param bindEmailRequest 绑定邮箱请求参数
-     * @return 绑定结果
-     */
-    suspend fun bindEmail(bindEmailRequest: BindEmailRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/bind-email",
-            body = bindEmailRequest
-        )
-    }
-    
-    /**
-     * 绑定手机号
-     * @param bindPhoneRequest 绑定手机号请求参数
-     * @return 绑定结果
-     */
-    suspend fun bindPhone(bindPhoneRequest: BindPhoneRequest): NetworkResult<SaResult> {
-        return post(
-            endpoint = "$path/bind-phone",
-            body = bindPhoneRequest
-        )
-    }
+
 }

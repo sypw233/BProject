@@ -11,6 +11,7 @@ import ovo.sypw.bsp.data.dto.UserInfo
 import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.domain.model.NetworkResult
 import ovo.sypw.bsp.domain.usecase.*
+import ovo.sypw.bsp.utils.Logger
 
 /**
  * 认证相关的ViewModel
@@ -22,7 +23,6 @@ class AuthViewModel(
     private val registerUseCase: RegisterUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val refreshTokenUseCase: RefreshTokenUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase
 ) : ViewModel() {
 
@@ -73,28 +73,24 @@ class AuthViewModel(
      * 用户登录
      * @param username 用户名或邮箱
      * @param password 密码
-     * @param rememberMe 是否记住登录状态
      */
     fun login(
         username: String,
         password: String,
-        rememberMe: Boolean = false
     ) {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
 
-            when (val result = loginUseCase(username, password, rememberMe)) {
+            when (val result = loginUseCase(username, password)) {
                 is NetworkResult.Success -> {
                     _isLoggedIn.value = true
-                    _userInfo.value = result.data.user
                     _loginResult.value = result
                     _errorMessage.value = null
                 }
 
                 is NetworkResult.Error -> {
                     _isLoggedIn.value = false
-                    _userInfo.value = null
                     _errorMessage.value = result.message
                     _loginResult.value = result
                 }
@@ -125,7 +121,6 @@ class AuthViewModel(
             when (val result = registerUseCase(username, password)) {
                 is NetworkResult.Success -> {
                     _isLoggedIn.value = true
-                    _userInfo.value = result.data.user
                     _loginResult.value = result
                     _errorMessage.value = null
                 }
@@ -170,6 +165,7 @@ class AuthViewModel(
 
             when (val result = getUserInfoUseCase(forceRefresh)) {
                 is NetworkResult.Success -> {
+                    Logger.d(result.data.toString())
                     _userInfo.value = result.data
                     _errorMessage.value = null
                 }
@@ -188,39 +184,6 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * 刷新访问令牌
-     */
-    fun refreshToken() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _errorMessage.value = null
-
-            when (val result = refreshTokenUseCase()) {
-                is NetworkResult.Success -> {
-                    _errorMessage.value = null
-                    // 令牌刷新成功，保持登录状态
-                }
-
-                is NetworkResult.Error -> {
-                    _errorMessage.value = result.message
-                    // 如果是认证错误，可能需要重新登录
-                    if (result.message?.contains("登录已过期") == true) {
-                        _isLoggedIn.value = false
-                        _userInfo.value = null
-                        _loginResult.value = null
-                    }
-                }
-
-                is NetworkResult.Loading -> {
-                    // 处理加载状态
-                }
-
-                NetworkResult.Idle -> TODO()
-            }
-            _isLoading.value = false
-        }
-    }
 
     /**
      * 清除错误信息

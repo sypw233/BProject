@@ -86,13 +86,13 @@ fun ProfileScreen(
                 ProfileInfoItem(
                     icon = Icons.Default.Email,
                     label = "邮箱",
-                    value = userInfo?.email ?: "未设置"
+                    value = "未设置"
                 )
 
                 ProfileInfoItem(
                     icon = Icons.Default.Phone,
                     label = "电话",
-                    value = userInfo?.phone ?: "未设置"
+                    value = "未设置"
                 )
             }
         }

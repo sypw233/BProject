@@ -64,16 +64,7 @@ val authModule = module {
             authRepository = get()
         )
     }
-    
-    /**
-     * 提供刷新令牌用例
-     */
-    single<RefreshTokenUseCase> {
-        RefreshTokenUseCase(
-            authRepository = get()
-        )
-    }
-    
+
     /**
      * 提供修改密码用例
      */

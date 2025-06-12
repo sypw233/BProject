@@ -124,7 +124,7 @@ fun LoginScreen(
                 onDone = {
                     focusManager.clearFocus()
                     if (username.isNotBlank() && password.isNotBlank()) {
-                        authViewModel.login(username, password, rememberMe)
+                        authViewModel.login(username, password)
                     }
                 }
             ),
@@ -186,7 +186,7 @@ fun LoginScreen(
         Button(
             onClick = {
                 focusManager.clearFocus()
-                authViewModel.login(username, password, rememberMe)
+                authViewModel.login(username, password)
             },
             modifier = Modifier
                 .fillMaxWidth()

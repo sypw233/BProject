@@ -32,29 +32,14 @@ interface AuthRepository {
         password: String
     ): NetworkResult<LoginResponse>
     
-    /**
-     * 用户登出
-     * @return 登出结果
-     */
-    suspend fun logout(): NetworkResult<Unit>
 
-    /**
-     * 刷新访问令牌
-     * @return 刷新结果
-     */
-    suspend fun refreshToken(): NetworkResult<RefreshTokenResponse>
-    
     /**
      * 获取当前用户信息
      * @return 用户信息
      */
     suspend fun getCurrentUser(): NetworkResult<UserInfo>
     
-    /**
-     * 验证当前令牌是否有效
-     * @return 验证结果
-     */
-    suspend fun validateToken(): NetworkResult<Boolean>
+
     
     /**
      * 检查是否已登录
@@ -68,11 +53,7 @@ interface AuthRepository {
      */
     suspend fun getAccessToken(): String?
     
-    /**
-     * 获取当前刷新令牌
-     * @return 刷新令牌
-     */
-    suspend fun getRefreshToken(): String?
+
     
     /**
      * 获取当前用户ID
@@ -91,24 +72,7 @@ interface AuthRepository {
         newPassword: String
     ): NetworkResult<Unit>
     
-    /**
-     * 忘记密码 - 发送重置邮件
-     * @param email 邮箱地址
-     * @return 发送结果
-     */
-    suspend fun forgotPassword(email: String): NetworkResult<Unit>
-    
-    /**
-     * 重置密码
-     * @param token 重置令牌
-     * @param newPassword 新密码
-     * @return 重置结果
-     */
-    suspend fun resetPassword(
-        token: String,
-        newPassword: String
-    ): NetworkResult<Unit>
-    
+
     /**
      * 清除本地认证信息
      */

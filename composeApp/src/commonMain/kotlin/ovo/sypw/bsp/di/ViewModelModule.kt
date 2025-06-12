@@ -29,7 +29,6 @@ val viewModelModule = module {
             registerUseCase = get(),
             logoutUseCase = get(),
             getUserInfoUseCase = get(),
-            refreshTokenUseCase = get(),
             changePasswordUseCase = get(),
         )
     }
