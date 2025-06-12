@@ -92,22 +92,22 @@ private fun AppContent() {
         }
         return
     }
-    MainAppContent()
+//    MainAppContent()
     // 根据登录状态显示不同内容
-//    if (isLoggedIn) {
-//        // 已登录，显示主应用界面
-//        MainAppContent()
-//    } else {
-//        // 未登录，显示登录界面
-//        val navigationManager = rememberNavigationManager()
-//
-//        // 设置初始路由为登录页面
-//        LaunchedEffect(Unit) {
-//            navigationManager.navigateTo(AppScreen.LOGIN.route)
-//        }
-//
-//        AuthContent(navigationManager = navigationManager)
-//    }
+    if (isLoggedIn) {
+        // 已登录，显示主应用界面
+        MainAppContent()
+    } else {
+        // 未登录，显示登录界面
+        val navigationManager = rememberNavigationManager()
+
+        // 设置初始路由为登录页面
+        LaunchedEffect(Unit) {
+            navigationManager.navigateTo(AppScreen.LOGIN.route)
+        }
+
+        AuthContent(navigationManager = navigationManager)
+    }
 }
 
 /**

@@ -3,13 +3,14 @@ package ovo.sypw.bsp.data.api
 /**
  * 网络配置类
  * 定义API基础配置信息
+ * 支持平台特定实现
  */
 object NetworkConfig {
     
     /**
      * API基础URL
      */
-    const val BASE_URL = "https://v2.xxapi.cn/api"
+    const val BASE_URL = "https://7516-117-28-183-122.ngrok-free.app"
     
     /**
      * 连接超时时间（毫秒）
