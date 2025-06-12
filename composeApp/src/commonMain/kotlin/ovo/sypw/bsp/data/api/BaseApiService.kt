@@ -45,6 +45,30 @@ abstract class BaseApiService {
     }
     
     /**
+     * 执行带Token的GET请求
+     * @param endpoint API端点
+     * @param token 认证令牌
+     * @param parameters 请求参数
+     * @return 网络请求结果
+     */
+    protected suspend fun getWithToken(
+        endpoint: String,
+        token: String,
+        parameters: Map<String, Any> = emptyMap()
+    ): NetworkResult<SaResult> {
+        Logger.d("BaseApiService", "API请求URL: ${NetworkConfig.getApiUrl(endpoint)}")
+        Logger.d("Token::::$token")
+        return safeApiCall {
+            httpClient.get(NetworkConfig.getApiUrl(endpoint)) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                parameters.forEach { (key, value) ->
+                    parameter(key, value)
+                }
+            }
+        }
+    }
+    
+    /**
      * 执行POST请求
      * @param endpoint API端点
      * @param body 请求体
@@ -58,6 +82,32 @@ abstract class BaseApiService {
     ): NetworkResult<SaResult> {
         return safeApiCall {
             httpClient.post(NetworkConfig.getApiUrl(endpoint)) {
+                contentType(ContentType.Application.Json)
+                parameters.forEach { (key, value) ->
+                    parameter(key, value)
+                }
+                body?.let { setBody(it) }
+            }
+        }
+    }
+    
+    /**
+     * 执行带Token的POST请求
+     * @param endpoint API端点
+     * @param token 认证令牌
+     * @param body 请求体
+     * @param parameters 请求参数
+     * @return 网络请求结果
+     */
+    protected suspend fun postWithToken(
+        endpoint: String,
+        token: String,
+        body: Any? = null,
+        parameters: Map<String, Any> = emptyMap()
+    ): NetworkResult<SaResult> {
+        return safeApiCall {
+            httpClient.post(NetworkConfig.getApiUrl(endpoint)) {
+                header(HttpHeaders.Authorization, "Bearer $token")
                 contentType(ContentType.Application.Json)
                 parameters.forEach { (key, value) ->
                     parameter(key, value)
@@ -91,6 +141,32 @@ abstract class BaseApiService {
     }
     
     /**
+     * 执行带Token的PUT请求
+     * @param endpoint API端点
+     * @param token 认证令牌
+     * @param body 请求体
+     * @param parameters 请求参数
+     * @return 网络请求结果
+     */
+    protected suspend fun putWithToken(
+        endpoint: String,
+        token: String,
+        body: Any? = null,
+        parameters: Map<String, Any> = emptyMap()
+    ): NetworkResult<SaResult> {
+        return safeApiCall {
+            httpClient.put(NetworkConfig.getApiUrl(endpoint)) {
+                header(HttpHeaders.Authorization, "Bearer $token")
+                contentType(ContentType.Application.Json)
+                parameters.forEach { (key, value) ->
+                    parameter(key, value)
+                }
+                body?.let { setBody(it) }
+            }
+        }
+    }
+    
+    /**
      * 执行DELETE请求
      * @param endpoint API端点
      * @param parameters 请求参数
@@ -102,6 +178,28 @@ abstract class BaseApiService {
     ): NetworkResult<SaResult> {
         return safeApiCall {
             httpClient.delete(NetworkConfig.getApiUrl(endpoint)) {
+                parameters.forEach { (key, value) ->
+                    parameter(key, value)
+                }
+            }
+        }
+    }
+    
+    /**
+     * 执行带Token的DELETE请求
+     * @param endpoint API端点
+     * @param token 认证令牌
+     * @param parameters 请求参数
+     * @return 网络请求结果
+     */
+    protected suspend fun deleteWithToken(
+        endpoint: String,
+        token: String,
+        parameters: Map<String, Any> = emptyMap()
+    ): NetworkResult<SaResult> {
+        return safeApiCall {
+            httpClient.delete(NetworkConfig.getApiUrl(endpoint)) {
+                header(HttpHeaders.Authorization, "Bearer $token")
                 parameters.forEach { (key, value) ->
                     parameter(key, value)
                 }

@@ -1,6 +1,9 @@
 package ovo.sypw.bsp.data.repository
 
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import ovo.sypw.bsp.data.api.AuthApiService
 import ovo.sypw.bsp.data.dto.*
 import ovo.sypw.bsp.data.storage.TokenStorage
@@ -36,13 +39,16 @@ class AuthRepositoryImpl(
                 if (saResult.isSuccess()) {
                     println(saResult.data)
                     // 创建模拟的登录响应数据
-                    saResult.data
                     val loginResponse = LoginResponse(
-                        token = "mock_token", // 实际应该从saResult.key中解析
+                        token = saResult.data?.jsonObject["token"]!!.jsonPrimitive.content
                     )
                     // 保存登录信息到本地存储
                     saveLoginInfo(loginResponse)
                     Logger.i("AuthRepository", "登录信息已保存$loginResponse")
+                    
+                    // 登录成功后自动获取用户信息
+                    fetchAndSaveUserInfo(loginResponse.token)
+                    
                     NetworkResult.Success(loginResponse)
                 } else {
                     Logger.w("AuthRepository", "登录失败")
@@ -76,10 +82,14 @@ class AuthRepositoryImpl(
                 if (saResult.isSuccess()) {
                     // 创建模拟的注册响应数据
                     val loginResponse = LoginResponse(
-                        token = "mock_token",
+                        token = saResult.data?.jsonObject?.get("token").toString()
                     )
                     // 注册成功后自动保存登录信息
                     saveLoginInfo(loginResponse)
+                    
+                    // 注册成功后自动获取用户信息
+                    fetchAndSaveUserInfo(loginResponse.token)
+                    
                     NetworkResult.Success(loginResponse)
                 } else {
                     NetworkResult.Error(
@@ -100,17 +110,25 @@ class AuthRepositoryImpl(
      * 获取当前用户信息
      */
     override suspend fun getCurrentUser(): NetworkResult<UserInfo> {
-        return when (val result = authApiService.getCurrentUser()) {
+        val token = tokenStorage.getAccessToken()
+        if (token == null) {
+            return NetworkResult.Error(
+                exception = Exception("未找到访问令牌"),
+                message = "请先登录"
+            )
+        }
+        
+        return when (val result = authApiService.getCurrentUserWithToken(token)) {
             is NetworkResult.Success -> {
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    // 创建模拟的用户信息
                     val userInfo = UserInfo(
-                        id = "1",
-                        username = "current_user",
+                        id = saResult.data?.jsonObject?.get("id").toString(),
+                        username = saResult.data?.jsonObject?.get("username").toString(),
                     )
                     // 保存用户信息到本地存储
                     val userInfoJson = Json.encodeToString(userInfo)
+                    Logger.i("AuthRepository", "用户信息已保存$userInfoJson")
                     tokenStorage.saveUserInfo(userInfoJson)
                     NetworkResult.Success(userInfo)
                 } else {
@@ -200,5 +218,40 @@ class AuthRepositoryImpl(
 //            val userInfoJson = Json.encodeToString(userInfo)
 //            tokenStorage.saveUserInfo(userInfoJson)
 //        }
+    }
+    
+    /**
+     * 获取并保存用户信息
+     * @param token 访问令牌
+     */
+    private suspend fun fetchAndSaveUserInfo(token: String) {
+        try {
+            when (val result = authApiService.getCurrentUserWithToken(token)) {
+                is NetworkResult.Success -> {
+                    val saResult = result.data
+                    if (saResult.isSuccess()) {
+                        val userInfo = UserInfo(
+                            id = saResult.data?.jsonObject["id"]!!.jsonPrimitive.content,
+                            username = saResult.data.jsonObject["username"]!!.jsonPrimitive.content,
+                        )
+                        // 保存用户信息到本地存储
+                        tokenStorage.saveUserId(userInfo.id)
+                        val userInfoJson = Json.encodeToString(userInfo)
+                        tokenStorage.saveUserInfo(userInfoJson)
+                        Logger.i("AuthRepository", "用户信息获取并保存成功: $userInfoJson")
+                    } else {
+                        Logger.w("AuthRepository", "获取用户信息失败: ${saResult.msg}")
+                    }
+                }
+                is NetworkResult.Error -> {
+                    Logger.e("AuthRepository", "获取用户信息网络请求失败: ${result.message}")
+                }
+                else -> {
+                    Logger.w("AuthRepository", "获取用户信息请求状态异常")
+                }
+            }
+        } catch (e: Exception) {
+            Logger.e("AuthRepository", "获取用户信息异常: ${e.message}")
+        }
     }
 }

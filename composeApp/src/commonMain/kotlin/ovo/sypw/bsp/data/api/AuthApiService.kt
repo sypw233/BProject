@@ -44,6 +44,18 @@ class AuthApiService : BaseApiService() {
         )
     }
     
+    /**
+     * 获取当前用户信息（带Token）
+     * @param token 认证令牌
+     * @return 用户信息响应结果
+     */
+    suspend fun getCurrentUserWithToken(token: String): NetworkResult<SaResult> {
+        return getWithToken(
+            endpoint = "$path/me",
+            token = token
+        )
+    }
+    
 
     /**
      * 修改密码
