@@ -3,6 +3,7 @@ package ovo.sypw.bsp.di
 import org.koin.dsl.module
 import ovo.sypw.bsp.presentation.viewmodel.ApiTestViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
+import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 
 /**
  * ViewModel模块依赖注入配置
@@ -31,5 +32,13 @@ val viewModelModule = module {
             getUserInfoUseCase = get(),
             changePasswordUseCase = get(),
         )
+    }
+    
+    /**
+     * 提供后台管理ViewModel
+     * 管理部门和员工相关状态
+     */
+    factory {
+        AdminViewModel()
     }
 }

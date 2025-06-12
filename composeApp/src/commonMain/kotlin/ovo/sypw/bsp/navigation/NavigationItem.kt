@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Api
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -26,6 +27,7 @@ enum class AppScreen(val route: String) {
     HOME("home"),
     PROFILE("profile"),
     API_TEST("api_test"),
+    ADMIN("admin"),
     LOGIN("login"),
     REGISTER("register"),
     CHANGE_PASSWORD("change_password")
@@ -46,6 +48,11 @@ fun getNavigationItems(): List<NavigationItem> {
             route = AppScreen.API_TEST.route,
             title = "API测试",
             icon = Icons.Default.Api
+        ),
+        NavigationItem(
+            route = AppScreen.ADMIN.route,
+            title = "后台管理",
+            icon = Icons.Default.AdminPanelSettings
         ),
         NavigationItem(
             route = AppScreen.PROFILE.route,

@@ -255,6 +255,9 @@ private fun MainContent(
         AppScreen.API_TEST.route -> {
             ApiTestScreen(modifier = modifier)
         }
+        AppScreen.ADMIN.route -> {
+            AdminScreen(modifier = modifier)
+        }
         AppScreen.PROFILE.route -> {
             ProfileScreen(
                 modifier = modifier,
