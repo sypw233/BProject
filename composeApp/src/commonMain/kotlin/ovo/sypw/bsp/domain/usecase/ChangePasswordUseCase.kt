@@ -64,19 +64,9 @@ class ChangePasswordUseCase(
             newPassword.length > 50 -> "新密码不能超过50个字符"
             newPassword != confirmPassword -> "两次输入的新密码不一致"
             oldPassword == newPassword -> "新密码不能与旧密码相同"
-            !isValidPassword(newPassword) -> "新密码必须包含字母和数字"
             else -> null
         }
     }
     
-    /**
-     * 验证密码强度
-     * @param password 密码
-     * @return 是否有效
-     */
-    private fun isValidPassword(password: String): Boolean {
-        val hasLetter = password.any { it.isLetter() }
-        val hasDigit = password.any { it.isDigit() }
-        return hasLetter && hasDigit
-    }
+
 }

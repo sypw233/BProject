@@ -34,22 +34,14 @@ class AuthApiService : BaseApiService() {
         )
     }
 
-    /**
-     * 获取当前用户信息
-     * @return 用户信息响应结果
-     */
-    suspend fun getCurrentUser(): NetworkResult<SaResult> {
-        return get(
-            endpoint = "$path/me"
-        )
-    }
+
     
     /**
      * 获取当前用户信息（带Token）
      * @param token 认证令牌
      * @return 用户信息响应结果
      */
-    suspend fun getCurrentUserWithToken(token: String): NetworkResult<SaResult> {
+    suspend fun getCurrentUser(token: String): NetworkResult<SaResult> {
         return getWithToken(
             endpoint = "$path/me",
             token = token
@@ -58,15 +50,18 @@ class AuthApiService : BaseApiService() {
     
 
     /**
-     * 修改密码
-     * @param changePasswordRequest 旧密码
+     * 修改密码（需要认证）
+     * @param token 认证令牌
+     * @param changePasswordRequest 修改密码请求参数
      * @return 修改密码响应结果
      */
     suspend fun changePassword(
+        token: String,
         changePasswordRequest: ChangePasswordRequest
     ): NetworkResult<SaResult> {
-        return post(
+        return postWithToken(
             endpoint = "$path/change-password",
+            token = token,
             body = changePasswordRequest
         )
     }

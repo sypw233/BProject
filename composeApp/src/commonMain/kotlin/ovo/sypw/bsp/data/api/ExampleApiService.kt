@@ -10,12 +10,17 @@ import ovo.sypw.bsp.data.dto.SaResult
  */
 class ExampleApiService : BaseApiService() {
 
-    suspend fun getWeiboData():NetworkResult<SaResult>{
-        val resWeibo: NetworkResult<SaResult> = get(
+    /**
+     * 获取微博热搜数据（需要认证）
+     * @param token 认证令牌
+     * @return 微博热搜数据
+     */
+    suspend fun getWeiboData(token: String): NetworkResult<SaResult> {
+        val resWeibo: NetworkResult<SaResult> = getWithToken(
             endpoint = "weibohot",
+            token = token
         )
         return resWeibo
-
     }
     /**
      * 获取示例数据（用于API测试）

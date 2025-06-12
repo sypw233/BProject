@@ -119,7 +119,7 @@ fun ChangePasswordScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 supportingText = {
-                    Text("密码至少6个字符，包含字母和数字")
+                    Text("密码至少6个字符")
                 }
             )
             

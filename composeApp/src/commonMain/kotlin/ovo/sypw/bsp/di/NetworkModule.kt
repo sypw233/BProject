@@ -39,6 +39,9 @@ val networkModule = module {
      * 提供Repository实现
      */
     single<ExampleRepository> {
-        ExampleRepositoryImpl(get())
+        ExampleRepositoryImpl(
+            apiService = get(),
+            tokenStorage = get()
+        )
     }
 }

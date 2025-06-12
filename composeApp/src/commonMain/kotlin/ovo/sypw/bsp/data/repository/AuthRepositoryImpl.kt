@@ -1,9 +1,6 @@
 package ovo.sypw.bsp.data.repository
 
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import ovo.sypw.bsp.data.api.AuthApiService
 import ovo.sypw.bsp.data.dto.*
 import ovo.sypw.bsp.data.storage.TokenStorage
@@ -37,19 +34,24 @@ class AuthRepositoryImpl(
                 Logger.i("AuthRepository", "登录请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    println(saResult.data)
-                    // 创建模拟的登录响应数据
-                    val loginResponse = LoginResponse(
-                        token = saResult.data?.jsonObject["token"]!!.jsonPrimitive.content
-                    )
-                    // 保存登录信息到本地存储
-                    saveLoginInfo(loginResponse)
-                    Logger.i("AuthRepository", "登录信息已保存$loginResponse")
-                    
-                    // 登录成功后自动获取用户信息
-                    fetchAndSaveUserInfo(loginResponse.token)
-                    
-                    NetworkResult.Success(loginResponse)
+                    // 使用反序列化获取登录响应数据
+                    val loginResponse = saResult.parseData<LoginResponse>()
+                    if (loginResponse != null) {
+                        // 保存登录信息到本地存储
+                        saveLoginInfo(loginResponse)
+                        Logger.i("AuthRepository", "登录信息已保存$loginResponse")
+                        
+                        // 登录成功后自动获取用户信息
+                        fetchAndSaveUserInfo(loginResponse.token)
+                        
+                        NetworkResult.Success(loginResponse)
+                    } else {
+                        Logger.w("AuthRepository", "登录响应数据解析失败")
+                        NetworkResult.Error(
+                            exception = Exception("登录响应数据解析失败"),
+                            message = "登录响应数据解析失败"
+                        )
+                    }
                 } else {
                     Logger.w("AuthRepository", "登录失败")
                     NetworkResult.Error(
@@ -80,17 +82,23 @@ class AuthRepositoryImpl(
             is NetworkResult.Success -> {
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    // 创建模拟的注册响应数据
-                    val loginResponse = LoginResponse(
-                        token = saResult.data?.jsonObject?.get("token").toString()
-                    )
-                    // 注册成功后自动保存登录信息
-                    saveLoginInfo(loginResponse)
-                    
-                    // 注册成功后自动获取用户信息
-                    fetchAndSaveUserInfo(loginResponse.token)
-                    
-                    NetworkResult.Success(loginResponse)
+                    // 使用反序列化获取注册响应数据
+                    val loginResponse = saResult.parseData<LoginResponse>()
+                    if (loginResponse != null) {
+                        // 注册成功后自动保存登录信息
+                        saveLoginInfo(loginResponse)
+                        
+                        // 注册成功后自动获取用户信息
+                        fetchAndSaveUserInfo(loginResponse.token)
+                        
+                        NetworkResult.Success(loginResponse)
+                    } else {
+                        Logger.w("AuthRepository", "注册响应数据解析失败")
+                        NetworkResult.Error(
+                            exception = Exception("注册响应数据解析失败"),
+                            message = "注册响应数据解析失败"
+                        )
+                    }
                 } else {
                     NetworkResult.Error(
                         exception = Exception("注册失败"),
@@ -118,19 +126,27 @@ class AuthRepositoryImpl(
             )
         }
         
-        return when (val result = authApiService.getCurrentUserWithToken(token)) {
+        return when (val result = authApiService.getCurrentUser(token)) {
             is NetworkResult.Success -> {
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    val userInfo = UserInfo(
-                        id = saResult.data?.jsonObject?.get("id").toString(),
-                        username = saResult.data?.jsonObject?.get("username").toString(),
-                    )
-                    // 保存用户信息到本地存储
-                    val userInfoJson = Json.encodeToString(userInfo)
-                    Logger.i("AuthRepository", "用户信息已保存$userInfoJson")
-                    tokenStorage.saveUserInfo(userInfoJson)
-                    NetworkResult.Success(userInfo)
+                    // 使用反序列化获取用户信息
+                    saResult.data
+                    val userInfo = saResult.parseData<UserInfo>()
+                    if (userInfo != null) {
+                        // 保存用户信息到本地存储
+                        tokenStorage.saveUserId(userInfo.id)
+                        val userInfoJson = Json.encodeToString(userInfo)
+                        Logger.i("AuthRepository", "用户信息已保存$userInfoJson")
+                        tokenStorage.saveUserInfo(userInfoJson)
+                        NetworkResult.Success(userInfo)
+                    } else {
+                        Logger.w("AuthRepository", "用户信息数据解析失败::$userInfo")
+                        NetworkResult.Error(
+                            exception = Exception("用户信息数据解析失败"),
+                            message = "用户信息数据解析失败"
+                        )
+                    }
                 } else {
                     NetworkResult.Error(
                         exception = Exception("获取用户信息失败"),
@@ -173,12 +189,20 @@ class AuthRepositoryImpl(
         oldPassword: String,
         newPassword: String
     ): NetworkResult<Unit> {
+        val token = tokenStorage.getAccessToken()
+        if (token.isNullOrEmpty()) {
+            return NetworkResult.Error(
+                exception = Exception("未找到认证令牌"),
+                message = "请先登录"
+            )
+        }
+        
         val changePasswordRequest = ChangePasswordRequest(
             oldPassword = oldPassword,
             newPassword = newPassword
         )
         
-        return when (val result = authApiService.changePassword(changePasswordRequest)) {
+        return when (val result = authApiService.changePassword(token, changePasswordRequest)) {
             is NetworkResult.Success -> {
                 val saResult = result.data
                 if (saResult.isSuccess()) {
@@ -226,19 +250,21 @@ class AuthRepositoryImpl(
      */
     private suspend fun fetchAndSaveUserInfo(token: String) {
         try {
-            when (val result = authApiService.getCurrentUserWithToken(token)) {
+            when (val result = authApiService.getCurrentUser(token)) {
                 is NetworkResult.Success -> {
                     val saResult = result.data
                     if (saResult.isSuccess()) {
-                        val userInfo = UserInfo(
-                            id = saResult.data?.jsonObject["id"]!!.jsonPrimitive.content,
-                            username = saResult.data.jsonObject["username"]!!.jsonPrimitive.content,
-                        )
-                        // 保存用户信息到本地存储
-                        tokenStorage.saveUserId(userInfo.id)
-                        val userInfoJson = Json.encodeToString(userInfo)
-                        tokenStorage.saveUserInfo(userInfoJson)
-                        Logger.i("AuthRepository", "用户信息获取并保存成功: $userInfoJson")
+                        // 使用反序列化获取用户信息
+                        val userInfo = saResult.parseData<UserInfo>()
+                        if (userInfo != null) {
+                            // 保存用户信息到本地存储
+                            tokenStorage.saveUserId(userInfo.id)
+                            val userInfoJson = Json.encodeToString(userInfo)
+                            tokenStorage.saveUserInfo(userInfoJson)
+                            Logger.i("AuthRepository", "用户信息获取并保存成功: $userInfoJson")
+                        } else {
+                            Logger.w("AuthRepository", "用户信息数据解析失败: $userInfo")
+                        }
                     } else {
                         Logger.w("AuthRepository", "获取用户信息失败: ${saResult.msg}")
                     }

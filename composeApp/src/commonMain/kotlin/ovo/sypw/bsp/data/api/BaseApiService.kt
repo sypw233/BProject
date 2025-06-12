@@ -222,9 +222,15 @@ abstract class BaseApiService {
             when (response.status) {
                 HttpStatusCode.OK -> {
                     try {
+                        // 先获取原始响应文本用于调试
+                        val responseText = response.bodyAsText()
+                        Logger.d("BaseApiService", "服务器原始响应: $responseText")
+                        
                         val saResult = response.body<SaResult>()
+                        Logger.d("BaseApiService", "解析后的SaResult: $saResult")
                         NetworkResult.Success(saResult)
                     } catch (e: Exception) {
+                        Logger.e("BaseApiService", "响应解析失败: ${e.message}")
                         NetworkResult.Error(
                             e,
                             "响应格式解析失败: ${e.message}"

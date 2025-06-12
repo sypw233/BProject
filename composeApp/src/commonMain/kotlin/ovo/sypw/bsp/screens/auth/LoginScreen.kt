@@ -37,9 +37,8 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit = {}
 ) {
     // 状态管理
-    var username by remember { mutableStateOf("sypw") }
+    var username by remember { mutableStateOf("admin") }
     var password by remember { mutableStateOf("123456") }
-    var rememberMe by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
     
     // ViewModel状态观察
@@ -144,24 +143,7 @@ fun LoginScreen(
             enabled = !isLoading
         )
         
-        // 记住我选项
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = rememberMe,
-                onCheckedChange = { rememberMe = it },
-                enabled = !isLoading
-            )
-            Text(
-                text = "记住我",
-                modifier = Modifier.padding(start = 8.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+
         
         // 错误信息显示
         errorMessage?.let { error ->

@@ -1,7 +1,7 @@
 package ovo.sypw.bsp.data.repository
 
 import ovo.sypw.bsp.data.api.ExampleApiService
-
+import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.data.api.DeleteResult
 import ovo.sypw.bsp.domain.repository.BaseRepository
 import ovo.sypw.bsp.domain.repository.ExampleRepository
@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.Flow
  * 演示如何实现Repository接口并使用BaseRepository的通用方法
  */
 class ExampleRepositoryImpl(
-    private val apiService: ExampleApiService
+    private val apiService: ExampleApiService,
+    private val tokenStorage: TokenStorage
 ) : ExampleRepository, BaseRepository {
     
 
@@ -25,7 +26,15 @@ class ExampleRepositoryImpl(
      */
     override suspend fun getExampleData(): NetworkResult<String> {
         return try {
-            val response = apiService.getWeiboData()
+            val token = tokenStorage.getAccessToken()
+            if (token.isNullOrEmpty()) {
+                return NetworkResult.Error(
+                    exception = Exception("未找到认证令牌"),
+                    message = "请先登录"
+                )
+            }
+            
+            val response = apiService.getWeiboData(token)
             NetworkResult.Success("GET请求成功，返回数据: $response")
         } catch (e: Exception) {
             NetworkResult.Error(e)
