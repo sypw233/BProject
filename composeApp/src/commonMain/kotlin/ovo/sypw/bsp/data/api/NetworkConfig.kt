@@ -25,7 +25,7 @@ object NetworkConfig {
      * Socket超时时间（毫秒）
      */
     const val SOCKET_TIMEOUT = 30_000L
-
+        
     
     /**
      * 内容类型

@@ -61,8 +61,6 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             // Android平台特定的Ktor客户端
             implementation(libs.ktor.client.android)
-            // Koin Android扩展
-            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)

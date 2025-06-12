@@ -3,7 +3,7 @@ package ovo.sypw.bsp.di
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.logger.Level
-
+import org.koin.core.logger.PrintLogger
 
 /**
  * Koin依赖注入初始化器
@@ -18,15 +18,15 @@ object KoinInitializer {
     fun init(enableLogging: Boolean = false) {
         startKoin {
             // 配置日志
-//            if (enableLogging) {
-//                logger(PrintLogger(Level.DEBUG))
-//            }
+            if (enableLogging) {
+                logger(PrintLogger(Level.DEBUG))
+            }
             
             // 加载所有模块
             modules(getAllModules())
         }
     }
-
+    
     /**
      * 停止Koin容器
      * 通常在应用关闭时调用
