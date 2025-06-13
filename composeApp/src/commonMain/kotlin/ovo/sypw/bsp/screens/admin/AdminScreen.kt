@@ -5,13 +5,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
+import ovo.sypw.bsp.navigation.NavigationManager
+import ovo.sypw.bsp.navigation.SideNavigationBar
+import ovo.sypw.bsp.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
@@ -180,29 +182,25 @@ private fun ExpandedAdminLayout(
     layoutConfig: ovo.sypw.bsp.utils.ResponsiveLayoutConfig,
     viewModel: AdminViewModel
 ) {
+    var isRailExpanded by remember { mutableStateOf(true) }
+    val navigationManager = rememberNavigationManager()
+    
+    // 确保导航到后台管理页面
+    LaunchedEffect(Unit) {
+        navigationManager.navigateTo("admin")
+    }
+    
     Row(
         modifier = Modifier.fillMaxSize()
     ) {
-        // 左侧导航栏
-        NavigationRail(
-            modifier = Modifier.fillMaxHeight()
-        ) {
-            Spacer(modifier = Modifier.height(layoutConfig.screenPadding))
-            
-            NavigationRailItem(
-                selected = selectedTabIndex == 0,
-                onClick = { onTabSelected(0) },
-                icon = { /* 可以添加图标 */ },
-                label = { Text("部门管理") }
-            )
-            
-            NavigationRailItem(
-                selected = selectedTabIndex == 1,
-                onClick = { onTabSelected(1) },
-                icon = { /* 可以添加图标 */ },
-                label = { Text("员工管理") }
-            )
-        }
+        // 左侧集成的侧边导航栏
+        SideNavigationBar(
+            navigationManager = navigationManager,
+            isExpanded = isRailExpanded,
+            onExpandToggle = { isRailExpanded = !isRailExpanded },
+            adminTabIndex = selectedTabIndex,
+            onAdminTabSelected = onTabSelected
+        )
         
         // 右侧内容区域
         Box(
@@ -225,11 +223,13 @@ private fun ExpandedAdminLayout(
     }
 }
 
+
+
 /**
  * 部门管理Tab内容
  */
 @Composable
-private fun DepartmentManagementTab(
+internal fun DepartmentManagementTab(
     viewModel: AdminViewModel,
     layoutConfig: ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 ) {
@@ -366,7 +366,7 @@ private fun DepartmentManagementTab(
  * 员工管理Tab内容
  */
 @Composable
-private fun EmployeeManagementTab(
+internal fun EmployeeManagementTab(
     viewModel: AdminViewModel,
     layoutConfig: ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 ) {

@@ -1,15 +1,24 @@
 package ovo.sypw.bsp.navigation
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MenuOpen
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import ovo.sypw.bsp.getPlatform
 
@@ -47,79 +56,247 @@ fun BottomNavigationBar(
 }
 
 /**
- * 侧边导航栏组件（桌面端和网页端使用）
- * 使用NavigationRail实现侧边导航
+ * 侧边导航栏组件
+ * 使用NavigationRail实现侧边导航，支持缩小功能和子项显示
  * @param navigationManager 导航管理器
  * @param modifier 修饰符
+ * @param isExpanded 是否展开状态
+ * @param onExpandToggle 展开/收起切换回调
+ * @param adminTabIndex 后台管理当前选中的Tab索引（-1表示未选中后台管理）
+ * @param onAdminTabSelected 后台管理Tab选择回调
  */
 @Composable
 fun SideNavigationBar(
     navigationManager: NavigationManager,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isExpanded: Boolean = true,
+    onExpandToggle: (() -> Unit)? = null,
+    adminTabIndex: Int = -1,
+    onAdminTabSelected: ((Int) -> Unit)? = null
 ) {
     val currentScreen by navigationManager.currentScreen
     val navigationItems = getNavigationItems()
+    var adminExpanded by remember { mutableStateOf(false) }
     
-    NavigationRail(
-        modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surface,
+    Surface(
+        modifier = modifier
+            .fillMaxHeight()
+            .width(if (isExpanded) 240.dp else 80.dp)
+            .animateContentSize(),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 3.dp
     ) {
         Column(
-            modifier = Modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 8.dp)
         ) {
+            // 顶部折叠/展开按钮（如果提供了回调）
+            onExpandToggle?.let { toggle ->
+                IconButton(
+                    onClick = toggle,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = if (isExpanded) 16.dp else 8.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isExpanded) Icons.Default.MenuOpen else Icons.Default.Menu,
+                        contentDescription = if (isExpanded) "收起导航栏" else "展开导航栏"
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            
             // 导航项目
             navigationItems.forEach { item ->
-                NavigationRailItem(
-                    icon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title
+                if (item.route == AppScreen.ADMIN.route) {
+                    // 后台管理项目 - 支持子项展开
+                    AdminNavigationItem(
+                        selected = currentScreen == item.route,
+                        onClick = { 
+                            navigationManager.navigateTo(item.route)
+                            if (isExpanded) {
+                                adminExpanded = !adminExpanded
+                            }
+                        },
+                        icon = item.icon,
+                        label = item.title,
+                        isExpanded = isExpanded,
+                        hasSubItems = true,
+                        subItemsExpanded = adminExpanded && currentScreen == item.route
+                    )
+                    
+                    // 后台管理子项（仅在展开且选中后台管理时显示）
+                    if (isExpanded && adminExpanded && currentScreen == item.route) {
+                        AdminSubNavigationItem(
+                            selected = adminTabIndex == 0,
+                            onClick = { onAdminTabSelected?.invoke(0) },
+                            icon = Icons.Default.Business,
+                            label = "部门管理",
+                            isExpanded = isExpanded
                         )
-                    },
-                    label = {
-                        Text(
-                            text = item.title,
-                            style = MaterialTheme.typography.labelSmall
+                        
+                        AdminSubNavigationItem(
+                            selected = adminTabIndex == 1,
+                            onClick = { onAdminTabSelected?.invoke(1) },
+                            icon = Icons.Default.People,
+                            label = "员工管理",
+                            isExpanded = isExpanded
                         )
-                    },
-                    selected = currentScreen == item.route,
-                    onClick = { navigationManager.navigateTo(item.route) }
+                    }
+                } else {
+                    // 普通导航项目
+                    AdminNavigationItem(
+                        selected = currentScreen == item.route,
+                        onClick = { navigationManager.navigateTo(item.route) },
+                        icon = item.icon,
+                        label = item.title,
+                        isExpanded = isExpanded,
+                        hasSubItems = false,
+                        subItemsExpanded = false
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 导航项组件
+ */
+@Composable
+private fun AdminNavigationItem(
+    selected: Boolean,
+    onClick: () -> Unit,
+    icon: ImageVector,
+    label: String,
+    isExpanded: Boolean,
+    hasSubItems: Boolean = false,
+    subItemsExpanded: Boolean = false
+) {
+    val backgroundColor = if (selected) {
+        MaterialTheme.colorScheme.secondaryContainer
+    } else {
+        Color.Transparent
+    }
+    
+    val contentColor = if (selected) {
+        MaterialTheme.colorScheme.onSecondaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+    
+    Surface(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        color = backgroundColor,
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        if (isExpanded) {
+            // 展开模式：图标在左，文字在右
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = contentColor,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = contentColor,
+                    modifier = Modifier.weight(1f)
+                )
+                
+                // 如果有子项，显示展开/收起图标
+                if (hasSubItems) {
+                    Icon(
+                        imageVector = if (subItemsExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        contentDescription = if (subItemsExpanded) "收起" else "展开",
+                        tint = contentColor,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        } else {
+            // 收起模式：仅显示图标
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = contentColor,
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
     }
 }
 
-
-
 /**
- * 根据平台自动选择导航栏类型
- * @param navigationManager 导航管理器
- * @param modifier 修饰符
+ * 子导航项组件
  */
 @Composable
-fun AdaptiveNavigationBar(
-    navigationManager: NavigationManager,
-    modifier: Modifier = Modifier
+private fun AdminSubNavigationItem(
+    selected: Boolean,
+    onClick: () -> Unit,
+    icon: ImageVector,
+    label: String,
+    isExpanded: Boolean
 ) {
-    val platform = getPlatform()
+    val backgroundColor = if (selected) {
+        MaterialTheme.colorScheme.tertiaryContainer
+    } else {
+        Color.Transparent
+    }
     
-    when {
-        platform.name.contains("Desktop") || platform.name.contains("JS") -> {
-            // 桌面端和网页端使用侧边导航
-            SideNavigationBar(
-                navigationManager = navigationManager,
-                modifier = modifier
-            )
-        }
-        else -> {
-            // 移动端使用底部导航
-            BottomNavigationBar(
-                navigationManager = navigationManager,
-                modifier = modifier
-            )
+    val contentColor = if (selected) {
+        MaterialTheme.colorScheme.onTertiaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    
+    Surface(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 2.dp),
+        color = backgroundColor,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        if (isExpanded) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Spacer(modifier = Modifier.width(8.dp)) // 缩进
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = contentColor,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = contentColor
+                )
+            }
         }
     }
 }

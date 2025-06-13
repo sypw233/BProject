@@ -3,23 +3,22 @@ package ovo.sypw.bsp
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplication
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 import ovo.sypw.bsp.navigation.*
 import ovo.sypw.bsp.screens.*
 import ovo.sypw.bsp.screens.auth.*
 import ovo.sypw.bsp.presentation.screen.ChangePasswordScreen
+import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.utils.FontUtils
-import ovo.sypw.bsp.di.getAllModules
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.utils.Logger
+import ovo.sypw.bsp.utils.ResponsiveUtils
+import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
 
 /**
  * 平台特定的 Koin 应用初始化
@@ -71,9 +70,7 @@ fun App() {
             AppContent()
         }
     }
-    
 
-    
 
 }
 
@@ -82,7 +79,7 @@ private fun AppContent() {
     val authViewModel: AuthViewModel = koinViewModel()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
     val isLoading by authViewModel.isLoading.collectAsState()
-    
+
     // 显示加载状态
     if (isLoading) {
         Box(
@@ -120,7 +117,7 @@ private fun AuthContent(
     navigationManager: NavigationManager
 ) {
     val currentScreen by navigationManager.currentScreen
-    
+
     when (currentScreen) {
         AppScreen.LOGIN.route -> {
             LoginScreen(
@@ -132,6 +129,7 @@ private fun AuthContent(
                 }
             )
         }
+
         AppScreen.REGISTER.route -> {
             // TODO: 创建注册界面
             LoginScreen(
@@ -140,6 +138,7 @@ private fun AuthContent(
                 }
             )
         }
+
         else -> {
             // 默认显示登录界面
             LoginScreen(
@@ -157,40 +156,66 @@ private fun AuthContent(
 @Composable
 private fun MainAppContent() {
     val navigationManager = rememberNavigationManager()
-    
+
     // 使用BoxWithConstraints获取窗口尺寸
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
     ) {
         val screenWidth = maxWidth
-        val useRailNavigation = screenWidth >= 840.dp // Material Design 3 推荐的断点
-        
-        if (useRailNavigation) {
-            // 宽屏：使用侧边导航布局
-            RailNavigationLayout(navigationManager = navigationManager)
-        } else {
-            // 窄屏：使用底部导航布局
-            BottomNavigationLayout(navigationManager = navigationManager)
+        when (ResponsiveUtils.getScreenSize(screenWidth)) {
+            ResponsiveUtils.ScreenSize.COMPACT ->
+                BottomNavigationLayout(navigationManager = navigationManager)
+
+            ResponsiveUtils.ScreenSize.MEDIUM ->
+                MediumRailNavigationLayout(navigationManager = navigationManager)
+
+            ResponsiveUtils.ScreenSize.EXPANDED ->
+                ExpandedRailNavigationLayout(navigationManager = navigationManager)
         }
+
     }
 }
 
 /**
- * 侧边导航布局（宽屏使用）
+ * 侧边导航布局（中屏使用）
+ * 导航栏显示在侧边，没有子项，文字显示在图标下方
  * @param navigationManager 导航管理器
  */
 @Composable
-private fun RailNavigationLayout(
+private fun MediumRailNavigationLayout(
     navigationManager: NavigationManager
 ) {
     Row(
         modifier = Modifier.fillMaxSize()
     ) {
-        // 左侧导航栏
-        SideNavigationBar(
-            navigationManager = navigationManager
-        )
-        
+        // 左侧导航栏 - 中等布局：文字在图标下方，无子项
+        NavigationRail(
+            modifier = Modifier.fillMaxHeight()
+        ) {
+            val currentScreen by navigationManager.currentScreen
+            val navigationItems = getNavigationItems()
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceEvenly, // 均匀分布
+                horizontalAlignment = Alignment.CenterHorizontally // 水平居中
+            ) {
+                navigationItems.forEach { item ->
+                    NavigationRailItem(
+                        icon = {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.title
+                            )
+                        },
+                        label = { Text(item.title) },
+                        selected = currentScreen == item.route,
+                        onClick = { navigationManager.navigateTo(item.route) }
+                    )
+                }
+            }
+
+        }
+
         // 右侧内容区域
         Box(
             modifier = Modifier
@@ -201,6 +226,53 @@ private fun RailNavigationLayout(
                 navigationManager = navigationManager,
                 modifier = Modifier.fillMaxSize()
             )
+        }
+    }
+}
+
+/**
+ * 侧边导航布局（大屏使用）
+ * 导航栏显示在侧边，可以显示子项，文字在图标右方，同时支持隐藏文字
+ * @param navigationManager 导航管理器
+ */
+@Composable
+private fun ExpandedRailNavigationLayout(
+    navigationManager: NavigationManager
+) {
+    var isRailExpanded by remember { mutableStateOf(true) }
+    var adminTabIndex by remember { mutableStateOf(0) }
+    val currentScreen by navigationManager.currentScreen
+
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // 左侧可折叠导航栏 - 大布局：支持子项，文字在图标右方，可隐藏文字
+        SideNavigationBar(
+            navigationManager = navigationManager,
+            isExpanded = isRailExpanded,
+            onExpandToggle = { isRailExpanded = !isRailExpanded },
+            adminTabIndex = if (currentScreen == AppScreen.ADMIN.route) adminTabIndex else -1,
+            onAdminTabSelected = { adminTabIndex = it }
+        )
+
+        // 右侧内容区域
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            // 如果是后台管理页面，直接显示对应的Tab内容
+            if (currentScreen == AppScreen.ADMIN.route) {
+                AdminContentLayout(
+                    selectedTabIndex = adminTabIndex,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                MainContent(
+                    navigationManager = navigationManager,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }
@@ -227,7 +299,7 @@ private fun BottomNavigationLayout(
                 modifier = Modifier.fillMaxSize()
             )
         }
-        
+
         // 底部导航栏
         BottomNavigationBar(
             navigationManager = navigationManager
@@ -247,17 +319,22 @@ private fun MainContent(
     modifier: Modifier = Modifier
 ) {
     val currentScreen by navigationManager.currentScreen
-    
+
     when (currentScreen) {
         AppScreen.HOME.route -> {
             HomeScreen(modifier = modifier)
         }
+
         AppScreen.API_TEST.route -> {
             ApiTestScreen(modifier = modifier)
         }
+
         AppScreen.ADMIN.route -> {
+            // 在大布局下，后台管理内容由ExpandedRailNavigationLayout直接控制
+            // 这里只处理小布局和中布局的情况
             AdminScreen(modifier = modifier)
         }
+
         AppScreen.PROFILE.route -> {
             ProfileScreen(
                 modifier = modifier,
@@ -270,6 +347,7 @@ private fun MainContent(
                 }
             )
         }
+
         AppScreen.CHANGE_PASSWORD.route -> {
             ChangePasswordScreen(
                 onNavigateBack = {
@@ -277,6 +355,7 @@ private fun MainContent(
                 }
             )
         }
+
         AppScreen.LOGIN.route -> {
             // 在主应用中不应该显示登录界面，重定向到首页
             LaunchedEffect(Unit) {
@@ -284,6 +363,7 @@ private fun MainContent(
             }
             HomeScreen(modifier = modifier)
         }
+
         AppScreen.REGISTER.route -> {
             // 在主应用中不应该显示注册界面，重定向到首页
             LaunchedEffect(Unit) {
@@ -291,9 +371,58 @@ private fun MainContent(
             }
             HomeScreen(modifier = modifier)
         }
+
         else -> {
             // 默认显示首页
             HomeScreen(modifier = modifier)
+        }
+    }
+}
+
+/**
+ * 后台管理内容布局（大布局专用）
+ * 直接显示后台管理的Tab内容，避免重复的侧边栏
+ * @param selectedTabIndex 选中的Tab索引
+ * @param modifier 修饰符
+ */
+@Composable
+private fun AdminContentLayout(
+    selectedTabIndex: Int,
+    modifier: Modifier = Modifier
+) {
+    val viewModel: AdminViewModel = koinInject()
+
+    // 使用BoxWithConstraints获取屏幕尺寸信息
+    BoxWithConstraints(
+        modifier = modifier.fillMaxSize()
+    ) {
+        val layoutConfig = getResponsiveLayoutConfig(maxWidth)
+
+        // 直接显示Tab内容，不需要Tab栏（由侧边导航栏控制）
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(layoutConfig.screenPadding)
+        ) {
+            when (selectedTabIndex) {
+                0 -> DepartmentManagementTab(
+                    viewModel = viewModel,
+                    layoutConfig = layoutConfig
+                )
+
+                1 -> EmployeeManagementTab(
+                    viewModel = viewModel,
+                    layoutConfig = layoutConfig
+                )
+
+                else -> {
+                    // 默认显示部门管理
+                    DepartmentManagementTab(
+                        viewModel = viewModel,
+                        layoutConfig = layoutConfig
+                    )
+                }
+            }
         }
     }
 }
