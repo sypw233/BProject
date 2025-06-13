@@ -2,10 +2,7 @@ package ovo.sypw.bsp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.cash.paging.Pager
-import app.cash.paging.PagingConfig
-import app.cash.paging.PagingData
-import app.cash.paging.cachedIn
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,10 +10,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import ovo.sypw.bsp.data.dto.DepartmentDto
 import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.data.paging.DepartmentPagingSource
+
+import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.domain.model.NetworkResult
 import ovo.sypw.bsp.domain.usecase.DepartmentUseCase
 import ovo.sypw.bsp.utils.Logger
+import ovo.sypw.bsp.utils.PagingManager
+import ovo.sypw.bsp.utils.PagingUtils
 
 /**
  * 后台管理ViewModel
@@ -47,9 +47,9 @@ class AdminViewModel(
     val departmentSearchQuery: StateFlow<String> = _departmentSearchQuery.asStateFlow()
     
     // 部门分页数据流
-    private var _departmentPagingData: Flow<PagingData<DepartmentDto>>? = null
-    val departmentPagingData: Flow<PagingData<DepartmentDto>>
-        get() = _departmentPagingData ?: createDepartmentPager().also { _departmentPagingData = it }
+    private var _departmentPagingManager: ovo.sypw.bsp.utils.PagingManager<DepartmentDto>? = null
+    val departmentPagingData: StateFlow<PagingData<DepartmentDto>>
+        get() = getDepartmentPagingManager().pagingData
     
     // 员工管理状态
     private val _employeeState = MutableStateFlow(EmployeeState())
@@ -64,22 +64,21 @@ class AdminViewModel(
     }
     
     /**
-     * 创建部门分页器
+     * 获取部门分页管理器
      */
-    private fun createDepartmentPager(): Flow<PagingData<DepartmentDto>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                enablePlaceholders = false,
-                initialLoadSize = 10
-            ),
-            pagingSourceFactory = {
-                DepartmentPagingSource(
-                    departmentUseCase = departmentUseCase,
-                    searchName = _departmentSearchQuery.value.takeIf { it.isNotBlank() }
-                )
-            }
-        ).flow.cachedIn(viewModelScope)
+    private fun getDepartmentPagingManager(): PagingManager<DepartmentDto> {
+        if (_departmentPagingManager == null) {
+            _departmentPagingManager = PagingUtils.createPagingManager(
+                loadData = { page, pageSize ->
+                    departmentUseCase.getDepartmentPage(
+                        current = page,
+                        size = pageSize,
+                        name = _departmentSearchQuery.value.takeIf { it.isNotBlank() }
+                    )
+                }
+            )
+        }
+        return _departmentPagingManager!!
     }
     
     /**
@@ -89,7 +88,7 @@ class AdminViewModel(
     fun updateDepartmentSearchQuery(query: String) {
         _departmentSearchQuery.value = query
         // 重新创建分页器以应用新的搜索条件
-        _departmentPagingData = null
+        _departmentPagingManager = null
     }
     
     /**
@@ -104,7 +103,7 @@ class AdminViewModel(
      */
     fun refreshDepartments() {
         // 重新创建分页器以刷新数据
-        _departmentPagingData = null
+        _departmentPagingManager = null
         // 同时保持原有的加载方法以兼容现有代码
         loadDepartments()
     }
@@ -417,7 +416,7 @@ class AdminViewModel(
                     Logger.i(TAG, "部门保存成功")
                     hideDepartmentDialog()
                     // 刷新分页数据和传统列表数据
-                    _departmentPagingData = null
+                    _departmentPagingManager = null
                     refreshDepartments()
                 }
                 is NetworkResult.Error -> {

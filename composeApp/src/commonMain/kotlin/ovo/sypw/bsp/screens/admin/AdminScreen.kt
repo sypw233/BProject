@@ -109,7 +109,7 @@ private fun CompactAdminLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-                1 -> DepartmentManagementPagingTab(
+                1 -> DepartmentManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
@@ -165,11 +165,7 @@ private fun MediumAdminLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-                1 -> DepartmentManagementPagingTab(
-                    viewModel = viewModel,
-                    layoutConfig = layoutConfig
-                )
-                2 -> EmployeeManagementTab(
+                1 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
