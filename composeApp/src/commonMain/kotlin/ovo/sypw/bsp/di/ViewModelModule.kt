@@ -39,6 +39,8 @@ val viewModelModule = module {
      * 管理部门和员工相关状态
      */
     factory {
-        AdminViewModel()
+        AdminViewModel(
+            departmentUseCase = get()
+        )
     }
 }

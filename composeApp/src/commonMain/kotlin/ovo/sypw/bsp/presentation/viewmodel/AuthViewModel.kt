@@ -23,7 +23,7 @@ class AuthViewModel(
     private val registerUseCase: RegisterUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val changePasswordUseCase: ChangePasswordUseCase
+    private val changePasswordUseCase: ChangePasswordUseCase,
 ) : ViewModel() {
 
     private val _isLoggedIn = MutableStateFlow(false)

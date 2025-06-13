@@ -62,8 +62,11 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             // Android平台特定的Ktor客户端
             implementation(libs.ktor.client.android)
-
+            // Koin Android支持
             implementation(libs.koin.android)
+            // AndroidX Paging 依赖
+            implementation(libs.androidx.paging.runtime)
+            implementation(libs.androidx.paging.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -87,6 +90,9 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             // 跨平台日期时间库
             implementation(libs.kotlinx.datetime)
+            // Paging分页库
+            implementation(libs.paging.compose)
+            implementation(libs.paging.common)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -106,6 +112,9 @@ kotlin {
         wasmJsMain.dependencies {
             // Web平台特定的Ktor客户端
             implementation(libs.ktor.client.js)
+
+            implementation(libs.paging.common.js)
+            implementation(libs.paging.compose.js)
         }
     }
 }
@@ -138,7 +147,6 @@ android {
 }
 
 dependencies {
-
     debugImplementation(compose.uiTooling)
 }
 

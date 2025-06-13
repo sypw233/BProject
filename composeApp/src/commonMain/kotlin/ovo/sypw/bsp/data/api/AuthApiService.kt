@@ -8,7 +8,7 @@ import ovo.sypw.bsp.domain.model.NetworkResult
  * 提供登录、注册、登出等网络请求功能
  */
 class AuthApiService : BaseApiService() {
-    private val path = "auth"
+    private val path = "/auth"
     
     /**
      * 用户登录

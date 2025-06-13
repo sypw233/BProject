@@ -44,6 +44,6 @@ object NetworkConfig {
      * @return 完整的API URL
      */
     fun getApiUrl(endpoint: String): String {
-        return "$BASE_URL/$endpoint"
+        return "$BASE_URL$endpoint"
     }
 }

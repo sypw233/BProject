@@ -1,20 +1,18 @@
-package ovo.sypw.bsp.screens
+package ovo.sypw.bsp.screens.admin
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import org.koin.compose.koinInject
-import ovo.sypw.bsp.navigation.NavigationManager
 import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
 
@@ -76,7 +74,7 @@ fun AdminScreen(
 private fun CompactAdminLayout(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    layoutConfig: ovo.sypw.bsp.utils.ResponsiveLayoutConfig,
+    layoutConfig: ResponsiveLayoutConfig,
     viewModel: AdminViewModel
 ) {
     Column(
@@ -111,7 +109,11 @@ private fun CompactAdminLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-                1 -> EmployeeManagementTab(
+                1 -> DepartmentManagementPagingTab(
+                    viewModel = viewModel,
+                    layoutConfig = layoutConfig
+                )
+                2 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
@@ -127,7 +129,7 @@ private fun CompactAdminLayout(
 private fun MediumAdminLayout(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    layoutConfig: ovo.sypw.bsp.utils.ResponsiveLayoutConfig,
+    layoutConfig: ResponsiveLayoutConfig,
     viewModel: AdminViewModel
 ) {
     Column(
@@ -163,7 +165,11 @@ private fun MediumAdminLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-                1 -> EmployeeManagementTab(
+                1 -> DepartmentManagementPagingTab(
+                    viewModel = viewModel,
+                    layoutConfig = layoutConfig
+                )
+                2 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
@@ -179,7 +185,7 @@ private fun MediumAdminLayout(
 private fun ExpandedAdminLayout(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    layoutConfig: ovo.sypw.bsp.utils.ResponsiveLayoutConfig,
+    layoutConfig: ResponsiveLayoutConfig,
     viewModel: AdminViewModel
 ) {
     var isRailExpanded by remember { mutableStateOf(true) }
@@ -223,278 +229,3 @@ private fun ExpandedAdminLayout(
     }
 }
 
-
-
-/**
- * 部门管理Tab内容
- */
-@Composable
-internal fun DepartmentManagementTab(
-    viewModel: AdminViewModel,
-    layoutConfig: ovo.sypw.bsp.utils.ResponsiveLayoutConfig
-) {
-    val departmentState by viewModel.departmentState.collectAsState()
-    
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
-    ) {
-        // 页面标题
-        Text(
-            text = "部门管理",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        
-        // 操作按钮区域 - 响应式布局
-        if (layoutConfig.useFullWidthButtons) {
-            // 紧凑型：垂直排列按钮
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
-            ) {
-                Button(
-                    onClick = { viewModel.refreshDepartments() },
-                    enabled = !departmentState.isLoading,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("刷新数据")
-                }
-                
-                OutlinedButton(
-                    onClick = { /* TODO: 添加部门 */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("添加部门")
-                }
-            }
-        } else {
-            // 中等型和扩展型：水平排列按钮
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(layoutConfig.horizontalSpacing)
-            ) {
-                Button(
-                    onClick = { viewModel.refreshDepartments() },
-                    enabled = !departmentState.isLoading
-                ) {
-                    Text("刷新数据")
-                }
-                
-                OutlinedButton(
-                    onClick = { /* TODO: 添加部门 */ }
-                ) {
-                    Text("添加部门")
-                }
-            }
-        }
-        
-        // 加载状态
-        if (departmentState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        
-        // 部门列表区域 - 响应式网格布局
-        when (layoutConfig.screenSize) {
-            ResponsiveUtils.ScreenSize.COMPACT -> {
-                // 紧凑型：单列卡片
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(layoutConfig.cardPadding)
-                    ) {
-                        Text(
-                            text = "部门列表",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(modifier = Modifier.height(layoutConfig.verticalSpacing))
-                        Text(
-                            text = "暂无部门数据",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-            else -> {
-                // 中等型和扩展型：网格布局
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(layoutConfig.columnCount),
-                    horizontalArrangement = Arrangement.spacedBy(layoutConfig.horizontalSpacing),
-                    verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
-                ) {
-                    // 示例卡片
-                    items(3) { index ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .let { modifier ->
-                                    val maxWidth = ResponsiveUtils.Grid.getMaxCardWidth(layoutConfig.screenSize)
-                                    if (maxWidth != androidx.compose.ui.unit.Dp.Unspecified) {
-                                        modifier.widthIn(max = maxWidth)
-                                    } else modifier
-                                }
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(layoutConfig.cardPadding)
-                            ) {
-                                Text(
-                                    text = if (index == 0) "部门列表" else "部门 ${index + 1}",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                Spacer(modifier = Modifier.height(layoutConfig.verticalSpacing))
-                                Text(
-                                    text = if (index == 0) "暂无部门数据" else "部门详情 ${index + 1}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
- * 员工管理Tab内容
- */
-@Composable
-internal fun EmployeeManagementTab(
-    viewModel: AdminViewModel,
-    layoutConfig: ovo.sypw.bsp.utils.ResponsiveLayoutConfig
-) {
-    val employeeState by viewModel.employeeState.collectAsState()
-    
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
-    ) {
-        // 页面标题
-        Text(
-            text = "员工管理",
-            style = MaterialTheme.typography.headlineMedium
-        )
-        
-        // 操作按钮区域 - 响应式布局
-        if (layoutConfig.useFullWidthButtons) {
-            // 紧凑型：垂直排列按钮
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
-            ) {
-                Button(
-                    onClick = { viewModel.refreshEmployees() },
-                    enabled = !employeeState.isLoading,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("刷新数据")
-                }
-                
-                OutlinedButton(
-                    onClick = { /* TODO: 添加员工 */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("添加员工")
-                }
-            }
-        } else {
-            // 中等型和扩展型：水平排列按钮
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(layoutConfig.horizontalSpacing)
-            ) {
-                Button(
-                    onClick = { viewModel.refreshEmployees() },
-                    enabled = !employeeState.isLoading
-                ) {
-                    Text("刷新数据")
-                }
-                
-                OutlinedButton(
-                    onClick = { /* TODO: 添加员工 */ }
-                ) {
-                    Text("添加员工")
-                }
-            }
-        }
-        
-        // 加载状态
-        if (employeeState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        
-        // 员工列表区域 - 响应式网格布局
-        when (layoutConfig.screenSize) {
-            ResponsiveUtils.ScreenSize.COMPACT -> {
-                // 紧凑型：单列卡片
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(layoutConfig.cardPadding)
-                    ) {
-                        Text(
-                            text = "员工列表",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(modifier = Modifier.height(layoutConfig.verticalSpacing))
-                        Text(
-                            text = "暂无员工数据",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-            else -> {
-                // 中等型和扩展型：网格布局
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(layoutConfig.columnCount),
-                    horizontalArrangement = Arrangement.spacedBy(layoutConfig.horizontalSpacing),
-                    verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
-                ) {
-                    // 示例卡片
-                    items(4) { index ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .let { modifier ->
-                                    val maxWidth = ResponsiveUtils.Grid.getMaxCardWidth(layoutConfig.screenSize)
-                                    if (maxWidth != androidx.compose.ui.unit.Dp.Unspecified) {
-                                        modifier.widthIn(max = maxWidth)
-                                    } else modifier
-                                }
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(layoutConfig.cardPadding)
-                            ) {
-                                Text(
-                                    text = if (index == 0) "员工列表" else "员工 ${index}",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                Spacer(modifier = Modifier.height(layoutConfig.verticalSpacing))
-                                Text(
-                                    text = if (index == 0) "暂无员工数据" else "员工详情 ${index}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}

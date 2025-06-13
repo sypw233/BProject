@@ -15,6 +15,8 @@ val appModule = module {
     includes(viewModelModule)
     // 包含存储模块
     includes(storageModule)
+    // 包含部门管理模块
+    includes(departmentModule)
 }
 
 /**
@@ -25,5 +27,6 @@ fun getAllModules() = listOf(
     networkModule,
     authModule,
     viewModelModule,
-    storageModule
+    storageModule,
+    departmentModule
 )

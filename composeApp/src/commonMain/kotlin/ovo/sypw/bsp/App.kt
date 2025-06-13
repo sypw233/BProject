@@ -16,6 +16,9 @@ import ovo.sypw.bsp.presentation.screen.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
+import ovo.sypw.bsp.screens.admin.AdminScreen
+import ovo.sypw.bsp.screens.admin.DepartmentManagementTab
+import ovo.sypw.bsp.screens.admin.EmployeeManagementTab
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
@@ -116,7 +119,7 @@ private fun AppContent() {
 private fun AuthContent(
     navigationManager: NavigationManager
 ) {
-    val currentScreen by navigationManager.currentScreen
+    val currentScreen = navigationManager.currentScreen.value
 
     when (currentScreen) {
         AppScreen.LOGIN.route -> {
@@ -192,7 +195,7 @@ private fun MediumRailNavigationLayout(
         NavigationRail(
             modifier = Modifier.fillMaxHeight()
         ) {
-            val currentScreen by navigationManager.currentScreen
+            val currentScreen = navigationManager.currentScreen.value
             val navigationItems = getNavigationItems()
             Column(
                 modifier = Modifier.fillMaxHeight(),
@@ -241,7 +244,7 @@ private fun ExpandedRailNavigationLayout(
 ) {
     var isRailExpanded by remember { mutableStateOf(true) }
     var adminTabIndex by remember { mutableStateOf(0) }
-    val currentScreen by navigationManager.currentScreen
+    val currentScreen = navigationManager.currentScreen.value
 
     Row(
         modifier = Modifier.fillMaxSize()
@@ -318,7 +321,7 @@ private fun MainContent(
     navigationManager: NavigationManager,
     modifier: Modifier = Modifier
 ) {
-    val currentScreen by navigationManager.currentScreen
+    val currentScreen = navigationManager.currentScreen.value
 
     when (currentScreen) {
         AppScreen.HOME.route -> {
