@@ -1,5 +1,6 @@
-package ovo.sypw.bsp.screens
+package ovo.sypw.bsp.presentation.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -46,7 +47,7 @@ fun HomeScreen(
         }
         
         // 动画显示内容
-        androidx.compose.animation.AnimatedVisibility(showContent) {
+        AnimatedVisibility(showContent) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)

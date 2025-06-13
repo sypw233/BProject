@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.examples
+package ovo.sypw.bsp.presentation.screens.examples
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ovo.sypw.bsp.data.dto.DepartmentDto
+import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.data.paging.PagingLoadState
 import ovo.sypw.bsp.domain.usecase.DepartmentUseCase
 import ovo.sypw.bsp.utils.*
@@ -102,7 +103,7 @@ fun PagingExampleScreen(
  */
 @Composable
 private fun PagingToolbar(
-    pagingData: ovo.sypw.bsp.data.paging.PagingData<DepartmentDto>,
+    pagingData: PagingData<DepartmentDto>,
     loadState: PagingLoadState,
     onRefresh: () -> Unit,
     onRetry: () -> Unit,
@@ -372,7 +373,7 @@ private fun EmptyStateItem(
  */
 @Composable
 private fun PagingBottomBar(
-    pagingData: ovo.sypw.bsp.data.paging.PagingData<DepartmentDto>,
+    pagingData: PagingData<DepartmentDto>,
     loadState: PagingLoadState,
     modifier: Modifier = Modifier
 ) {

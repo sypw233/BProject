@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.screens.admin
+package ovo.sypw.bsp.presentation.screens.admin
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

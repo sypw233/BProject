@@ -8,17 +8,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import ovo.sypw.bsp.presentation.screens.examples.PagingExampleScreen
 
 import ovo.sypw.bsp.navigation.*
-import ovo.sypw.bsp.screens.*
-import ovo.sypw.bsp.screens.auth.*
-import ovo.sypw.bsp.presentation.screen.ChangePasswordScreen
+import ovo.sypw.bsp.presentation.screens.ApiTestScreen
+import ovo.sypw.bsp.presentation.screens.HomeScreen
+import ovo.sypw.bsp.presentation.screens.ProfileScreen
+import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
-import ovo.sypw.bsp.screens.admin.AdminScreen
-import ovo.sypw.bsp.screens.admin.DepartmentManagementTab
-import ovo.sypw.bsp.screens.admin.EmployeeManagementTab
+import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
+import ovo.sypw.bsp.presentation.screens.admin.DepartmentManagementTab
+import ovo.sypw.bsp.presentation.screens.admin.EmployeeManagementTab
+import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
@@ -328,13 +331,11 @@ private fun MainContent(
             HomeScreen(modifier = modifier)
         }
 
-        AppScreen.API_TEST.route -> {
+        AppScreen.API_TEST.route ->
+//            PagingExampleScreen()
             ApiTestScreen(modifier = modifier)
-        }
 
         AppScreen.ADMIN.route -> {
-            // 在大布局下，后台管理内容由ExpandedRailNavigationLayout直接控制
-            // 这里只处理小布局和中布局的情况
             AdminScreen(modifier = modifier)
         }
 

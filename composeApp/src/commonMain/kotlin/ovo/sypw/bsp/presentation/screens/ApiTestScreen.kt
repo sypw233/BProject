@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.screens
+package ovo.sypw.bsp.presentation.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
