@@ -21,16 +21,13 @@ import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
 @Composable
 fun AdminScreen(
     modifier: Modifier = Modifier,
-    viewModel: AdminViewModel = koinInject()
+    viewModel: AdminViewModel = koinInject(),
+    layoutConfig: ResponsiveLayoutConfig
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
     
     // 使用BoxWithConstraints获取屏幕尺寸信息
-    BoxWithConstraints(
-        modifier = modifier.fillMaxSize()
-    ) {
-        val layoutConfig = getResponsiveLayoutConfig(maxWidth)
-        
+
         when (layoutConfig.screenSize) {
             ResponsiveUtils.ScreenSize.COMPACT ,ResponsiveUtils.ScreenSize.MEDIUM -> {
                 // 紧凑型布局：垂直Tab布局
@@ -52,7 +49,7 @@ fun AdminScreen(
             }
         }
     }
-}
+
 
 /**
  * 紧凑型布局

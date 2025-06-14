@@ -49,12 +49,12 @@ class DepartmentRepositoryImpl(
         
         return when (val result = departmentApiService.getDepartmentPage(current, size, name, token)) {
             is NetworkResult.Success -> {
-                Logger.i(TAG, "获取部门分页列表请求成功")
+//                Logger.i(TAG, "获取部门分页列表请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
                     val pageResult = saResult.parseData<PageResultDto<DepartmentDto>>()
                     if (pageResult != null) {
-                        Logger.i(TAG, "部门分页数据解析成功: ${pageResult.records.size}条记录")
+//                        Logger.i(TAG, "部门分页数据解析成功: ${pageResult.records.size}条记录")
                         NetworkResult.Success(pageResult)
                     } else {
                         Logger.w(TAG, "部门分页数据解析失败")

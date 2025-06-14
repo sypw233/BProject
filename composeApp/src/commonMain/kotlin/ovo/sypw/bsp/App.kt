@@ -47,6 +47,7 @@ import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.utils.Logger
+import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
 
@@ -114,7 +115,7 @@ private fun AppContent() {
     if (isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = androidx.compose.ui.Alignment.Center
+            contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
@@ -192,16 +193,26 @@ private fun MainAppContent() {
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
     ) {
-        val screenWidth = maxWidth
-        when (ResponsiveUtils.getScreenSize(screenWidth)) {
+        val layoutConfig = getResponsiveLayoutConfig(maxWidth)
+        Logger.d("当前Nav获取布局大小: ${layoutConfig}")
+        when (layoutConfig.screenSize) {
             ResponsiveUtils.ScreenSize.COMPACT ->
-                BottomNavigationLayout(navigationManager = navigationManager)
+                BottomNavigationLayout(
+                    navigationManager = navigationManager,
+                    layoutConfig = layoutConfig
+                )
 
             ResponsiveUtils.ScreenSize.MEDIUM ->
-                MediumRailNavigationLayout(navigationManager = navigationManager)
+                MediumRailNavigationLayout(
+                    navigationManager = navigationManager,
+                    layoutConfig = layoutConfig
+                )
 
             ResponsiveUtils.ScreenSize.EXPANDED ->
-                ExpandedRailNavigationLayout(navigationManager = navigationManager)
+                ExpandedRailNavigationLayout(
+                    navigationManager = navigationManager,
+                    layoutConfig = layoutConfig
+                )
         }
 
     }
@@ -214,7 +225,8 @@ private fun MainAppContent() {
  */
 @Composable
 private fun MediumRailNavigationLayout(
-    navigationManager: NavigationManager
+    navigationManager: NavigationManager,
+    layoutConfig: ResponsiveLayoutConfig
 ) {
     Row(
         modifier = Modifier.fillMaxSize()
@@ -255,7 +267,8 @@ private fun MediumRailNavigationLayout(
         ) {
             MainContent(
                 navigationManager = navigationManager,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                layoutConfig = layoutConfig,
             )
         }
     }
@@ -268,7 +281,8 @@ private fun MediumRailNavigationLayout(
  */
 @Composable
 private fun ExpandedRailNavigationLayout(
-    navigationManager: NavigationManager
+    navigationManager: NavigationManager,
+    layoutConfig: ResponsiveLayoutConfig
 ) {
     var isRailExpanded by remember { mutableStateOf(true) }
     var adminTabIndex by remember { mutableStateOf(0) }
@@ -301,7 +315,8 @@ private fun ExpandedRailNavigationLayout(
             } else {
                 MainContent(
                     navigationManager = navigationManager,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    layoutConfig = layoutConfig,
                 )
             }
         }
@@ -314,7 +329,8 @@ private fun ExpandedRailNavigationLayout(
  */
 @Composable
 private fun BottomNavigationLayout(
-    navigationManager: NavigationManager
+    navigationManager: NavigationManager,
+    layoutConfig: ResponsiveLayoutConfig
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -327,7 +343,8 @@ private fun BottomNavigationLayout(
         ) {
             MainContent(
                 navigationManager = navigationManager,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                layoutConfig = layoutConfig
             )
         }
 
@@ -347,7 +364,8 @@ private fun BottomNavigationLayout(
 @Composable
 private fun MainContent(
     navigationManager: NavigationManager,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    layoutConfig: ResponsiveLayoutConfig
 ) {
     val currentScreen = navigationManager.currentScreen.value
 
@@ -357,11 +375,13 @@ private fun MainContent(
         }
 
         AppScreen.API_TEST.route ->
-//            PagingExampleScreen()
             ApiTestScreen(modifier = modifier)
 
         AppScreen.ADMIN.route -> {
-            AdminScreen(modifier = modifier)
+            AdminScreen(
+                modifier = modifier,
+                layoutConfig = layoutConfig
+            )
         }
 
         AppScreen.PROFILE.route -> {
@@ -438,10 +458,12 @@ private fun AdminContentLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
+
                 1 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
+
                 else -> {
                     // 默认显示部门管理
                     DepartmentManagementTab(

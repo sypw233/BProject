@@ -68,10 +68,10 @@ fun SaResult.getErrorMessage(): String {
 inline fun <reified T> SaResult.parseData(): T? {
     return try {
         if (data == null) {
-            println("[SaResult.parseData] data字段为null")
+//            println("[SaResult.parseData] data字段为null")
             return null
         }
-        println("[SaResult.parseData] 原始data: $data")
+//        println("[SaResult.parseData] 原始data: $data")
         
         // 创建宽松的Json配置，允许非标准JSON格式
         val lenientJson = Json {
@@ -81,7 +81,7 @@ inline fun <reified T> SaResult.parseData(): T? {
         }
         
         val result = lenientJson.decodeFromJsonElement<T>(data)
-        println("[SaResult.parseData] 反序列化成功: $result")
+//        println("[SaResult.parseData] 反序列化成功: $result")
         result
     } catch (e: Exception) {
         println("[SaResult.parseData] 反序列化失败: ${e.message}")

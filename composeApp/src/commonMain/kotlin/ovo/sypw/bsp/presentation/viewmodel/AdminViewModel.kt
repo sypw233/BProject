@@ -129,7 +129,7 @@ class AdminViewModel(
             
             when (val result = departmentUseCase.getDepartmentPage(current, size, name)) {
                 is NetworkResult.Success -> {
-                    Logger.i(TAG, "部门数据加载成功")
+//                    Logger.i(TAG, "部门数据加载成功")
                     _departmentState.value = _departmentState.value.copy(
                         isLoading = false,
                         departments = result.data.records,

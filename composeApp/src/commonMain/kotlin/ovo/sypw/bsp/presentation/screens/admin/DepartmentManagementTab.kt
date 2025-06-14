@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
@@ -37,6 +36,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.runtime.Composable
@@ -52,7 +53,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ovo.sypw.bsp.data.dto.DepartmentDto
+import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 
@@ -70,14 +73,10 @@ internal fun DepartmentManagementTab(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
     ) {
-        // 页面标题
-        Text(
-            text = "部门管理",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
+        Logger.d("当前Tab获取布局大小: ${layoutConfig}")
         // 操作按钮区域 - 响应式布局
-        if (layoutConfig.useFullWidthButtons) {
+        if (layoutConfig.screenSize!= ResponsiveUtils.ScreenSize.EXPANDED) {
+
             // 紧凑型：垂直排列按钮
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -99,6 +98,11 @@ internal fun DepartmentManagementTab(
                 }
             }
         } else {
+            // 页面标题
+            Text(
+                text = "部门管理",
+                style = MaterialTheme.typography.headlineMedium
+            )
             // 中等型和扩展型：水平排列按钮
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -188,6 +192,7 @@ internal fun DepartmentManagementTab(
                         }
                     }
                 }
+
                 else -> {
                     // 中等型和扩展型：网格布局
                     if (departmentState.departments.isEmpty() && !departmentState.isLoading) {
@@ -230,12 +235,17 @@ internal fun DepartmentManagementTab(
                 }
             }
         }
-        
+
         // 分页组件 - 始终显示在底部
         departmentState.pageInfo?.let { pageInfo ->
             PaginationComponent(
                 pageInfo = pageInfo,
-                onPageChange = { page -> viewModel.loadDepartments(current = page, size = pageInfo.size) },
+                onPageChange = { page ->
+                    viewModel.loadDepartments(
+                        current = page,
+                        size = pageInfo.size
+                    )
+                },
                 onPageSizeChange = { size -> viewModel.loadDepartments(current = 1, size = size) },
                 layoutConfig = layoutConfig
             )
@@ -248,7 +258,7 @@ internal fun DepartmentManagementTab(
             viewModel.loadDepartments()
         }
     }
-    
+
     // 部门Dialog
     DepartmentDialog(viewModel = viewModel)
 }
@@ -288,7 +298,7 @@ private fun DepartmentCard(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
-                
+
                 Row {
                     IconButton(onClick = onEdit) {
                         Icon(
@@ -306,9 +316,9 @@ private fun DepartmentCard(
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(layoutConfig.verticalSpacing))
-            
+
             // 部门描述
 //            if (department.description.isNotBlank()) {
 //                Text(
@@ -318,7 +328,7 @@ private fun DepartmentCard(
 //                )
 //                Spacer(modifier = Modifier.height(layoutConfig.verticalSpacing))
 //            }
-            
+
             // 员工数量
 //            Text(
 //                text = "员工数量: ${department.employeeCount}",
@@ -334,100 +344,108 @@ private fun DepartmentCard(
  */
 @Composable
 private fun PaginationComponent(
-    pageInfo: ovo.sypw.bsp.data.dto.PageResultDto<DepartmentDto>,
+    pageInfo: PageResultDto<DepartmentDto>,
     onPageChange: (Int) -> Unit,
     onPageSizeChange: (Int) -> Unit,
     layoutConfig: ResponsiveLayoutConfig
 ) {
     var showPageSizeDropdown by remember { mutableStateOf(false) }
     val pageSizeOptions = listOf(5, 10, 20, 50)
-    
+
     Card(
         modifier = Modifier.fillMaxWidth()
+//            .height(100.dp)
     ) {
-        if (layoutConfig.useFullWidthButtons) {
+        if (layoutConfig.screenSize == ResponsiveUtils.ScreenSize.COMPACT) {
             // 紧凑型：垂直布局
             Column(
                 modifier = Modifier.padding(layoutConfig.cardPadding),
                 verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
             ) {
-                // 分页信息
-                Text(
-                    text = "共 ${pageInfo.total} 条记录，第 ${pageInfo.current} / ${pageInfo.pages} 页",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
                 // 页面大小选择
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // 分页信息
                     Text(
-                        text = "每页显示:",
-                        style = MaterialTheme.typography.bodyMedium
+                        text = "共 ${pageInfo.total} 条记录 ",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
-                    Box {
-                        TextButton(
-                            onClick = { showPageSizeDropdown = true }
-                        ) {
-                            Text("${pageInfo.size} 条")
-                        }
-                        
-                        DropdownMenu(
-                            expanded = showPageSizeDropdown,
-                            onDismissRequest = { showPageSizeDropdown = false }
-                        ) {
-                            pageSizeOptions.forEach { size ->
-                                DropdownMenuItem(
-                                    text = { Text("$size 条") },
-                                    onClick = {
-                                        onPageSizeChange(size)
-                                        showPageSizeDropdown = false
-                                    }
-                                )
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "每页显示:",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        Box {
+                            TextButton(
+                                onClick = { showPageSizeDropdown = true }
+                            ) {
+                                Text("${pageInfo.size} 条")
+                            }
+
+                            DropdownMenu(
+                                expanded = showPageSizeDropdown,
+                                onDismissRequest = { showPageSizeDropdown = false }
+                            ) {
+                                pageSizeOptions.forEach { size ->
+                                    DropdownMenuItem(
+                                        text = { Text("$size 条") },
+                                        onClick = {
+                                            onPageSizeChange(size)
+                                            showPageSizeDropdown = false
+                                        }
+                                    )
+                                }
                             }
                         }
+
+                    }
+
+                    // 页面导航
+                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // 上一页
+                        IconButton(
+                            onClick = { onPageChange(pageInfo.current - 1) },
+                            enabled = pageInfo.current > 1
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = "上一页"
+                            )
+                        }
+
+                        // 页码显示
+                        Text(
+                            text = "${pageInfo.current} / ${pageInfo.pages}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+
+                        // 下一页
+                        IconButton(
+                            onClick = { onPageChange(pageInfo.current + 1) },
+                            enabled = pageInfo.current < pageInfo.pages
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowRight,
+                                contentDescription = "下一页"
+                            )
+                        }
                     }
                 }
-                
-                // 页面导航
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // 上一页
-                    IconButton(
-                        onClick = { onPageChange(pageInfo.current - 1) },
-                        enabled = pageInfo.current > 1
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowLeft,
-                            contentDescription = "上一页"
-                        )
-                    }
-                    
-                    // 页码显示
-                    Text(
-                        text = "${pageInfo.current} / ${pageInfo.pages}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                    
-                    // 下一页
-                    IconButton(
-                        onClick = { onPageChange(pageInfo.current + 1) },
-                        enabled = pageInfo.current < pageInfo.pages
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowRight,
-                            contentDescription = "下一页"
-                        )
-                    }
-                }
+
+
             }
         } else {
             // 中等型和扩展型：水平布局
@@ -448,19 +466,19 @@ private fun PaginationComponent(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
+
                     Text(
                         text = "每页显示:",
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    
+
                     Box {
                         TextButton(
                             onClick = { showPageSizeDropdown = true }
                         ) {
                             Text("${pageInfo.size} 条")
                         }
-                        
+
                         DropdownMenu(
                             expanded = showPageSizeDropdown,
                             onDismissRequest = { showPageSizeDropdown = false }
@@ -477,7 +495,7 @@ private fun PaginationComponent(
                         }
                     }
                 }
-                
+
                 // 页面导航
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -493,14 +511,14 @@ private fun PaginationComponent(
                             contentDescription = "上一页"
                         )
                     }
-                    
+
                     // 页码按钮组
                     PaginationButtons(
                         currentPage = pageInfo.current,
                         totalPages = pageInfo.pages,
                         onPageChange = onPageChange
                     )
-                    
+
                     // 下一页
                     IconButton(
                         onClick = { onPageChange(pageInfo.current + 1) },
@@ -527,7 +545,7 @@ private fun PaginationButtons(
     onPageChange: (Int) -> Unit
 ) {
     val visiblePages = getVisiblePages(currentPage, totalPages)
-    
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -542,6 +560,7 @@ private fun PaginationButtons(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+
                 else -> {
                     Button(
                         onClick = { if (page != currentPage) onPageChange(page) },
@@ -583,12 +602,12 @@ private fun getVisiblePages(currentPage: Int, totalPages: Int): List<Int> {
     if (totalPages <= 7) {
         return (1..totalPages).toList()
     }
-    
+
     val result = mutableListOf<Int>()
-    
+
     // 总是显示第一页
     result.add(1)
-    
+
     when {
         currentPage <= 4 -> {
             // 当前页在前面
@@ -596,11 +615,13 @@ private fun getVisiblePages(currentPage: Int, totalPages: Int): List<Int> {
             result.add(-1) // 省略号
             result.add(totalPages)
         }
+
         currentPage >= totalPages - 3 -> {
             // 当前页在后面
             result.add(-1) // 省略号
             result.addAll((totalPages - 4)..totalPages)
         }
+
         else -> {
             // 当前页在中间
             result.add(-1) // 省略号
@@ -609,6 +630,6 @@ private fun getVisiblePages(currentPage: Int, totalPages: Int): List<Int> {
             result.add(totalPages)
         }
     }
-    
+
     return result
 }

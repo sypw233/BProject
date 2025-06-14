@@ -149,6 +149,7 @@ object ResponsiveUtils {
  */
 data class ResponsiveLayoutConfig(
     val screenSize: ResponsiveUtils.ScreenSize,
+    val screenSizeOrigin:Dp,
     val screenPadding: Dp,
     val contentPadding: Dp,
     val cardPadding: Dp,
@@ -168,6 +169,7 @@ fun getResponsiveLayoutConfig(screenWidth: Dp): ResponsiveLayoutConfig {
     
     return ResponsiveLayoutConfig(
         screenSize = screenSize,
+        screenSizeOrigin = screenWidth,
         screenPadding = ResponsiveUtils.Padding.getScreenPadding(screenSize),
         contentPadding = ResponsiveUtils.Padding.getContentPadding(screenSize),
         cardPadding = ResponsiveUtils.Padding.getContentPadding(screenSize),

@@ -30,7 +30,7 @@ class DepartmentUseCase(
         size: Int = 5,
         name: String? = null
     ): NetworkResult<PageResultDto<DepartmentDto>> {
-        Logger.d(TAG, "获取部门分页列表用例: current=$current, size=$size, name=$name")
+//        Logger.d(TAG, "获取部门分页列表用例: current=$current, size=$size, name=$name")
         
         // 参数验证
         if (current < 1) {
