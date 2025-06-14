@@ -1,29 +1,51 @@
 package ovo.sypw.bsp
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Text
+import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-
-import ovo.sypw.bsp.navigation.*
+import ovo.sypw.bsp.navigation.AppScreen
+import ovo.sypw.bsp.navigation.BottomNavigationBar
+import ovo.sypw.bsp.navigation.NavigationManager
+import ovo.sypw.bsp.navigation.SideNavigationBar
+import ovo.sypw.bsp.navigation.getNavigationItems
+import ovo.sypw.bsp.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.screens.ApiTestScreen
 import ovo.sypw.bsp.presentation.screens.HomeScreen
 import ovo.sypw.bsp.presentation.screens.ProfileScreen
-import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
-import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
-import ovo.sypw.bsp.utils.FontUtils
-import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
-import ovo.sypw.bsp.presentation.screens.admin.AdminConfig
 import ovo.sypw.bsp.presentation.screens.admin.DepartmentManagementTab
-import ovo.sypw.bsp.presentation.screens.admin.DepartmentPagingTab
 import ovo.sypw.bsp.presentation.screens.admin.EmployeeManagementTab
+import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
+import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
+import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
@@ -416,11 +438,7 @@ private fun AdminContentLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-                1 -> DepartmentPagingTab(
-                    viewModel = viewModel,
-                    layoutConfig = layoutConfig
-                )
-                2 -> EmployeeManagementTab(
+                1 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )

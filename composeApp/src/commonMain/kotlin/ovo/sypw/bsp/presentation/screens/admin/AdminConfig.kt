@@ -35,12 +35,6 @@ object AdminConfig {
         ),
         AdminTab(
             index = 1,
-            title = "部门分页",
-            icon = Icons.AutoMirrored.Filled.ViewList,
-            route = "admin/department_paging"
-        ),
-        AdminTab(
-            index = 2,
             title = "员工管理",
             icon = Icons.Default.Group,
             route = "admin/employee"
