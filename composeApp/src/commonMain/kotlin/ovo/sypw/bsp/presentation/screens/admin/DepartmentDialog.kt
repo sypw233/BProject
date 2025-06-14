@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,26 +28,34 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.DepartmentDialogState
+import org.koin.compose.koinInject
 
 /**
  * 部门添加/编辑Dialog
- * @param viewModel AdminViewModel实例
  */
 @Composable
-fun DepartmentDialog(
-    viewModel: AdminViewModel
-) {
+fun DepartmentDialog(viewModel: DepartmentViewModel) {
     val dialogState by viewModel.departmentDialogState.collectAsState()
     
+    // 添加调试日志
+    SideEffect {
+        println("DepartmentDialog重组: isVisible=${dialogState.isVisible}, isEditMode=${dialogState.isEditMode}")
+    }
+    
+    println("DepartmentDialog被调用: isVisible=${dialogState.isVisible}")
+    
     if (dialogState.isVisible) {
+        println("显示DepartmentDialogContent")
         DepartmentDialogContent(
             dialogState = dialogState,
             onDepartmentNameChange = viewModel::updateDepartmentName,
             onSave = viewModel::saveDepartment,
             onDismiss = viewModel::hideDepartmentDialog
         )
+    } else {
+        println("DepartmentDialog不可见，不显示内容")
     }
 }
 

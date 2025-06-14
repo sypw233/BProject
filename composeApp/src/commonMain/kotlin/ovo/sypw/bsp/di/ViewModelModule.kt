@@ -4,6 +4,8 @@ import org.koin.dsl.module
 import ovo.sypw.bsp.presentation.viewmodel.ApiTestViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
+import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
 
 /**
  * ViewModel模块依赖注入配置
@@ -36,11 +38,27 @@ val viewModelModule = module {
     
     /**
      * 提供后台管理ViewModel
-     * 管理部门和员工相关状态
+     * 负责Tab切换和基础状态管理
      */
     factory {
-        AdminViewModel(
+        AdminViewModel()
+    }
+    
+    /**
+     * 提供部门管理ViewModel
+     * 专门负责部门相关的状态管理和业务逻辑
+     */
+    factory {
+        DepartmentViewModel(
             departmentUseCase = get()
         )
+    }
+    
+    /**
+     * 提供员工管理ViewModel
+     * 专门负责员工相关的状态管理和业务逻辑
+     */
+    factory {
+        EmployeeViewModel()
     }
 }

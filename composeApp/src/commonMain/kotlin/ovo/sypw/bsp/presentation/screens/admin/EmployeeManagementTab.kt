@@ -24,7 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
+import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 
@@ -33,9 +34,9 @@ import ovo.sypw.bsp.utils.ResponsiveUtils
  */
 @Composable
 internal fun EmployeeManagementTab(
-    viewModel: AdminViewModel,
     layoutConfig: ResponsiveLayoutConfig
 ) {
+    val viewModel: EmployeeViewModel = koinInject()
     val employeeState by viewModel.employeeState.collectAsState()
 
     Column(

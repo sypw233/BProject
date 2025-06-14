@@ -28,7 +28,8 @@ import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.presentation.components.ManagementPageState
 import ovo.sypw.bsp.presentation.components.ManagementPageActions
 import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
-import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
+import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 
 /**
@@ -37,9 +38,9 @@ import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
  */
 @Composable
 fun DepartmentManagementTab(
-    viewModel: AdminViewModel,
     layoutConfig: ResponsiveLayoutConfig
 ) {
+    val viewModel: DepartmentViewModel = koinInject()
     val departmentState by viewModel.departmentState.collectAsState()
     
     // 创建状态适配器

@@ -35,8 +35,7 @@ fun AdminScreen(
             CompactAdminLayout(
                 selectedTabIndex = selectedTabIndex,
                 onTabSelected = viewModel::selectTab,
-                layoutConfig = layoutConfig,
-                viewModel = viewModel
+                layoutConfig = layoutConfig
             )
         }
 
@@ -45,8 +44,7 @@ fun AdminScreen(
             ExpandedAdminLayout(
                 selectedTabIndex = selectedTabIndex,
                 onTabSelected = viewModel::selectTab,
-                layoutConfig = layoutConfig,
-                viewModel = viewModel
+                layoutConfig = layoutConfig
             )
         }
 
@@ -62,8 +60,7 @@ fun AdminScreen(
 private fun CompactAdminLayout(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    layoutConfig: ResponsiveLayoutConfig,
-    viewModel: AdminViewModel
+    layoutConfig: ResponsiveLayoutConfig
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -90,12 +87,10 @@ private fun CompactAdminLayout(
         ) {
             when (selectedTabIndex) {
                 0 -> DepartmentManagementTab(
-                    viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
 
                 1 -> EmployeeManagementTab(
-                    viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
             }
@@ -110,8 +105,7 @@ private fun CompactAdminLayout(
 private fun ExpandedAdminLayout(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    layoutConfig: ResponsiveLayoutConfig,
-    viewModel: AdminViewModel
+    layoutConfig: ResponsiveLayoutConfig
 ) {
     var isRailExpanded by remember { mutableStateOf(true) }
     val navigationManager = rememberNavigationManager()
@@ -142,12 +136,10 @@ private fun ExpandedAdminLayout(
         ) {
             when (selectedTabIndex) {
                 0 -> DepartmentManagementTab(
-                    viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
 
                 1 -> EmployeeManagementTab(
-                    viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
             }

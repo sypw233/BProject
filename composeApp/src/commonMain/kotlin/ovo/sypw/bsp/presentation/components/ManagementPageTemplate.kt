@@ -165,6 +165,7 @@ fun <T> ManagementPageTemplate(
     }
 
     // 对话框内容
+    println("ManagementPageTemplate调用dialogContent")
     dialogContent()
 }
 

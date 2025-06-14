@@ -43,7 +43,7 @@ import ovo.sypw.bsp.presentation.screens.admin.EmployeeManagementTab
 import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
-import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.utils.Logger
@@ -439,7 +439,6 @@ private fun AdminContentLayout(
     selectedTabIndex: Int,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: AdminViewModel = koinInject()
 
     // 使用BoxWithConstraints获取屏幕尺寸信息
     BoxWithConstraints(
@@ -455,19 +454,16 @@ private fun AdminContentLayout(
         ) {
             when (selectedTabIndex) {
                 0 -> DepartmentManagementTab(
-                    viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
 
                 1 -> EmployeeManagementTab(
-                    viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
 
                 else -> {
                     // 默认显示部门管理
                     DepartmentManagementTab(
-                        viewModel = viewModel,
                         layoutConfig = layoutConfig
                     )
                 }
