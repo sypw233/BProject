@@ -1,6 +1,8 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -24,31 +26,33 @@ fun AdminScreen(
     viewModel: AdminViewModel = koinInject(),
     layoutConfig: ResponsiveLayoutConfig
 ) {
-    val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
-    
-    // 使用BoxWithConstraints获取屏幕尺寸信息
 
-        when (layoutConfig.screenSize) {
-            ResponsiveUtils.ScreenSize.COMPACT ,ResponsiveUtils.ScreenSize.MEDIUM -> {
-                // 紧凑型布局：垂直Tab布局
-                CompactAdminLayout(
-                    selectedTabIndex = selectedTabIndex,
-                    onTabSelected = viewModel::selectTab,
-                    layoutConfig = layoutConfig,
-                    viewModel = viewModel
-                )
-            }
-            ResponsiveUtils.ScreenSize.EXPANDED -> {
-                // 扩展型布局：侧边Tab或并排显示
-                ExpandedAdminLayout(
-                    selectedTabIndex = selectedTabIndex,
-                    onTabSelected = viewModel::selectTab,
-                    layoutConfig = layoutConfig,
-                    viewModel = viewModel
-                )
-            }
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
+    // 使用BoxWithConstraints获取屏幕尺寸信息
+    when (layoutConfig.screenSize) {
+        ResponsiveUtils.ScreenSize.COMPACT, ResponsiveUtils.ScreenSize.MEDIUM -> {
+            // 紧凑型布局：垂直Tab布局
+            CompactAdminLayout(
+                selectedTabIndex = selectedTabIndex,
+                onTabSelected = viewModel::selectTab,
+                layoutConfig = layoutConfig,
+                viewModel = viewModel
+            )
         }
+
+        ResponsiveUtils.ScreenSize.EXPANDED -> {
+            // 扩展型布局：侧边Tab或并排显示
+            ExpandedAdminLayout(
+                selectedTabIndex = selectedTabIndex,
+                onTabSelected = viewModel::selectTab,
+                layoutConfig = layoutConfig,
+                viewModel = viewModel
+            )
+        }
+
     }
+
+}
 
 
 /**
@@ -77,7 +81,7 @@ private fun CompactAdminLayout(
                 )
             }
         }
-        
+
         // Tab内容区域
         Box(
             modifier = Modifier
@@ -89,6 +93,7 @@ private fun CompactAdminLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
+
                 1 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
@@ -110,12 +115,12 @@ private fun ExpandedAdminLayout(
 ) {
     var isRailExpanded by remember { mutableStateOf(true) }
     val navigationManager = rememberNavigationManager()
-    
+
     // 确保导航到后台管理页面
     LaunchedEffect(Unit) {
         navigationManager.navigateTo("admin")
     }
-    
+
     Row(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -127,7 +132,7 @@ private fun ExpandedAdminLayout(
             adminTabIndex = selectedTabIndex,
             onAdminTabSelected = onTabSelected
         )
-        
+
         // 右侧内容区域
         Box(
             modifier = Modifier
@@ -140,6 +145,7 @@ private fun ExpandedAdminLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
+
                 1 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
