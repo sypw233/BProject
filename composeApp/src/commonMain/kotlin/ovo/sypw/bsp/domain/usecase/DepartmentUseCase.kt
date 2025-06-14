@@ -27,7 +27,7 @@ class DepartmentUseCase(
      */
     suspend fun getDepartmentPage(
         current: Int = 1,
-        size: Int = 10,
+        size: Int = 5,
         name: String? = null
     ): NetworkResult<PageResultDto<DepartmentDto>> {
         Logger.d(TAG, "获取部门分页列表用例: current=$current, size=$size, name=$name")

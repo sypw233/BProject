@@ -47,7 +47,7 @@ class AdminViewModel(
     val departmentSearchQuery: StateFlow<String> = _departmentSearchQuery.asStateFlow()
     
     // 部门分页数据流
-    private var _departmentPagingManager: ovo.sypw.bsp.utils.PagingManager<DepartmentDto>? = null
+    private var _departmentPagingManager: PagingManager<DepartmentDto>? = null
     val departmentPagingData: StateFlow<PagingData<DepartmentDto>>
         get() = getDepartmentPagingManager().pagingData
     
@@ -66,7 +66,7 @@ class AdminViewModel(
     /**
      * 获取部门分页管理器
      */
-    private fun getDepartmentPagingManager(): PagingManager<DepartmentDto> {
+    fun getDepartmentPagingManager(): PagingManager<DepartmentDto> {
         if (_departmentPagingManager == null) {
             _departmentPagingManager = PagingUtils.createPagingManager(
                 loadData = { page, pageSize ->
@@ -116,7 +116,7 @@ class AdminViewModel(
      */
     fun loadDepartments(
         current: Int = 1,
-        size: Int = 10,
+        size: Int = 5,
         name: String? = null
     ) {
         Logger.d(TAG, "加载部门数据: current=$current, size=$size, name=$name")

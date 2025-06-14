@@ -4,6 +4,7 @@ package ovo.sypw.bsp.data.storage
  * 跨平台本地存储expect声明
  * 各平台需要提供具体的实现
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect class LocalStorage {
     
     /**

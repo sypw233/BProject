@@ -40,37 +40,40 @@ fun LoginScreen(
     var username by remember { mutableStateOf("admin") }
     var password by remember { mutableStateOf("123456") }
     var passwordVisible by remember { mutableStateOf(false) }
-    
+
     // ViewModel状态观察
     val isLoading by authViewModel.isLoading.collectAsState()
     val errorMessage by authViewModel.errorMessage.collectAsState()
     val loginResult by authViewModel.loginResult.collectAsState()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
-    
+
     // 焦点管理
     val focusManager = LocalFocusManager.current
-    
+
     // 监听登录状态变化
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
             onLoginSuccess()
         }
     }
-    
+
     // 显示错误信息
     LaunchedEffect(loginResult) {
         if (loginResult is NetworkResult.Error) {
             // 错误信息已通过errorMessage状态显示
         }
     }
-    
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
+            Column(
+                modifier = Modifier
+                    .widthIn(max=400.dp)
+                    .padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
         // 标题
         Text(
             text = "欢迎登录",
@@ -79,14 +82,14 @@ fun LoginScreen(
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        
+
         Text(
             text = "请输入您的账号信息",
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 32.dp)
         )
-        
+
         // 用户名输入框
         OutlinedTextField(
             value = username,
@@ -106,7 +109,7 @@ fun LoginScreen(
                 .padding(bottom = 16.dp),
             enabled = !isLoading
         )
-        
+
         // 密码输入框
         OutlinedTextField(
             value = password,
@@ -142,9 +145,9 @@ fun LoginScreen(
                 .padding(bottom = 16.dp),
             enabled = !isLoading
         )
-        
 
-        
+
+
         // 错误信息显示
         errorMessage?.let { error ->
             Card(
@@ -163,7 +166,7 @@ fun LoginScreen(
                 )
             }
         }
-        
+
         // 登录按钮
         Button(
             onClick = {
@@ -191,10 +194,10 @@ fun LoginScreen(
                 )
             }
         }
-        
+
         // 注册链接
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -212,8 +215,10 @@ fun LoginScreen(
                 )
             }
         }
+            }
+        }
     }
-}
+
 
 /**
  * 登录界面预览

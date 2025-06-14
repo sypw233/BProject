@@ -32,18 +32,9 @@ fun AdminScreen(
         val layoutConfig = getResponsiveLayoutConfig(maxWidth)
         
         when (layoutConfig.screenSize) {
-            ResponsiveUtils.ScreenSize.COMPACT -> {
+            ResponsiveUtils.ScreenSize.COMPACT ,ResponsiveUtils.ScreenSize.MEDIUM -> {
                 // 紧凑型布局：垂直Tab布局
                 CompactAdminLayout(
-                    selectedTabIndex = selectedTabIndex,
-                    onTabSelected = viewModel::selectTab,
-                    layoutConfig = layoutConfig,
-                    viewModel = viewModel
-                )
-            }
-            ResponsiveUtils.ScreenSize.MEDIUM -> {
-                // 中等型布局：标准Tab布局
-                MediumAdminLayout(
                     selectedTabIndex = selectedTabIndex,
                     onTabSelected = viewModel::selectTab,
                     layoutConfig = layoutConfig,
@@ -64,7 +55,7 @@ fun AdminScreen(
 }
 
 /**
- * 紧凑型布局（手机竖屏）
+ * 紧凑型布局
  */
 @Composable
 private fun CompactAdminLayout(
@@ -76,22 +67,18 @@ private fun CompactAdminLayout(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // 使用ScrollableTabRow适应小屏幕
-        ScrollableTabRow(
+        TabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = Modifier.fillMaxWidth(),
-            edgePadding = layoutConfig.contentPadding
         ) {
-            Tab(
-                selected = selectedTabIndex == 0,
-                onClick = { onTabSelected(0) },
-                text = { Text("部门管理") }
-            )
-            Tab(
-                selected = selectedTabIndex == 1,
-                onClick = { onTabSelected(1) },
-                text = { Text("员工管理") }
-            )
+            AdminConfig.adminTabs.forEach { tab ->
+                Tab(
+                    modifier = Modifier.weight(1f),
+                    selected = selectedTabIndex == tab.index,
+                    onClick = { onTabSelected(tab.index) },
+                    text = { Text(tab.title) }
+                )
+            }
         }
         
         // Tab内容区域
@@ -105,63 +92,11 @@ private fun CompactAdminLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-                1 -> DepartmentManagementTab(
+                1 -> DepartmentPagingTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
                 2 -> EmployeeManagementTab(
-                    viewModel = viewModel,
-                    layoutConfig = layoutConfig
-                )
-            }
-        }
-    }
-}
-
-/**
- * 中等型布局（手机横屏/小平板）
- */
-@Composable
-private fun MediumAdminLayout(
-    selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit,
-    layoutConfig: ResponsiveLayoutConfig,
-    viewModel: AdminViewModel
-) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // 标准TabRow
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Tab(
-                selected = selectedTabIndex == 0,
-                onClick = { onTabSelected(0) },
-                text = { Text("部门管理") },
-                modifier = Modifier.defaultMinSize(minWidth = ResponsiveUtils.Tab.getTabMinWidth(layoutConfig.screenSize))
-            )
-            Tab(
-                selected = selectedTabIndex == 1,
-                onClick = { onTabSelected(1) },
-                text = { Text("员工管理") },
-                modifier = Modifier.defaultMinSize(minWidth = ResponsiveUtils.Tab.getTabMinWidth(layoutConfig.screenSize))
-            )
-        }
-        
-        // Tab内容区域
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(layoutConfig.screenPadding)
-        ) {
-            when (selectedTabIndex) {
-                0 -> DepartmentManagementTab(
-                    viewModel = viewModel,
-                    layoutConfig = layoutConfig
-                )
-                1 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
@@ -212,7 +147,11 @@ private fun ExpandedAdminLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-                1 -> EmployeeManagementTab(
+                1 -> DepartmentPagingTab(
+                    viewModel = viewModel,
+                    layoutConfig = layoutConfig
+                )
+                2 -> EmployeeManagementTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )

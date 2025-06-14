@@ -45,26 +45,6 @@ data class DepartmentUpdateDto(
     val name: String
 )
 
-/**
- * 部门分页查询参数DTO
- */
-@Serializable
-data class DepartmentPageQueryDto(
-    /**
-     * 当前页码
-     */
-    val current: Int = 1,
-    
-    /**
-     * 每页大小
-     */
-    val size: Int = 10,
-    
-    /**
-     * 部门名称（可选，用于搜索）
-     */
-    val name: String? = null
-)
 
 /**
  * 分页结果DTO

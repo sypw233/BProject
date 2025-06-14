@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import ovo.sypw.bsp.presentation.screens.examples.PagingExampleScreen
 
 import ovo.sypw.bsp.navigation.*
 import ovo.sypw.bsp.presentation.screens.ApiTestScreen
@@ -19,9 +18,12 @@ import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
+import ovo.sypw.bsp.presentation.screens.admin.AdminConfig
 import ovo.sypw.bsp.presentation.screens.admin.DepartmentManagementTab
+import ovo.sypw.bsp.presentation.screens.admin.DepartmentPagingTab
 import ovo.sypw.bsp.presentation.screens.admin.EmployeeManagementTab
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
+import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
@@ -96,15 +98,14 @@ private fun AppContent() {
         }
         return
     }
+
 //    MainAppContent()
     // 根据登录状态显示不同内容
     if (isLoggedIn) {
         // 已登录，显示主应用界面
         MainAppContent()
     } else {
-        // 未登录，显示登录界面
         val navigationManager = rememberNavigationManager()
-
         // 设置初始路由为登录页面
         LaunchedEffect(Unit) {
             navigationManager.navigateTo(AppScreen.LOGIN.route)
@@ -137,9 +138,11 @@ private fun AuthContent(
         }
 
         AppScreen.REGISTER.route -> {
-            // TODO: 创建注册界面
-            LoginScreen(
-                onNavigateToRegister = {
+            RegisterScreen(
+                onNavigateToLogin = {
+                    navigationManager.navigateTo(AppScreen.LOGIN.route)
+                },
+                onRegisterSuccess = {
                     navigationManager.navigateTo(AppScreen.LOGIN.route)
                 }
             )
@@ -413,12 +416,14 @@ private fun AdminContentLayout(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-
-                1 -> EmployeeManagementTab(
+                1 -> DepartmentPagingTab(
                     viewModel = viewModel,
                     layoutConfig = layoutConfig
                 )
-
+                2 -> EmployeeManagementTab(
+                    viewModel = viewModel,
+                    layoutConfig = layoutConfig
+                )
                 else -> {
                     // 默认显示部门管理
                     DepartmentManagementTab(

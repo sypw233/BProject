@@ -6,12 +6,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuOpen
 import androidx.compose.material.icons.filled.People
+import ovo.sypw.bsp.presentation.screens.admin.AdminConfig
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import ovo.sypw.bsp.getPlatform
+import ovo.sypw.bsp.utils.Logger
 
 /**
  * 底部导航栏组件（移动端使用）
@@ -100,7 +103,7 @@ fun SideNavigationBar(
                         .padding(horizontal = if (isExpanded) 16.dp else 8.dp)
                 ) {
                     Icon(
-                        imageVector = if (isExpanded) Icons.Default.MenuOpen else Icons.Default.Menu,
+                        imageVector = if (isExpanded) Icons.AutoMirrored.Filled.MenuOpen else Icons.Default.Menu,
                         contentDescription = if (isExpanded) "收起导航栏" else "展开导航栏"
                     )
                 }
@@ -128,22 +131,18 @@ fun SideNavigationBar(
                     
                     // 后台管理子项（仅在展开且选中后台管理时显示）
                     if (isExpanded && adminExpanded && currentScreen == item.route) {
-                        AdminSubNavigationItem(
-                            selected = adminTabIndex == 0,
-                            onClick = { onAdminTabSelected?.invoke(0) },
-                            icon = Icons.Default.Business,
-                            label = "部门管理",
-                            isExpanded = isExpanded
-                        )
-
-                        
-                        AdminSubNavigationItem(
-                            selected = adminTabIndex == 1,
-                            onClick = { onAdminTabSelected?.invoke(1) },
-                            icon = Icons.Default.People,
-                            label = "员工管理",
-                            isExpanded = isExpanded
-                        )
+                        AdminConfig.adminTabs.forEach { tab ->
+                            AdminSubNavigationItem(
+                                selected = adminTabIndex == tab.index,
+                                onClick = {
+                                    onAdminTabSelected?.invoke(tab.index)
+                                    Logger.d("Now click Tab: ${tab.title} ${tab.index}")
+                                          },
+                                icon = tab.icon,
+                                label = tab.title,
+                                isExpanded = isExpanded
+                            )
+                        }
                     }
                 } else {
                     // 普通导航项目

@@ -8,6 +8,7 @@ import org.w3c.dom.set
  * WebAssembly平台的LocalStorage实现
  * 使用浏览器的localStorage API进行数据存储
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class LocalStorage {
     
     companion object {
