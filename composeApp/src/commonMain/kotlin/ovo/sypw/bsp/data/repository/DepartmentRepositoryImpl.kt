@@ -36,7 +36,7 @@ class DepartmentRepositoryImpl(
         size: Int,
         name: String?
     ): NetworkResult<PageResultDto<DepartmentDto>> {
-        Logger.d(TAG, "获取部门分页列表: current=$current, size=$size, name=$name")
+//        Logger.d(TAG, "获取部门分页列表: current=$current, size=$size, name=$name")
         
         val token = getAuthToken()
         if (token == null) {

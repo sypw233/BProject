@@ -194,7 +194,7 @@ private fun MainAppContent() {
         modifier = Modifier.fillMaxSize()
     ) {
         val layoutConfig = getResponsiveLayoutConfig(maxWidth)
-        Logger.d("当前Nav获取布局大小: ${layoutConfig}")
+//        Logger.d("当前Nav获取布局大小: ${layoutConfig}")
         when (layoutConfig.screenSize) {
             ResponsiveUtils.ScreenSize.COMPACT ->
                 BottomNavigationLayout(

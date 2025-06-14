@@ -119,7 +119,7 @@ class AdminViewModel(
         size: Int = 5,
         name: String? = null
     ) {
-        Logger.d(TAG, "加载部门数据: current=$current, size=$size, name=$name")
+//        Logger.d(TAG, "加载部门数据: current=$current, size=$size, name=$name")
         
         viewModelScope.launch {
             _departmentState.value = _departmentState.value.copy(
