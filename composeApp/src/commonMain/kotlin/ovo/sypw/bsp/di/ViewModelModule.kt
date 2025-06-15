@@ -59,6 +59,9 @@ val viewModelModule = module {
      * 专门负责员工相关的状态管理和业务逻辑
      */
     factory {
-        EmployeeViewModel()
+        EmployeeViewModel(
+            employeeUseCase = get(),
+            departmentUseCase = get()
+        )
     }
 }

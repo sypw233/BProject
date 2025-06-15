@@ -1,169 +1,192 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import ovo.sypw.bsp.data.dto.EmployeeDto
+import ovo.sypw.bsp.data.dto.PageResultDto
+import ovo.sypw.bsp.presentation.components.ManagementPageState
+import ovo.sypw.bsp.presentation.components.ManagementPageActions
+import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
-import ovo.sypw.bsp.utils.ResponsiveUtils
 
 /**
- * 员工管理Tab内容
+ * 员工管理页面
+ * 支持响应式布局，在不同屏幕尺寸下显示不同的界面
+ * 参考部门管理的实现，使用通用管理页面模板
  */
 @Composable
-internal fun EmployeeManagementTab(
+fun EmployeeManagementTab(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     val viewModel: EmployeeViewModel = koinInject()
     val employeeState by viewModel.employeeState.collectAsState()
+    
+    // 创建状态适配器
+    val pageState = object : ManagementPageState<EmployeeDto> {
+        override val isLoading: Boolean = employeeState.isLoading
+        override val items: List<EmployeeDto> = employeeState.employees
+        override val pageInfo: PageResultDto<EmployeeDto>? = employeeState.pageInfo
+        override val errorMessage: String? = employeeState.errorMessage
+    }
+    
+    // 创建操作适配器
+    val pageActions = object : ManagementPageActions {
+        override fun refresh() = viewModel.refreshEmployees()
+        override fun loadData(current: Int, size: Int) = viewModel.loadEmployees(current, size)
+        override fun showAddDialog() = viewModel.showAddEmployeeDialog()
+    }
+    
+    // 使用通用管理页面模板
+    ManagementPageTemplate(
+        state = pageState,
+        actions = pageActions,
+        title = "员工管理",
+        emptyMessage = "暂无员工数据",
+        refreshText = "刷新数据",
+        addText = "添加员工",
+        layoutConfig = layoutConfig,
+        itemContent = { employee ->
+            EmployeeCard(
+                employee = employee,
+                onEdit = { viewModel.showEditEmployeeDialog(employee) },
+                onDelete = { viewModel.deleteEmployee(employee.id) },
+                layoutConfig = layoutConfig
+            )
+        },
+        dialogContent = {
+            val dialogState by viewModel.employeeDialogState.collectAsState()
+            EmployeeDialog(
+                employeeViewModel = viewModel,
+                dialogState = dialogState,
+                onDismiss = { viewModel.hideEmployeeDialog() }
+            )
+        }
+    )
+}
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
+/**
+ * 员工卡片组件
+ * 显示员工基本信息和操作按钮
+ */
+@Composable
+private fun EmployeeCard(
+    employee: EmployeeDto,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    layoutConfig: ResponsiveLayoutConfig
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        // 页面标题
-        Text(
-            text = "员工管理",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        // 操作按钮区域 - 响应式布局
-        if (layoutConfig.useFullWidthButtons) {
-            // 紧凑型：垂直排列按钮
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
-            ) {
-                Button(
-                    onClick = { viewModel.refreshEmployees() },
-                    enabled = !employeeState.isLoading,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("刷新数据")
-                }
-
-                OutlinedButton(
-                    onClick = { /* TODO: 添加员工 */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("添加员工")
-                }
-            }
-        } else {
-            // 中等型和扩展型：水平排列按钮
+        Column(
+            modifier = Modifier.padding(layoutConfig.cardPadding)
+        ) {
+            // 员工标题和操作按钮
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(layoutConfig.horizontalSpacing)
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(
-                    onClick = { viewModel.refreshEmployees() },
-                    enabled = !employeeState.isLoading
+                Column(
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Text("刷新数据")
-                }
-
-                OutlinedButton(
-                    onClick = { /* TODO: 添加员工 */ }
-                ) {
-                    Text("添加员工")
-                }
-            }
-        }
-
-        // 加载状态
-        if (employeeState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-
-        // 员工列表区域 - 响应式网格布局
-        when (layoutConfig.screenSize) {
-            ResponsiveUtils.ScreenSize.COMPACT -> {
-                // 紧凑型：单列卡片
-                Card(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(layoutConfig.cardPadding)
-                    ) {
+                    // 员工姓名
+                    Text(
+                        text = employee.realName,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    
+                    // 用户名
+                    Text(
+                        text = "用户名: ${employee.username}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    
+                    // 性别和职位信息
+                    Row {
                         Text(
-                            text = "员工列表",
-                            style = MaterialTheme.typography.titleMedium
+                            text = "性别: ${if (employee.gender == 1) "男" else "女"}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(layoutConfig.verticalSpacing))
+                        
+                        Spacer(modifier = Modifier.width(16.dp))
+                        
                         Text(
-                            text = "暂无员工数据",
-                            style = MaterialTheme.typography.bodyMedium,
+                            text = "职位: ${getJobName(employee.job)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    
+                    // 入职日期
+                    employee.entryDate?.let { entryDate ->
+                        Text(
+                            text = "入职日期: $entryDate",
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
-            }
 
-            else -> {
-                // 中等型和扩展型：网格布局
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(layoutConfig.columnCount),
-                    horizontalArrangement = Arrangement.spacedBy(layoutConfig.horizontalSpacing),
-                    verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
-                ) {
-                    // 示例卡片
-                    items(4) { index ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .let { modifier ->
-                                    val maxWidth =
-                                        ResponsiveUtils.Grid.getMaxCardWidth(layoutConfig.screenSize)
-                                    if (maxWidth != Dp.Unspecified) {
-                                        modifier.widthIn(max = maxWidth)
-                                    } else modifier
-                                }
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(layoutConfig.cardPadding)
-                            ) {
-                                Text(
-                                    text = if (index == 0) "员工列表" else "员工 ${index}",
-                                    style = MaterialTheme.typography.titleMedium
-                                )
-                                Spacer(modifier = Modifier.height(layoutConfig.verticalSpacing))
-                                Text(
-                                    text = if (index == 0) "暂无员工数据" else "员工详情 ${index}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
+                Row {
+                    IconButton(onClick = onEdit) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "编辑员工",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "删除员工",
+                            tint = MaterialTheme.colorScheme.error
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+/**
+ * 获取职位名称
+ * @param job 职位代码
+ * @return 职位名称
+ */
+private fun getJobName(job: Int): String {
+    return when (job) {
+        1 -> "班长"
+        2 -> "讲师"
+        3 -> "学工主管"
+        4 -> "教研主管"
+        5 -> "咨询师"
+        else -> "未知职位"
     }
 }
