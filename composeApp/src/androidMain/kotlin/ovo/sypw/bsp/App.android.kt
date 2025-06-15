@@ -1,22 +1,32 @@
 package ovo.sypw.bsp
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.KoinApplication
 import org.koin.dsl.module
 import ovo.sypw.bsp.di.getAllModules
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.ui.Modifier
 
 /**
  * Android 平台的 Koin 应用初始化
  * 自动注入 Android Context
  */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 actual fun PlatformKoinApplication(content: @Composable () -> Unit) {
     val context = LocalContext.current
     Log.d("MAIN", "PlatformKoinApplication: START")
+
     KoinApplication(
         application = {
             androidContext(context)
@@ -26,6 +36,20 @@ actual fun PlatformKoinApplication(content: @Composable () -> Unit) {
             })
         }
     ) {
-        content()
+        Scaffold(
+            contentWindowInsets = WindowInsets.systemBars,
+            content = {  innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ){
+                    content()
+                }
+
+
+            }
+        )
     }
+
 }

@@ -10,6 +10,10 @@ import org.koin.compose.koinInject
 import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.presentation.ui.ImageTestScreen
+import ovo.sypw.bsp.presentation.ui.FileUploadTestScreen
+import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
+import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
@@ -93,6 +97,19 @@ private fun CompactAdminLayout(
                 1 -> EmployeeManagementTab(
                     layoutConfig = layoutConfig
                 )
+                
+                2 -> ImageTestScreen(
+                    modifier = Modifier.fillMaxSize()
+                )
+                
+                3 -> FileUploadTestScreen(
+                    fileUploadUseCase = koinInject<FileUploadUseCase>(),
+                    modifier = Modifier.fillMaxSize()
+                )
+                
+                else -> DepartmentManagementTab(
+                    layoutConfig = layoutConfig
+                )
             }
         }
     }
@@ -140,6 +157,19 @@ private fun ExpandedAdminLayout(
                 )
 
                 1 -> EmployeeManagementTab(
+                    layoutConfig = layoutConfig
+                )
+                
+                2 -> ImageTestScreen(
+                    modifier = Modifier.fillMaxSize()
+                )
+                
+                3 -> FileUploadTestScreen(
+                    fileUploadUseCase = koinInject<FileUploadUseCase>(),
+                    modifier = Modifier.fillMaxSize()
+                )
+                
+                else -> DepartmentManagementTab(
                     layoutConfig = layoutConfig
                 )
             }
