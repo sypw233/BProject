@@ -1,15 +1,27 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PhotoCamera
+import coil3.compose.AsyncImage
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -19,6 +31,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeDialogState
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
+import ovo.sypw.bsp.utils.createFileUtils
 
 /**
  * 员工添加/编辑Dialog组件
@@ -122,6 +135,144 @@ fun EmployeeDialog(
                             singleLine = true,
                             placeholder = { Text("请输入真实姓名") }
                         )
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // 头像选择区域
+                        Column {
+                            Text(
+                                text = "头像",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                // 头像显示区域
+                                Box(
+                                    modifier = Modifier
+                                        .size(80.dp)
+                                        .clip(CircleShape)
+                                        .border(
+                                            width = 2.dp,
+                                            color = MaterialTheme.colorScheme.outline,
+                                            shape = CircleShape
+                                        )
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceVariant,
+                                            shape = CircleShape
+                                        )
+                                        .clickable {
+                                            employeeViewModel.selectAvatar()
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    // 显示选中的头像或默认图标
+                                    if (dialogState.selectedAvatarBytes != null) {
+                                        val fileUtils = createFileUtils()
+                                        val imageBitmap = fileUtils.bytesToImageBitmap(dialogState.selectedAvatarBytes)
+                                        if (imageBitmap != null) {
+                                            Image(
+                                                bitmap = imageBitmap,
+                                                contentDescription = "选中的头像",
+                                                modifier = Modifier.fillMaxSize(),
+                                                contentScale = ContentScale.Crop
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = Icons.Default.Person,
+                                                contentDescription = "默认头像",
+                                                modifier = Modifier.size(40.dp),
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    } else if (!dialogState.avatarUrl.isNullOrEmpty()) {
+                                        AsyncImage(
+                                            model = dialogState.avatarUrl,
+                                            contentDescription = "当前头像",
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Default.Person,
+                                            contentDescription = "默认头像",
+                                            modifier = Modifier.size(40.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    
+                                    // 上传状态指示器
+                                    if (dialogState.isUploadingAvatar) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(
+                                                    color = Color.Black.copy(alpha = 0.5f),
+                                                    shape = CircleShape
+                                                ),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(24.dp),
+                                                strokeWidth = 2.dp,
+                                                color = Color.White
+                                            )
+                                        }
+                                    }
+                                }
+                                
+                                // 头像操作按钮
+                                Column {
+                                    Button(
+                                        onClick = { employeeViewModel.selectAvatar() },
+                                        enabled = !dialogState.isUploadingAvatar,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.PhotoCamera,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("选择头像")
+                                    }
+                                    
+                                    if (dialogState.selectedAvatarBytes != null || !dialogState.avatarUrl.isNullOrEmpty()) {
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        OutlinedButton(
+                                            onClick = { employeeViewModel.clearSelectedAvatar() },
+                                            enabled = !dialogState.isUploadingAvatar,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text("清除头像")
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // 头像提示信息
+                            if (!dialogState.avatarUrl.isNullOrEmpty() && dialogState.selectedAvatarBytes == null) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "当前使用已上传的头像",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            
+                            if (dialogState.selectedAvatarBytes != null) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "已选择新头像，保存时将自动上传",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         

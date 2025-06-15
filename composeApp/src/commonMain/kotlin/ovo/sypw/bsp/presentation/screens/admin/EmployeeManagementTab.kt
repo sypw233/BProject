@@ -1,15 +1,30 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import coil3.compose.AsyncImage
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -21,7 +36,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ovo.sypw.bsp.data.dto.EmployeeDto
 import ovo.sypw.bsp.data.dto.PageResultDto
@@ -31,6 +50,7 @@ import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
+import ovo.sypw.bsp.utils.ResponsiveUtils
 
 /**
  * 员工管理页面
@@ -99,40 +119,106 @@ private fun EmployeeCard(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(140.dp) // 固定卡片高度，确保一致性
     ) {
-        Column(
-            modifier = Modifier.padding(layoutConfig.cardPadding)
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(layoutConfig.cardPadding),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // 员工标题和操作按钮
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // 头像区域
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(CircleShape)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = CircleShape
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    // 员工姓名
-                    Text(
-                        text = employee.realName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                if (!employee.avatar.isNullOrEmpty()) {
+                    AsyncImage(
+                        model = employee.avatar,
+                        contentDescription = "员工头像",
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape)
                     )
-                    
-                    // 用户名
-                    Text(
-                        text = "用户名: ${employee.username}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "默认头像",
+                        modifier = Modifier.size(30.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
-                    // 性别和职位信息
+                }
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // 员工信息区域
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                // 员工姓名
+                Text(
+                    text = employee.realName,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                // 用户名
+                Text(
+                    text = "用户名: ${employee.username}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                // 性别和职位信息 - 根据屏幕尺寸调整布局
+                if (layoutConfig.screenSize == ResponsiveUtils.ScreenSize.COMPACT) {
+                    // 小屏幕：垂直排列
+                    Column {
+                        Text(
+                            text = "性别: ${if (employee.gender == 1) "男" else "女"}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = "职位: ${getJobName(employee.job)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
+                    }
+                } else {
+                    // 大屏幕：水平排列
                     Row {
                         Text(
                             text = "性别: ${if (employee.gender == 1) "男" else "女"}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
                         )
                         
                         Spacer(modifier = Modifier.width(16.dp))
@@ -140,35 +226,45 @@ private fun EmployeeCard(
                         Text(
                             text = "职位: ${getJobName(employee.job)}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    
-                    // 入职日期
-                    employee.entryDate?.let { entryDate ->
-                        Text(
-                            text = "入职日期: $entryDate",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }
-
-                Row {
-                    IconButton(onClick = onEdit) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "编辑员工",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = onDelete) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "删除员工",
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                // 入职日期
+                employee.entryDate?.let { entryDate ->
+                    Text(
+                        text = "入职日期: $entryDate",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            
+            // 操作按钮区域
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "编辑员工",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "删除员工",
+                        tint = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }

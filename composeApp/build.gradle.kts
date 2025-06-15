@@ -88,6 +88,9 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             // 跨平台日期时间库
             implementation(libs.kotlinx.datetime)
+            // 图片加载库
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
 
         }
         commonTest.dependencies {

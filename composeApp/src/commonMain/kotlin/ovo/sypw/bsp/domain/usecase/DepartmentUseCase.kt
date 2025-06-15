@@ -41,7 +41,7 @@ class DepartmentUseCase(
             )
         }
         
-        if (size < 1 || size > 100) {
+        if (size < 1 || size > 9999) {
             Logger.w(TAG, "每页大小参数无效: $size")
             return NetworkResult.Error(
                 exception = IllegalArgumentException("每页大小必须在1-100之间"),

@@ -14,10 +14,17 @@ import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.domain.model.NetworkResult
 import ovo.sypw.bsp.domain.usecase.EmployeeUseCase
 import ovo.sypw.bsp.domain.usecase.DepartmentUseCase
+import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
 import ovo.sypw.bsp.data.dto.DepartmentDto
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager
 import ovo.sypw.bsp.utils.PagingUtils
+import ovo.sypw.bsp.utils.FileUtils
+import ovo.sypw.bsp.utils.createFileUtils
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * 员工管理ViewModel
@@ -25,8 +32,12 @@ import ovo.sypw.bsp.utils.PagingUtils
  */
 class EmployeeViewModel(
     private val employeeUseCase: EmployeeUseCase,
-    private val departmentUseCase: DepartmentUseCase
+    private val departmentUseCase: DepartmentUseCase,
+    private val fileUploadUseCase: FileUploadUseCase
 ) : ViewModel() {
+    
+    // 文件工具类实例
+    private val fileUtils: FileUtils = createFileUtils()
     
     companion object {
         private const val TAG = "EmployeeViewModel"
@@ -380,7 +391,8 @@ class EmployeeViewModel(
             job = employee.job,
             departmentId = employee.departmentId,
             entryDate = employee.entryDate ?: "",
-            editingEmployeeId = employee.id
+            editingEmployeeId = employee.id,
+            avatarUrl = employee.avatar // 加载现有头像URL
         )
     }
     
@@ -462,6 +474,114 @@ class EmployeeViewModel(
     }
     
     /**
+     * 选择头像图片
+     */
+    fun selectAvatar() {
+        viewModelScope.launch {
+            try {
+                _employeeDialogState.value = _employeeDialogState.value.copy(
+                    isUploadingAvatar = true,
+                    errorMessage = null
+                )
+                
+                val imageBytes = fileUtils.selectImage()
+                if (imageBytes != null) {
+                    _employeeDialogState.value = _employeeDialogState.value.copy(
+                        selectedAvatarBytes = imageBytes,
+                        isUploadingAvatar = false
+                    )
+                    Logger.i(TAG, "头像选择成功，大小: ${imageBytes.size} bytes")
+                } else {
+                    _employeeDialogState.value = _employeeDialogState.value.copy(
+                        isUploadingAvatar = false,
+                        errorMessage = "未选择图片或选择被取消"
+                    )
+                }
+            } catch (e: Exception) {
+                Logger.e(TAG, "选择头像失败", e)
+                _employeeDialogState.value = _employeeDialogState.value.copy(
+                    isUploadingAvatar = false,
+                    errorMessage = "选择头像失败: ${e.message}"
+                )
+            }
+        }
+    }
+    
+    /**
+     * 清除选择的头像
+     */
+    fun clearSelectedAvatar() {
+        _employeeDialogState.value = _employeeDialogState.value.copy(
+            selectedAvatarBytes = null
+        )
+    }
+    
+    /**
+     * 上传头像并获取URL
+     * @return 上传成功的头像URL，失败返回null
+     */
+    @OptIn(ExperimentalTime::class)
+    private suspend fun uploadAvatarIfNeeded(): String? {
+        val dialogState = _employeeDialogState.value
+        val avatarBytes = dialogState.selectedAvatarBytes ?: return dialogState.avatarUrl
+        
+        try {
+            Logger.i(TAG, "开始上传头像")
+            _employeeDialogState.value = dialogState.copy(
+                isUploadingAvatar = true
+            )
+            
+            // 生成文件名
+            val fileName = "avatar_${Clock.System.now().toEpochMilliseconds()}.jpg"
+            
+            var uploadedUrl: String? = null
+            
+            // 上传头像
+            fileUploadUseCase.uploadImage(
+                imageBytes = avatarBytes,
+                fileName = fileName,
+                quality = 85
+            ).catch { e ->
+                Logger.e(TAG, "上传头像失败", e)
+                throw e
+            }.collect { result ->
+                when (result) {
+                    is NetworkResult.Success -> {
+                        val avatarUrl = result.data.fileUrl
+                        Logger.i(TAG, "头像上传成功: $avatarUrl")
+                        _employeeDialogState.value = _employeeDialogState.value.copy(
+                            avatarUrl = avatarUrl,
+                            isUploadingAvatar = false
+                        )
+                        uploadedUrl = avatarUrl
+                    }
+                    is NetworkResult.Error -> {
+                        Logger.e(TAG, "头像上传失败: ${result.message}")
+                        _employeeDialogState.value = _employeeDialogState.value.copy(
+                            isUploadingAvatar = false,
+                            errorMessage = "头像上传失败: ${result.message}"
+                        )
+                        throw Exception(result.message)
+                    }
+                    is NetworkResult.Loading -> {
+                        // 保持加载状态
+                    }
+                    else -> {}
+                }
+            }
+            
+            return uploadedUrl ?: dialogState.avatarUrl
+        } catch (e: Exception) {
+            Logger.e(TAG, "上传头像异常", e)
+            _employeeDialogState.value = _employeeDialogState.value.copy(
+                isUploadingAvatar = false,
+                errorMessage = "头像上传失败: ${e.message}"
+            )
+            return null
+        }
+    }
+    
+    /**
      * 保存员工（添加或编辑）
      */
     fun saveEmployee() {
@@ -495,58 +615,69 @@ class EmployeeViewModel(
                 errorMessage = null
             )
             
-            val result = if (dialogState.isEditMode && dialogState.editingEmployeeId != null) {
-                // 编辑模式
-                val updateDto = EmployeeUpdateDto(
-                    id = dialogState.editingEmployeeId,
-                    realName = dialogState.realName,
-                    gender = dialogState.gender,
-                    job = dialogState.job,
-                    departmentId = dialogState.departmentId,
-                    entryDate = dialogState.entryDate.takeIf { it.isNotBlank() },
-                    username = dialogState.username,
-                    password = dialogState.password,
-                    avatar = null
-                )
-                employeeUseCase.updateEmployee(updateDto)
-            } else {
-                // 添加模式
-                val createDto = EmployeeCreateDto(
-                    username = dialogState.username,
-                    realName = dialogState.realName,
-                    password = dialogState.password,
-                    avatar = null,
-                    gender = dialogState.gender,
-                    job = dialogState.job,
-                    departmentId = dialogState.departmentId,
-                    entryDate = dialogState.entryDate.takeIf { it.isNotBlank() }
-                )
-                employeeUseCase.createEmployee(createDto)
-            }
-            
-            when (result) {
-                is NetworkResult.Success -> {
-                    Logger.i(TAG, "员工保存成功")
-                    hideEmployeeDialog()
-                    // 刷新分页数据和传统列表数据
-                    _employeePagingManager = null
-                    refreshEmployees()
-                }
-                is NetworkResult.Error -> {
-                    Logger.e(TAG, "员工保存失败: ${result.message}")
-                    _employeeDialogState.value = _employeeDialogState.value.copy(
-                        isLoading = false,
-                        errorMessage = result.message ?: "保存失败"
+            try {
+                // 先上传头像（如果有选择的话）
+                val avatarUrl = uploadAvatarIfNeeded()
+                
+                val result = if (dialogState.isEditMode && dialogState.editingEmployeeId != null) {
+                    // 编辑模式
+                    val updateDto = EmployeeUpdateDto(
+                        id = dialogState.editingEmployeeId,
+                        realName = dialogState.realName,
+                        gender = dialogState.gender,
+                        job = dialogState.job,
+                        departmentId = dialogState.departmentId,
+                        entryDate = dialogState.entryDate.takeIf { it.isNotBlank() },
+                        username = dialogState.username,
+                        password = dialogState.password,
+                        avatar = avatarUrl
                     )
-                }
-                NetworkResult.Idle -> {
-                    _employeeDialogState.value = _employeeDialogState.value.copy(
-                        isLoading = false
+                    employeeUseCase.updateEmployee(updateDto)
+                } else {
+                    // 添加模式
+                    val createDto = EmployeeCreateDto(
+                        username = dialogState.username,
+                        realName = dialogState.realName,
+                        password = dialogState.password,
+                        avatar = avatarUrl,
+                        gender = dialogState.gender,
+                        job = dialogState.job,
+                        departmentId = dialogState.departmentId,
+                        entryDate = dialogState.entryDate.takeIf { it.isNotBlank() }
                     )
+                    employeeUseCase.createEmployee(createDto)
                 }
-                NetworkResult.Loading -> {
-                    // 保持加载状态
+                
+                when (result) {
+                    is NetworkResult.Success -> {
+                        Logger.i(TAG, "员工保存成功")
+                        hideEmployeeDialog()
+                        // 刷新分页数据和传统列表数据
+                        _employeePagingManager = null
+                        refreshEmployees()
+                    }
+                    is NetworkResult.Error -> {
+                        Logger.e(TAG, "员工保存失败: ${result.message}")
+                        _employeeDialogState.value = _employeeDialogState.value.copy(
+                            isLoading = false,
+                            errorMessage = result.message ?: "保存失败"
+                        )
+                    }
+                    NetworkResult.Idle -> {
+                        _employeeDialogState.value = _employeeDialogState.value.copy(
+                            isLoading = false
+                        )
+                    }
+                    NetworkResult.Loading -> {
+                        // 保持加载状态
+                    }
                 }
+            } catch (e: Exception) {
+                Logger.e(TAG, "保存员工异常", e)
+                _employeeDialogState.value = _employeeDialogState.value.copy(
+                    isLoading = false,
+                    errorMessage = "保存失败: ${e.message}"
+                )
             }
         }
     }
@@ -577,5 +708,57 @@ data class EmployeeDialogState(
     val entryDate: String = "",
     val editingEmployeeId: Int? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
-)
+    val errorMessage: String? = null,
+    // 头像相关字段
+    val avatarUrl: String? = null,
+    val selectedAvatarBytes: ByteArray? = null,
+    val isUploadingAvatar: Boolean = false
+) {
+    // 重写equals和hashCode以正确处理ByteArray
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as EmployeeDialogState
+
+        if (isVisible != other.isVisible) return false
+        if (isEditMode != other.isEditMode) return false
+        if (username != other.username) return false
+        if (realName != other.realName) return false
+        if (password != other.password) return false
+        if (gender != other.gender) return false
+        if (job != other.job) return false
+        if (departmentId != other.departmentId) return false
+        if (entryDate != other.entryDate) return false
+        if (editingEmployeeId != other.editingEmployeeId) return false
+        if (isLoading != other.isLoading) return false
+        if (errorMessage != other.errorMessage) return false
+        if (avatarUrl != other.avatarUrl) return false
+        if (selectedAvatarBytes != null) {
+            if (other.selectedAvatarBytes == null) return false
+            if (!selectedAvatarBytes.contentEquals(other.selectedAvatarBytes)) return false
+        } else if (other.selectedAvatarBytes != null) return false
+        if (isUploadingAvatar != other.isUploadingAvatar) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = isVisible.hashCode()
+        result = 31 * result + isEditMode.hashCode()
+        result = 31 * result + username.hashCode()
+        result = 31 * result + realName.hashCode()
+        result = 31 * result + password.hashCode()
+        result = 31 * result + gender
+        result = 31 * result + job
+        result = 31 * result + departmentId
+        result = 31 * result + entryDate.hashCode()
+        result = 31 * result + (editingEmployeeId ?: 0)
+        result = 31 * result + isLoading.hashCode()
+        result = 31 * result + (errorMessage?.hashCode() ?: 0)
+        result = 31 * result + (avatarUrl?.hashCode() ?: 0)
+        result = 31 * result + (selectedAvatarBytes?.contentHashCode() ?: 0)
+        result = 31 * result + isUploadingAvatar.hashCode()
+        return result
+    }
+}

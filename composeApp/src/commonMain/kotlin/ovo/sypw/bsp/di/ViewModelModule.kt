@@ -61,7 +61,8 @@ val viewModelModule = module {
     factory {
         EmployeeViewModel(
             employeeUseCase = get(),
-            departmentUseCase = get()
+            departmentUseCase = get(),
+            fileUploadUseCase = get()
         )
     }
 }
