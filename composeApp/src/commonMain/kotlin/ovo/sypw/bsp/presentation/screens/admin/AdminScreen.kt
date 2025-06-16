@@ -147,33 +147,37 @@ fun GetAdminTab(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     when (selectedTabIndex) {
-        0 -> DepartmentManagementTab(
-            layoutConfig = layoutConfig
-        )
-
-        1 -> EmployeeManagementTab(
-            layoutConfig = layoutConfig
-        )
-
-        2 -> ClassManagementTab(
-            layoutConfig = layoutConfig
-        )
-
-        3 -> StudentManagementTab(
-            layoutConfig = layoutConfig
-        )
-
-        4 -> ImageTestScreen(
+        0 -> DashboardTab(
             modifier = Modifier.fillMaxSize()
         )
 
-        5 -> FileUploadTestScreen(
+        1 -> DepartmentManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        2 -> EmployeeManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        3 -> ClassManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        4 -> StudentManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        5 -> ImageTestScreen(
+            modifier = Modifier.fillMaxSize()
+        )
+
+        6 -> FileUploadTestScreen(
             fileUploadUseCase = koinInject<FileUploadUseCase>(),
             modifier = Modifier.fillMaxSize()
         )
 
-        else -> DepartmentManagementTab(
-            layoutConfig = layoutConfig
+        else -> DashboardTab(
+            modifier = Modifier.fillMaxSize()
         )
     }
 }

@@ -72,6 +72,8 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
 
+            implementation("io.github.thechance101:chart:1.1.0")
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

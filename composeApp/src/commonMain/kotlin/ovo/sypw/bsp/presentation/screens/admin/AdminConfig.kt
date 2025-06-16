@@ -3,6 +3,7 @@ package ovo.sypw.bsp.presentation.screens.admin
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Person
@@ -33,36 +34,42 @@ object AdminConfig {
     val adminTabs = listOf(
         AdminTab(
             index = 0,
+            title = "数据仪表板",
+            icon = Icons.Default.Dashboard,
+            route = "admin/dashboard"
+        ),
+        AdminTab(
+            index = 1,
             title = "部门管理",
             icon = Icons.Default.Business,
             route = "admin/department"
         ),
         AdminTab(
-            index = 1,
+            index = 2,
             title = "员工管理",
             icon = Icons.Default.Group,
             route = "admin/employee"
         ),
         AdminTab(
-            index = 2,
+            index = 3,
             title = "班级管理",
             icon = Icons.Default.School,
             route = "admin/class"
         ),
         AdminTab(
-            index = 3,
+            index = 4,
             title = "学生管理",
             icon = Icons.Default.Person,
             route = "admin/student"
         ),
         AdminTab(
-            index = 4,
+            index = 5,
             title = "图片测试",
             icon = Icons.Default.Image,
             route = "admin/imagetest"
         ),
         AdminTab(
-            index = 5,
+            index = 6,
             title = "文件上传",
             icon = Icons.Default.Upload,
             route = "admin/fileupload"
