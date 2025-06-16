@@ -211,5 +211,5 @@ fun CardActionButtons(
 
 @Composable
 fun IconButton(onClick: () -> Unit, content: @Composable () -> Unit) {
-    TODO("Not yet implemented")
+    androidx.compose.material3.IconButton(onClick = onClick, content = content)
 }

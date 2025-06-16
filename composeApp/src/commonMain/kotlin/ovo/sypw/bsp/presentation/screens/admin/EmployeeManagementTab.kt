@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -51,6 +52,8 @@ import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
+import ovo.sypw.bsp.presentation.components.EmployeeSearchAndFilter
+import ovo.sypw.bsp.presentation.screens.admin.EmployeeDialog
 
 /**
  * 员工管理页面
@@ -63,48 +66,82 @@ fun EmployeeManagementTab(
 ) {
     val viewModel: EmployeeViewModel = koinInject()
     val employeeState by viewModel.employeeState.collectAsState()
+    val searchQuery by viewModel.employeeSearchQuery.collectAsState()
+    val filterState by viewModel.employeeFilterState.collectAsState()
+    val departments by viewModel.departments.collectAsState()
     
-    // 创建状态适配器
-    val pageState = object : ManagementPageState<EmployeeDto> {
-        override val isLoading: Boolean = employeeState.isLoading
-        override val items: List<EmployeeDto> = employeeState.employees
-        override val pageInfo: PageResultDto<EmployeeDto>? = employeeState.pageInfo
-        override val errorMessage: String? = employeeState.errorMessage
+    // 加载部门数据
+    LaunchedEffect(Unit) {
+        viewModel.loadDepartments()
     }
     
-    // 创建操作适配器
-    val pageActions = object : ManagementPageActions {
-        override fun refresh() = viewModel.refreshEmployees()
-        override fun loadData(current: Int, size: Int) = viewModel.loadEmployees(current, size)
-        override fun showAddDialog() = viewModel.showAddEmployeeDialog()
-    }
-    
-    // 使用通用管理页面模板
-    ManagementPageTemplate(
-        state = pageState,
-        actions = pageActions,
-        title = "员工管理",
-        emptyMessage = "暂无员工数据",
-        refreshText = "刷新数据",
-        addText = "添加员工",
-        layoutConfig = layoutConfig,
-        itemContent = { employee ->
-            EmployeeCard(
-                employee = employee,
-                onEdit = { viewModel.showEditEmployeeDialog(employee) },
-                onDelete = { viewModel.deleteEmployee(employee.id) },
-                layoutConfig = layoutConfig
-            )
-        },
-        dialogContent = {
-            val dialogState by viewModel.employeeDialogState.collectAsState()
-            EmployeeDialog(
-                employeeViewModel = viewModel,
-                dialogState = dialogState,
-                onDismiss = { viewModel.hideEmployeeDialog() }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // 搜索和筛选组件
+        EmployeeSearchAndFilter(
+            searchQuery = searchQuery,
+            onSearchQueryChange = viewModel::updateEmployeeSearchQuery,
+            filterState = filterState,
+            onFilterChange = viewModel::updateEmployeeFilter,
+            onToggleFilterExpanded = viewModel::toggleFilterExpanded,
+            onClearAllFilters = viewModel::clearAllFilters,
+            departments = departments,
+            layoutConfig=layoutConfig
+        )
+        
+        // 员工列表
+        Box(modifier = Modifier.weight(1f)) {
+            // 创建状态适配器
+            val pageState = object : ManagementPageState<EmployeeDto> {
+                override val isLoading: Boolean = employeeState.isLoading
+                override val items: List<EmployeeDto> = employeeState.employees
+                override val pageInfo: PageResultDto<EmployeeDto>? = employeeState.pageInfo
+                override val errorMessage: String? = employeeState.errorMessage
+            }
+            
+            // 创建操作适配器
+            val pageActions = object : ManagementPageActions {
+                override fun refresh() = viewModel.refreshEmployees()
+                override fun loadData(current: Int, size: Int) {
+                    // 使用当前的搜索和筛选条件加载数据
+                    val currentQuery = searchQuery.takeIf { it.isNotBlank() }
+                    viewModel.loadEmployees(current, size, currentQuery)
+                }
+                override fun showAddDialog() = viewModel.showAddEmployeeDialog()
+            }
+            
+            // 使用通用管理页面模板
+            ManagementPageTemplate(
+                state = pageState,
+                actions = pageActions,
+                title = "员工列表",
+                emptyMessage = "暂无员工数据",
+                refreshText = "刷新数据",
+                addText = "添加员工",
+                layoutConfig = layoutConfig,
+                itemContent = { employee ->
+                    EmployeeCard(
+                        employee = employee,
+                        onEdit = { viewModel.showEditEmployeeDialog(employee) },
+                        onDelete = { viewModel.deleteEmployee(employee.id) },
+                        layoutConfig = layoutConfig
+                    )
+                },
+                dialogContent = {
+                    val dialogState by viewModel.employeeDialogState.collectAsState()
+                    EmployeeDialog(
+                        employeeViewModel = viewModel,
+                        dialogState = dialogState,
+                        onDismiss = { viewModel.hideEmployeeDialog() }
+                    )
+                }
             )
         }
-    )
+    }
 }
 
 /**

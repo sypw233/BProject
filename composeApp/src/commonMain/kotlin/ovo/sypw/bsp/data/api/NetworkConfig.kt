@@ -10,7 +10,7 @@ object NetworkConfig {
     /**
      * API基础URL
      */
-    const val BASE_URL = "https://0dab-240e-37a-209b-6900-6cec-d160-56c-ad45.ngrok-free.app"
+    const val BASE_URL = "https://dee8-117-30-97-20.ngrok-free.app"
     
     /**
      * 连接超时时间（毫秒）

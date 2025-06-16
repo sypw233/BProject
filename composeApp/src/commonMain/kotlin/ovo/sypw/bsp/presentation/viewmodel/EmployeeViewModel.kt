@@ -55,6 +55,10 @@ class EmployeeViewModel(
     private val _employeeSearchQuery = MutableStateFlow("")
     val employeeSearchQuery: StateFlow<String> = _employeeSearchQuery.asStateFlow()
     
+    // 员工筛选状态
+    private val _employeeFilterState = MutableStateFlow(EmployeeFilterState())
+    val employeeFilterState: StateFlow<EmployeeFilterState> = _employeeFilterState.asStateFlow()
+    
     // 部门列表状态
     private val _departments = MutableStateFlow<List<DepartmentDto>>(emptyList())
     val departments: StateFlow<List<DepartmentDto>> = _departments.asStateFlow()
@@ -71,10 +75,16 @@ class EmployeeViewModel(
         if (_employeePagingManager == null) {
             _employeePagingManager = PagingUtils.createPagingManager(
                 loadData = { page, pageSize ->
+                    val filterState = _employeeFilterState.value
                     employeeUseCase.getEmployeePage(
                         current = page,
                         size = pageSize,
-                        realName = _employeeSearchQuery.value.takeIf { it.isNotBlank() }
+                        realName = _employeeSearchQuery.value.takeIf { it.isNotBlank() },
+                        gender = filterState.selectedGender,
+                        job = filterState.selectedJob,
+                        departmentId = filterState.selectedDepartmentId,
+                        entryDateStart = filterState.entryDateStart,
+                        entryDateEnd = filterState.entryDateEnd
                     )
                 }
             )
@@ -90,6 +100,8 @@ class EmployeeViewModel(
         _employeeSearchQuery.value = query
         // 重新创建分页器以应用新的搜索条件
         _employeePagingManager = null
+        // 立即加载数据
+        loadEmployees()
     }
     
     /**
@@ -97,6 +109,81 @@ class EmployeeViewModel(
      */
     fun clearEmployeeSearch() {
         updateEmployeeSearchQuery("")
+    }
+    
+    /**
+     * 更新筛选条件
+     */
+    fun updateEmployeeFilter(filterState: EmployeeFilterState) {
+        _employeeFilterState.value = filterState
+        // 重新创建分页器以应用新的筛选条件
+        _employeePagingManager = null
+        // 立即加载数据
+        loadEmployees()
+    }
+    
+    /**
+     * 切换筛选面板展开状态
+     */
+    fun toggleFilterExpanded() {
+        _employeeFilterState.value = _employeeFilterState.value.copy(
+            isFilterExpanded = !_employeeFilterState.value.isFilterExpanded
+        )
+    }
+    
+    /**
+     * 清空所有筛选条件
+     */
+    fun clearAllFilters() {
+        _employeeFilterState.value = EmployeeFilterState()
+        _employeeSearchQuery.value = ""
+        // 重新创建分页器以应用清空的条件
+        _employeePagingManager = null
+        // 立即加载数据
+        loadEmployees()
+    }
+    
+    /**
+     * 设置性别筛选
+     */
+    fun setGenderFilter(gender: Int?) {
+        _employeeFilterState.value = _employeeFilterState.value.copy(selectedGender = gender)
+        _employeePagingManager = null
+        // 立即加载数据
+        loadEmployees()
+    }
+    
+    /**
+     * 设置职位筛选
+     */
+    fun setJobFilter(job: Int?) {
+        _employeeFilterState.value = _employeeFilterState.value.copy(selectedJob = job)
+        _employeePagingManager = null
+        // 立即加载数据
+        loadEmployees()
+    }
+    
+    /**
+     * 设置部门筛选
+     */
+    fun setDepartmentFilter(departmentId: Int?) {
+        _employeeFilterState.value = _employeeFilterState.value.copy(selectedDepartmentId = departmentId)
+        _employeePagingManager = null
+        // 立即加载数据
+        loadEmployees()
+    }
+    
+    /**
+     * 设置入职日期范围筛选
+     */
+    fun setEntryDateFilter(startDate: String?, endDate: String?) {
+        _employeeFilterState.value = _employeeFilterState.value.copy(
+            entryDateStart = startDate,
+            entryDateEnd = endDate
+        )
+        _employeePagingManager = null
+        // 立即加载数据
+        loadEmployees()
     }
     
     /**
@@ -126,7 +213,19 @@ class EmployeeViewModel(
                 errorMessage = null
             )
             
-            when (val result = employeeUseCase.getEmployeePage(current, size, realName = realName)) {
+            val filterState = _employeeFilterState.value
+            val searchQuery = realName ?: _employeeSearchQuery.value.takeIf { it.isNotBlank() }
+            
+            when (val result = employeeUseCase.getEmployeePage(
+                current = current,
+                size = size,
+                realName = searchQuery,
+                gender = filterState.selectedGender,
+                job = filterState.selectedJob,
+                departmentId = filterState.selectedDepartmentId,
+                entryDateStart = filterState.entryDateStart,
+                entryDateEnd = filterState.entryDateEnd
+            )) {
                 is NetworkResult.Success -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = false,
@@ -760,5 +859,53 @@ data class EmployeeDialogState(
         result = 31 * result + (selectedAvatarBytes?.contentHashCode() ?: 0)
         result = 31 * result + isUploadingAvatar.hashCode()
         return result
+    }
+}
+
+/**
+ * 员工筛选状态
+ */
+data class EmployeeFilterState(
+    val selectedGender: Int? = null, // null-全部, 1-男, 2-女
+    val selectedJob: Int? = null, // null-全部, 1-5对应不同职位
+    val selectedDepartmentId: Int? = null, // null-全部, 其他值对应部门ID
+    val entryDateStart: String? = null, // 入职开始日期
+    val entryDateEnd: String? = null, // 入职结束日期
+    val isFilterExpanded: Boolean = false // 筛选面板是否展开
+) {
+    /**
+     * 检查是否有任何筛选条件被设置
+     */
+    fun hasActiveFilters(): Boolean {
+        return selectedGender != null || 
+               selectedJob != null || 
+               selectedDepartmentId != null || 
+               !entryDateStart.isNullOrBlank() || 
+               !entryDateEnd.isNullOrBlank()
+    }
+    
+    /**
+     * 获取职位名称
+     */
+    fun getJobName(jobId: Int): String {
+        return when (jobId) {
+            1 -> "经理"
+            2 -> "主管"
+            3 -> "员工"
+            4 -> "实习生"
+            5 -> "顾问"
+            else -> "未知"
+        }
+    }
+    
+    /**
+     * 获取性别名称
+     */
+    fun getGenderName(gender: Int): String {
+        return when (gender) {
+            1 -> "男"
+            2 -> "女"
+            else -> "未知"
+        }
     }
 }
