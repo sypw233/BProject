@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -30,6 +31,8 @@ import ovo.sypw.bsp.presentation.components.ManagementPageActions
 import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
 import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
 import org.koin.compose.koinInject
+import ovo.sypw.bsp.presentation.components.SearchAndFilterTemplate
+import ovo.sypw.bsp.presentation.components.SearchBar
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 
 /**
@@ -42,7 +45,9 @@ fun DepartmentManagementTab(
 ) {
     val viewModel: DepartmentViewModel = koinInject()
     val departmentState by viewModel.departmentState.collectAsState()
-    
+    val searchQuery by viewModel.departmentSearchQuery.collectAsState()
+
+
     // 创建状态适配器
     val pageState = object : ManagementPageState<DepartmentDto> {
         override val isLoading: Boolean = departmentState.isLoading
@@ -50,14 +55,14 @@ fun DepartmentManagementTab(
         override val pageInfo: PageResultDto<DepartmentDto>? = departmentState.pageInfo
         override val errorMessage: String? = departmentState.errorMessage
     }
-    
+
     // 创建操作适配器
     val pageActions = object : ManagementPageActions {
         override fun refresh() = viewModel.refreshDepartments()
         override fun loadData(current: Int, size: Int) = viewModel.loadDepartments(current, size)
         override fun showAddDialog() = viewModel.showAddDepartmentDialog()
     }
-    
+
     // 使用通用管理页面模板
     ManagementPageTemplate(
         state = pageState,
@@ -77,6 +82,23 @@ fun DepartmentManagementTab(
         },
         dialogContent = {
             DepartmentDialog(viewModel = viewModel)
+        },
+        searchAndFilterContent = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                SearchBar(
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = viewModel::updateDepartmentSearchQuery,
+                    modifier = Modifier
+                        .height(48.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                )
+
+            }
         }
     )
 

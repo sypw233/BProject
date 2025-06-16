@@ -37,6 +37,7 @@ import ovo.sypw.bsp.utils.ResponsiveUtils
  */
 @Composable
 fun ResponsiveActionButtons(
+    modifier: Modifier = Modifier,
     onRefresh: () -> Unit,
     onAdd: () -> Unit,
     isLoading: Boolean = false,

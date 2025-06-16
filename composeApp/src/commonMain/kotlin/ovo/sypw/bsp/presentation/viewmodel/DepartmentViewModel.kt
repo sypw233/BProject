@@ -71,6 +71,12 @@ class DepartmentViewModel(
         _departmentSearchQuery.value = query
         // 重新创建分页器以应用新的搜索条件
         _departmentPagingManager = null
+        // 立即应用搜索条件并重新加载数据
+        loadDepartments(
+            current = 1,
+            size = _departmentState.value.pageInfo?.size ?: 5,
+            name = query.takeIf { it.isNotBlank() }
+        )
     }
     
     /**
@@ -78,6 +84,8 @@ class DepartmentViewModel(
      */
     fun clearDepartmentSearch() {
         updateDepartmentSearchQuery("")
+        // 重新加载所有数据
+        loadDepartments(current = 1, size = _departmentState.value.pageInfo?.size ?: 5)
     }
     
     /**

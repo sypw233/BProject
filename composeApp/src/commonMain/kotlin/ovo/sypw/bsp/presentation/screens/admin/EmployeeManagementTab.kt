@@ -77,21 +77,9 @@ fun EmployeeManagementTab(
     
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 搜索和筛选组件
-        EmployeeSearchAndFilter(
-            searchQuery = searchQuery,
-            onSearchQueryChange = viewModel::updateEmployeeSearchQuery,
-            filterState = filterState,
-            onFilterChange = viewModel::updateEmployeeFilter,
-            onToggleFilterExpanded = viewModel::toggleFilterExpanded,
-            onClearAllFilters = viewModel::clearAllFilters,
-            departments = departments,
-            layoutConfig=layoutConfig
-        )
         
         // 员工列表
         Box(modifier = Modifier.weight(1f)) {
@@ -137,6 +125,19 @@ fun EmployeeManagementTab(
                         employeeViewModel = viewModel,
                         dialogState = dialogState,
                         onDismiss = { viewModel.hideEmployeeDialog() }
+                    )
+                },
+                searchAndFilterContent = {
+                    // 搜索和筛选组件
+                    EmployeeSearchAndFilter(
+                        searchQuery = searchQuery,
+                        onSearchQueryChange = viewModel::updateEmployeeSearchQuery,
+                        filterState = filterState,
+                        onFilterChange = viewModel::updateEmployeeFilter,
+                        onToggleFilterExpanded = viewModel::toggleFilterExpanded,
+                        onClearAllFilters = viewModel::clearAllFilters,
+                        departments = departments,
+                        layoutConfig=layoutConfig
                     )
                 }
             )
