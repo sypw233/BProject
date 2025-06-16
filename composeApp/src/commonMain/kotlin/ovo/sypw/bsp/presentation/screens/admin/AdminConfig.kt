@@ -3,6 +3,7 @@ package ovo.sypw.bsp.presentation.screens.admin
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Image
@@ -64,12 +65,18 @@ object AdminConfig {
         ),
         AdminTab(
             index = 5,
+            title = "公告管理",
+            icon = Icons.Default.Campaign,
+            route = "admin/announcement"
+        ),
+        AdminTab(
+            index = 6,
             title = "图片测试",
             icon = Icons.Default.Image,
             route = "admin/imagetest"
         ),
         AdminTab(
-            index = 6,
+            index = 7,
             title = "文件上传",
             icon = Icons.Default.Upload,
             route = "admin/fileupload"

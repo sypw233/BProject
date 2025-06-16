@@ -167,11 +167,15 @@ fun GetAdminTab(
             layoutConfig = layoutConfig
         )
 
-        5 -> ImageTestScreen(
+        5 -> AnnouncementManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        6 -> ImageTestScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        6 -> FileUploadTestScreen(
+        7 -> FileUploadTestScreen(
             fileUploadUseCase = koinInject<FileUploadUseCase>(),
             modifier = Modifier.fillMaxSize()
         )

@@ -4,6 +4,7 @@ import org.koin.dsl.module
 import ovo.sypw.bsp.presentation.viewmodel.ApiTestViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
+import ovo.sypw.bsp.presentation.viewmodel.AnnouncementViewModel
 import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
 import ovo.sypw.bsp.presentation.viewmodel.ClassViewModel
@@ -86,6 +87,16 @@ val viewModelModule = module {
         StudentViewModel(
             studentUseCase = get(),
             classUseCase = get()
+        )
+    }
+    
+    /**
+     * 提供公告管理ViewModel
+     * 专门负责公告相关的状态管理和业务逻辑
+     */
+    factory {
+        AnnouncementViewModel(
+            announcementUseCase = get()
         )
     }
 }

@@ -1,0 +1,305 @@
+package ovo.sypw.bsp.presentation.screens.admin
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import ovo.sypw.bsp.presentation.viewmodel.AnnouncementDialogState
+import ovo.sypw.bsp.presentation.viewmodel.AnnouncementViewModel
+import ovo.sypw.bsp.data.dto.AnnouncementPriority
+import ovo.sypw.bsp.data.dto.AnnouncementType
+import ovo.sypw.bsp.data.dto.AnnouncementStatus
+
+/**
+ * 公告添加/编辑Dialog组件
+ * 提供公告信息的添加和编辑功能
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AnnouncementDialog(
+    announcementViewModel: AnnouncementViewModel,
+    dialogState: AnnouncementDialogState,
+    onDismiss: () -> Unit
+) {
+    if (dialogState.isVisible) {
+        Dialog(
+            onDismissRequest = onDismiss,
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false
+            )
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .fillMaxHeight(0.85f),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp)
+                ) {
+                    // 标题栏
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (dialogState.isEditMode) "编辑公告" else "添加公告",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        
+                        IconButton(
+                            onClick = onDismiss
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "关闭"
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // 错误消息显示
+                    if (dialogState.errorMessage != null) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            )
+                        ) {
+                            Text(
+                                text = dialogState.errorMessage,
+                                modifier = Modifier.padding(12.dp),
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    
+                    // 表单内容
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        // 公告标题输入
+                        OutlinedTextField(
+                            value = dialogState.title,
+                            onValueChange = announcementViewModel::updateAnnouncementTitle,
+                            label = { Text("公告标题") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            placeholder = { Text("请输入公告标题") }
+                        )
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // 公告内容输入
+                        OutlinedTextField(
+                            value = dialogState.content,
+                            onValueChange = announcementViewModel::updateAnnouncementContent,
+                            label = { Text("公告内容") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            placeholder = { Text("请输入公告内容") },
+                            maxLines = 10
+                        )
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // 公告类型选择
+                        Text(
+                            text = "公告类型",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.type == AnnouncementType.NOTIFICATION.value,
+                                    onClick = { announcementViewModel.updateAnnouncementType(AnnouncementType.NOTIFICATION.value) }
+                                )
+                                Text(AnnouncementType.NOTIFICATION.displayName)
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.type == AnnouncementType.ACTIVITY.value,
+                                    onClick = { announcementViewModel.updateAnnouncementType(AnnouncementType.ACTIVITY.value) }
+                                )
+                                Text(AnnouncementType.ACTIVITY.displayName)
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.type == AnnouncementType.SYSTEM.value,
+                                    onClick = { announcementViewModel.updateAnnouncementType(AnnouncementType.SYSTEM.value) }
+                                )
+                                Text(AnnouncementType.SYSTEM.displayName)
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // 公告状态选择
+                        Text(
+                            text = "公告状态",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.status == AnnouncementStatus.DRAFT.value,
+                                    onClick = { announcementViewModel.updateAnnouncementStatus(AnnouncementStatus.DRAFT.value) }
+                                )
+                                Text(AnnouncementStatus.DRAFT.displayName)
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.status == AnnouncementStatus.PUBLISHED.value,
+                                    onClick = { announcementViewModel.updateAnnouncementStatus(AnnouncementStatus.PUBLISHED.value) }
+                                )
+                                Text(AnnouncementStatus.PUBLISHED.displayName)
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.status == AnnouncementStatus.OFFLINE.value,
+                                    onClick = { announcementViewModel.updateAnnouncementStatus(AnnouncementStatus.OFFLINE.value) }
+                                )
+                                Text(AnnouncementStatus.OFFLINE.displayName)
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // 优先级选择
+                        Text(
+                            text = "优先级",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.priority == AnnouncementPriority.NORMAL.value,
+                                    onClick = { announcementViewModel.updateAnnouncementPriority(AnnouncementPriority.NORMAL.value) }
+                                )
+                                Text(AnnouncementPriority.NORMAL.displayName)
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.priority == AnnouncementPriority.IMPORTANT.value,
+                                    onClick = { announcementViewModel.updateAnnouncementPriority(AnnouncementPriority.IMPORTANT.value) }
+                                )
+                                Text(AnnouncementPriority.IMPORTANT.displayName)
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = dialogState.priority == AnnouncementPriority.URGENT.value,
+                                    onClick = { announcementViewModel.updateAnnouncementPriority(AnnouncementPriority.URGENT.value) }
+                                )
+                                Text(AnnouncementPriority.URGENT.displayName)
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // 提示信息
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(12.dp)
+                            ) {
+                                Text(
+                                    text = "提示：",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "• 公告创建后默认为草稿状态\n• 需要手动发布才能对外显示\n• 优先级越高的公告显示越靠前",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    // 操作按钮
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
+                    ) {
+                        OutlinedButton(
+                            onClick = onDismiss
+                        ) {
+                            Text("取消")
+                        }
+                        
+                        Button(
+                            onClick = announcementViewModel::saveAnnouncement,
+                            enabled = dialogState.title.isNotBlank() && dialogState.content.isNotBlank()
+                        ) {
+                            Text(if (dialogState.isEditMode) "更新" else "添加")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
