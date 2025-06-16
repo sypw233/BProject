@@ -60,6 +60,7 @@ fun AdminScreen(
 /**
  * 紧凑型布局
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CompactAdminLayout(
     selectedTabIndex: Int,
@@ -69,7 +70,7 @@ private fun CompactAdminLayout(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TabRow(
+        SecondaryScrollableTabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = Modifier.fillMaxWidth(),
         ) {

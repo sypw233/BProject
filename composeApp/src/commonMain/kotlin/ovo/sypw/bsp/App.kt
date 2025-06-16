@@ -37,6 +37,7 @@ import ovo.sypw.bsp.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.screens.ApiTestScreen
 import ovo.sypw.bsp.presentation.screens.HomeScreen
 import ovo.sypw.bsp.presentation.screens.ProfileScreen
+import ovo.sypw.bsp.presentation.screens.PublicAnnouncementScreen
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
 import ovo.sypw.bsp.presentation.screens.admin.DepartmentManagementTab
 import ovo.sypw.bsp.presentation.screens.admin.EmployeeManagementTab
@@ -373,6 +374,13 @@ private fun MainContent(
     when (currentScreen) {
         AppScreen.HOME.route -> {
             HomeScreen(modifier = modifier)
+        }
+
+        AppScreen.ANNOUNCEMENTS.route -> {
+            PublicAnnouncementScreen(
+                modifier = modifier,
+                layoutConfig = layoutConfig
+            )
         }
 
         AppScreen.API_TEST.route ->

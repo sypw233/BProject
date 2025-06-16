@@ -5,6 +5,7 @@ import ovo.sypw.bsp.presentation.viewmodel.ApiTestViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AnnouncementViewModel
+import ovo.sypw.bsp.presentation.viewmodel.PublicAnnouncementViewModel
 import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
 import ovo.sypw.bsp.presentation.viewmodel.ClassViewModel
@@ -96,6 +97,16 @@ val viewModelModule = module {
      */
     factory {
         AnnouncementViewModel(
+            announcementUseCase = get()
+        )
+    }
+    
+    /**
+     * 提供公告显示ViewModel
+     * 专门负责公告显示界面的状态管理和业务逻辑
+     */
+    factory {
+        PublicAnnouncementViewModel(
             announcementUseCase = get()
         )
     }

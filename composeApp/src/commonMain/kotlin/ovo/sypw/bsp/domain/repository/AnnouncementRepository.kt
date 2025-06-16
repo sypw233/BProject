@@ -114,4 +114,21 @@ interface AnnouncementRepository : BaseRepository {
      * @return 下线结果
      */
     suspend fun offlineAnnouncement(id: Int): NetworkResult<Unit>
+    
+    /**
+     * 获取已发布的公告列表（无需认证）
+     * @param current 当前页码
+     * @param size 每页大小
+     * @param title 公告标题（可选，用于搜索）
+     * @param type 公告类型（可选）
+     * @param priority 优先级（可选）
+     * @return 已发布公告分页数据结果
+     */
+    suspend fun getPublishedAnnouncements(
+        current: Int = 1,
+        size: Int = 10,
+        title: String? = null,
+        type: Int? = null,
+        priority: Int? = null
+    ): NetworkResult<PageResultDto<AnnouncementDto>>
 }

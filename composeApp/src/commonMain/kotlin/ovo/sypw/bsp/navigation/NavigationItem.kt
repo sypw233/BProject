@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.Announcement
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -25,6 +26,7 @@ data class NavigationItem(
  */
 enum class AppScreen(val route: String) {
     HOME("home"),
+    ANNOUNCEMENTS("announcements"),
     PROFILE("profile"),
     API_TEST("api_test"),
     ADMIN("admin"),
@@ -43,6 +45,11 @@ fun getNavigationItems(): List<NavigationItem> {
             route = AppScreen.HOME.route,
             title = "首页",
             icon = Icons.Default.Home
+        ),
+        NavigationItem(
+            route = AppScreen.ANNOUNCEMENTS.route,
+            title = "公告",
+            icon = Icons.Default.Announcement
         ),
         NavigationItem(
             route = AppScreen.API_TEST.route,

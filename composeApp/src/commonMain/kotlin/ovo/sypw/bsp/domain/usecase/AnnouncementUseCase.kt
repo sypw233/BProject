@@ -418,4 +418,65 @@ class AnnouncementUseCase(
 
         return announcementRepository.offlineAnnouncement(id)
     }
+    
+    /**
+     * 获取已发布的公告列表（无需认证）
+     * @param current 当前页码
+     * @param size 每页大小
+     * @param title 公告标题（可选，用于搜索）
+     * @param type 公告类型（可选）
+     * @param priority 优先级（可选）
+     * @return 已发布公告分页数据结果
+     */
+    suspend fun getPublishedAnnouncements(
+        current: Int = 1,
+        size: Int = 10,
+        title: String? = null,
+        type: Int? = null,
+        priority: Int? = null
+    ): NetworkResult<PageResultDto<AnnouncementDto>> {
+        Logger.d(TAG, "获取已发布公告列表用例: current=$current, size=$size, title=$title")
+
+        // 参数验证
+        if (current < 1) {
+            Logger.w(TAG, "页码参数无效: $current")
+            return NetworkResult.Error(
+                exception = IllegalArgumentException("页码必须大于0"),
+                message = "页码参数无效"
+            )
+        }
+
+        if (size < 1 || size > 100) {
+            Logger.w(TAG, "每页大小参数无效: $size")
+            return NetworkResult.Error(
+                exception = IllegalArgumentException("每页大小必须在1-100之间"),
+                message = "每页大小参数无效"
+            )
+        }
+
+        // 验证可选参数
+        type?.let {
+            if (it < 0) {
+                Logger.w(TAG, "公告类型参数无效: $it")
+                return NetworkResult.Error(
+                    exception = IllegalArgumentException("公告类型必须大于等于0"),
+                    message = "公告类型参数无效"
+                )
+            }
+        }
+
+        priority?.let {
+            if (it < 0) {
+                Logger.w(TAG, "优先级参数无效: $it")
+                return NetworkResult.Error(
+                    exception = IllegalArgumentException("优先级必须大于等于0"),
+                    message = "优先级参数无效"
+                )
+            }
+        }
+
+        return announcementRepository.getPublishedAnnouncements(
+            current, size, title, type, priority
+        )
+    }
 }

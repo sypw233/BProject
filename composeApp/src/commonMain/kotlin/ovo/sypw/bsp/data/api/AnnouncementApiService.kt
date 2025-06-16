@@ -198,4 +198,25 @@ class AnnouncementApiService : BaseApiService() {
             token = token
         )
     }
+    
+    /**
+     * 获取已发布的公告列表（无需认证）
+     * @param current 当前页码
+     * @param size 每页大小
+     * @param title 公告标题（可选，用于搜索）
+     * @param type 公告类型（可选）
+     * @param priority 优先级（可选）
+     * @return 已发布公告列表数据
+     */
+    suspend fun getPublishedAnnouncements(
+        token: String
+    ): NetworkResult<SaResult> {
+        Logger.d(TAG, "获取已发布公告列表:")
+
+        
+        return getWithToken(
+            endpoint = "/announcements/published",
+            token = token
+        )
+    }
 }
