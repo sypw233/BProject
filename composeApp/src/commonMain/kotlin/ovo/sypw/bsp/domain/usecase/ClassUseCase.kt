@@ -27,7 +27,7 @@ class ClassUseCase(
      */
     suspend fun getClassPage(
         current: Int = 1,
-        size: Int = 5,
+        size: Int = 9,
         name: String? = null
     ): NetworkResult<PageResultDto<ClassDto>> {
 //        Logger.d(TAG, "获取班级分页列表用例: current=$current, size=$size, name=$name")

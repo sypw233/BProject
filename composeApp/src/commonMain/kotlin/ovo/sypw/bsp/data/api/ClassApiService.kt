@@ -29,7 +29,7 @@ class ClassApiService : BaseApiService() {
      */
     suspend fun getClassPage(
         current: Int = 1,
-        size: Int = 10,
+        size: Int = 9,
         name: String? = null,
         token: String
     ): NetworkResult<SaResult> {

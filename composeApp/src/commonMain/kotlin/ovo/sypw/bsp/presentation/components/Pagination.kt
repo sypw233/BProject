@@ -48,7 +48,7 @@ fun<T> PaginationComponent(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     var showPageSizeDropdown by remember { mutableStateOf(false) }
-    val pageSizeOptions = listOf(5, 10, 20, 50)
+    val pageSizeOptions = listOf(9, 18, 27, 36)
 
     Card(
         modifier = Modifier.fillMaxWidth()

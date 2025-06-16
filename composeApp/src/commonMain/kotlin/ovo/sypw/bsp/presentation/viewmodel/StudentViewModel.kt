@@ -218,7 +218,7 @@ class StudentViewModel(
      */
     fun loadStudents(
         current: Int = 1,
-        size: Int = 5,
+        size: Int = 9,
         name: String? = null
     ) {
         viewModelScope.launch {

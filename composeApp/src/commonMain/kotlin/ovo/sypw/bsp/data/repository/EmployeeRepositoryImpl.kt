@@ -368,28 +368,9 @@ class EmployeeRepositoryImpl(
         )) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "批量导出员工请求成功")
-                val saResult = result.data
-                if (saResult.isSuccess()) {
-                    // 注意：这里需要根据实际API返回格式处理文件数据
-                    // 假设API返回的是Base64编码的文件数据或直接的字节数组
-                    val fileData = saResult.parseData<ByteArray>()
-                    if (fileData != null) {
-                        Logger.i(TAG, "员工导出成功: 文件大小=${fileData.size}字节")
-                        NetworkResult.Success(fileData)
-                    } else {
-                        Logger.w(TAG, "员工导出文件解析失败")
-                        NetworkResult.Error(
-                            exception = Exception("文件解析失败"),
-                            message = "导出文件解析失败"
-                        )
-                    }
-                } else {
-                    Logger.w(TAG, "批量导出员工失败: ${saResult.msg}")
-                    NetworkResult.Error(
-                        exception = Exception(saResult.msg),
-                        message = saResult.msg
-                    )
-                }
+                val fileData = result.data
+                Logger.i(TAG, "员工导出成功: 文件大小=${fileData.size}字节")
+                NetworkResult.Success(fileData)
             }
             is NetworkResult.Error -> {
                 Logger.e(TAG, "批量导出员工网络请求失败: ${result.message}")

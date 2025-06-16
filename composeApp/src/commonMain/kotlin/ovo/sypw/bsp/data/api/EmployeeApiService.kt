@@ -37,7 +37,7 @@ class EmployeeApiService : BaseApiService() {
      */
     suspend fun getEmployeePage(
         current: Int = 1,
-        size: Int = 10,
+        size: Int = 9,
         username: String? = null,
         realName: String? = null,
         gender: Int? = null,
@@ -186,13 +186,13 @@ class EmployeeApiService : BaseApiService() {
     
     /**
      * 批量导出员工
-     * @param username 用户名（可选，用于搜索）
-     * @param realName 真实姓名（可选，用于搜索）
-     * @param gender 性别（可选，用于筛选）
-     * @param job 职位（可选，用于筛选）
-     * @param departmentId 部门ID（可选，用于筛选）
-     * @param entryDateStart 入职开始日期（可选，用于筛选）
-     * @param entryDateEnd 入职结束日期（可选，用于筛选）
+     * @param username 用户名（可选）
+     * @param realName 真实姓名（可选）
+     * @param gender 性别（可选）
+     * @param job 职位（可选）
+     * @param departmentId 部门ID（可选）
+     * @param entryDateStart 入职开始日期（可选）
+     * @param entryDateEnd 入职结束日期（可选）
      * @param token 认证令牌
      * @return 导出文件数据结果
      */
@@ -205,7 +205,7 @@ class EmployeeApiService : BaseApiService() {
         entryDateStart: String? = null,
         entryDateEnd: String? = null,
         token: String
-    ): NetworkResult<SaResult> {
+    ): NetworkResult<ByteArray> {
         Logger.d(TAG, "批量导出员工")
         
         val parameters = mutableMapOf<String, Any>()
@@ -219,7 +219,7 @@ class EmployeeApiService : BaseApiService() {
         entryDateStart?.let { parameters["entryDateStart"] = it }
         entryDateEnd?.let { parameters["entryDateEnd"] = it }
         
-        return getWithToken(
+        return getFileWithToken(
             endpoint = EMPLOYEES_EXPORT_ENDPOINT,
             token = token,
             parameters = parameters

@@ -16,7 +16,7 @@ data class PagingConfig(
     /**
      * 默认页面大小
      */
-    val pageSize: Int = 10,
+    val pageSize: Int = 9,
     
     /**
      * 初始加载大小（通常是pageSize的倍数）

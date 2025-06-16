@@ -173,5 +173,16 @@ data class EmployeeImportDto(
     /**
      * 失败详情列表
      */
-    val failures: List<String>? = null
-)
+    val failureDetails: List<String>? = null
+) {
+    /**
+     * 总导入数量
+     */
+    val totalCount: Int
+        get() = successCount + failureCount
+    
+    /**
+     * 是否全部成功
+     */
+    fun isAllSuccess(): Boolean = failureCount == 0
+}

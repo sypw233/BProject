@@ -20,6 +20,21 @@ interface FileUtils {
     suspend fun selectImage(): ByteArray?
     
     /**
+     * 选择文件
+     * @return 文件的字节数组，如果取消选择则返回null
+     */
+    suspend fun selectFile(): ByteArray?
+    
+    /**
+     * 保存文件
+     * @param data 文件数据
+     * @param fileName 文件名
+     * @param mimeType MIME类型
+     * @return 是否保存成功
+     */
+    suspend fun saveFile(data: ByteArray, fileName: String, mimeType: String): Boolean
+    
+    /**
      * 将字节数组转换为ImageBitmap
      * @param bytes 图片字节数组
      * @return ImageBitmap对象

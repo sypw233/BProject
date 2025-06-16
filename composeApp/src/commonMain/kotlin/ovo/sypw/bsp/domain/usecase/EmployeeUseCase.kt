@@ -32,7 +32,7 @@ class EmployeeUseCase(
      */
     suspend fun getEmployeePage(
         current: Int = 1,
-        size: Int = 10,
+        size: Int = 9,
         username: String? = null,
         realName: String? = null,
         gender: Int? = null,

@@ -47,7 +47,10 @@ import ovo.sypw.bsp.data.dto.EmployeeDto
 import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.presentation.components.ManagementPageState
 import ovo.sypw.bsp.presentation.components.ManagementPageActions
-import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
+import ovo.sypw.bsp.presentation.components.ExtendedManagementPageTemplate
+import ovo.sypw.bsp.presentation.components.ExtendedManagementPageActions
+import ovo.sypw.bsp.presentation.components.EmployeeImportResultDialog
+import ovo.sypw.bsp.presentation.components.EmployeeExportResultDialog
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
@@ -102,14 +105,25 @@ fun EmployeeManagementTab(
                 override fun showAddDialog() = viewModel.showAddEmployeeDialog()
             }
             
-            // 使用通用管理页面模板
-            ManagementPageTemplate(
+            // 使用扩展管理页面模板
+            ExtendedManagementPageTemplate(
                 state = pageState,
-                actions = pageActions,
+                actions = object : ExtendedManagementPageActions {
+                    override fun refresh() = viewModel.refreshEmployees()
+                    override fun loadData(current: Int, size: Int) {
+                        val currentQuery = searchQuery.takeIf { it.isNotBlank() }
+                        viewModel.loadEmployees(current, size, currentQuery)
+                    }
+                    override fun showAddDialog() = viewModel.showAddEmployeeDialog()
+                    override fun importData() = viewModel.selectAndImportEmployeeFile()
+                    override fun exportData() = viewModel.exportEmployees()
+                },
                 title = "员工列表",
                 emptyMessage = "暂无员工数据",
                 refreshText = "刷新数据",
                 addText = "添加员工",
+                importText = "导入员工",
+                exportText = "导出员工",
                 layoutConfig = layoutConfig,
                 itemContent = { employee ->
                     EmployeeCard(
@@ -125,6 +139,19 @@ fun EmployeeManagementTab(
                         employeeViewModel = viewModel,
                         dialogState = dialogState,
                         onDismiss = { viewModel.hideEmployeeDialog() }
+                    )
+                    
+                    // 导入结果对话框
+                    EmployeeImportResultDialog(
+                        importResult = employeeState.importResult,
+                        onDismiss = { viewModel.clearImportResult() }
+                    )
+                    
+                    // 导出结果对话框
+                    EmployeeExportResultDialog(
+                        hasExportData = employeeState.exportData?.isNotEmpty() ?: false,
+                        onSave = { viewModel.saveExportedEmployeeData() },
+                        onDismiss = { viewModel.clearExportData() }
                     )
                 },
                 searchAndFilterContent = {

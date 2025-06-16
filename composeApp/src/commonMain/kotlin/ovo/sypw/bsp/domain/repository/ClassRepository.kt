@@ -18,7 +18,7 @@ interface ClassRepository : BaseRepository {
      */
     suspend fun getClassPage(
         current: Int = 1,
-        size: Int = 10,
+        size: Int = 9,
         name: String? = null
     ): NetworkResult<PageResultDto<ClassDto>>
     

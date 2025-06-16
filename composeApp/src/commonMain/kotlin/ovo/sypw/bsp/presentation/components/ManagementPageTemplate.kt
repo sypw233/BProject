@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -44,8 +46,17 @@ interface ManagementPageState<T> {
  */
 interface ManagementPageActions {
     fun refresh()
-    fun loadData(current: Int = 1, size: Int = 10)
+    fun loadData(current: Int = 1, size: Int = 9)
     fun showAddDialog()
+}
+
+/**
+ * 扩展的管理页面操作接口
+ * 包含导入导出功能
+ */
+interface ExtendedManagementPageActions : ManagementPageActions {
+    fun importData()
+    fun exportData()
 }
 
 /**
@@ -175,6 +186,214 @@ fun <T> ManagementPageTemplate(
                     onClick = actions::showAddDialog,
                     modifier = Modifier.size(48.dp)
 
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = addText
+                    )
+                }
+            }
+        }
+    }
+
+    // 自动加载数据
+    LaunchedEffect(Unit) {
+        if (state.items.isEmpty() && !state.isLoading) {
+            actions.loadData()
+        }
+    }
+
+    // 对话框内容
+    dialogContent()
+}
+
+/**
+ * 扩展的管理页面模板组件
+ * 提供标准的管理页面布局和功能，包含导入导出操作
+ * @param state 页面状态
+ * @param actions 页面操作（包含导入导出）
+ * @param title 页面标题
+ * @param emptyMessage 空状态提示信息
+ * @param refreshText 刷新按钮文本
+ * @param addText 添加按钮文本
+ * @param importText 导入按钮文本
+ * @param exportText 导出按钮文本
+ * @param layoutConfig 响应式布局配置
+ * @param itemContent 列表项内容组件
+ * @param dialogContent 对话框内容组件
+ * @param searchAndFilterContent 搜索和筛选内容组件
+ */
+@Composable
+fun <T> ExtendedManagementPageTemplate(
+    state: ManagementPageState<T>,
+    actions: ExtendedManagementPageActions,
+    title: String,
+    emptyMessage: String,
+    refreshText: String = "刷新数据",
+    addText: String = "添加",
+    importText: String = "导入",
+    exportText: String = "导出",
+    layoutConfig: ResponsiveLayoutConfig,
+    itemContent: @Composable (T) -> Unit,
+    dialogContent: @Composable () -> Unit = {},
+    searchAndFilterContent: @Composable () -> Unit = {}
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            // 标题和操作按钮区域（仅在扩展型布局显示）
+            if (layoutConfig.screenSize == ResponsiveUtils.ScreenSize.EXPANDED) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+
+                // 操作按钮和搜索过滤区域
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 操作按钮区域 - 包含导入导出按钮
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(layoutConfig.horizontalSpacing)
+                    ) {
+                        Button(
+                            onClick = actions::refresh,
+                            enabled = !state.isLoading
+                        ) {
+                            Text(refreshText)
+                        }
+
+                        OutlinedButton(
+                            onClick = actions::showAddDialog
+                        ) {
+                            Text(addText)
+                        }
+                        
+                        // 导入按钮
+                        OutlinedButton(
+                            onClick = actions::importData,
+                            enabled = !state.isLoading
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Upload,
+                                contentDescription = importText,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = importText,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
+                        
+                        // 导出按钮
+                        OutlinedButton(
+                            onClick = actions::exportData,
+                            enabled = !state.isLoading
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = exportText,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = exportText,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
+                    }
+
+                    // 搜索和过滤区域
+                    Box {
+                        searchAndFilterContent()
+                    }
+                }
+            } else {
+                // 紧凑型布局：搜索过滤内容
+                searchAndFilterContent()
+            }
+
+            // 加载状态
+            LoadingIndicator(isLoading = state.isLoading)
+
+            // 错误信息显示
+            ErrorMessageCard(
+                errorMessage = state.errorMessage,
+                layoutConfig = layoutConfig
+            )
+
+            // 列表内容区域（带分页）
+            ResponsiveListLayoutWithPagination(
+                items = state.items,
+                isLoading = state.isLoading,
+                emptyMessage = emptyMessage,
+                onLoadData = { actions.loadData() },
+                pageInfo = state.pageInfo,
+                onPageChange = { page ->
+                    actions.loadData(
+                        current = page,
+                        size = state.pageInfo?.size ?: 10
+                    )
+                },
+                onPageSizeChange = { size ->
+                    actions.loadData(current = 1, size = size)
+                },
+                layoutConfig = layoutConfig,
+                modifier = Modifier.weight(1f),
+                itemContent = itemContent
+            )
+        }
+
+        // FAB按钮组 - 悬浮在右下角（紧凑型布局）
+        if (layoutConfig.screenSize != ResponsiveUtils.ScreenSize.EXPANDED) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // 导入FAB
+                FloatingActionButton(
+                    onClick = actions::importData,
+                    modifier = Modifier.size(48.dp),
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Upload,
+                        contentDescription = importText
+                    )
+                }
+                
+                // 导出FAB
+                FloatingActionButton(
+                    onClick = actions::exportData,
+                    modifier = Modifier.size(48.dp),
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Download,
+                        contentDescription = exportText
+                    )
+                }
+                
+                // 刷新FAB
+                FloatingActionButton(
+                    onClick = actions::refresh,
+                    modifier = Modifier.size(48.dp),
+                    containerColor = MaterialTheme.colorScheme.secondary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = refreshText
+                    )
+                }
+
+                // 添加FAB
+                FloatingActionButton(
+                    onClick = actions::showAddDialog,
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,

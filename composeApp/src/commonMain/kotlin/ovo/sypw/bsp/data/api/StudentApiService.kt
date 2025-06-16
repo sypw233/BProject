@@ -38,7 +38,7 @@ class StudentApiService : BaseApiService() {
      */
     suspend fun getStudentPage(
         current: Int = 1,
-        size: Int = 10,
+        size: Int = 9,
         name: String? = null,
         gender: Int? = null,
         classId: Int? = null,
