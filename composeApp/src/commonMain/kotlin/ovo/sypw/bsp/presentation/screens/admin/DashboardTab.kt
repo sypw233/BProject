@@ -78,7 +78,7 @@ fun DashboardTab(
                     }
                 }
             }
-            
+
             state.data != null -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -148,7 +148,9 @@ fun DashboardTab(
                                     data = data,
                                     modifier = Modifier.fillMaxWidth()
                                 )
+
                             }
+
                         }
                     }
                 }

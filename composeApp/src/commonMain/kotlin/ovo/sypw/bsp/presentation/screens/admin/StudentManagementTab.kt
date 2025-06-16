@@ -106,6 +106,7 @@ fun StudentManagementTab(
                 itemContent = { student ->
                     StudentCard(
                         student = student,
+                        studentClass = classes.find { it.id == student.classId }?.name.toString(),
                         onEdit = { viewModel.showEditStudentDialog(student) },
                         onDelete = { viewModel.deleteStudent(student.id) },
                         layoutConfig = layoutConfig
@@ -144,6 +145,7 @@ fun StudentManagementTab(
 @Composable
 private fun StudentCard(
     student: StudentDto,
+    studentClass: String,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     layoutConfig: ResponsiveLayoutConfig
@@ -205,16 +207,14 @@ private fun StudentCard(
                 
                 // 班级和状态信息
                 Row {
-                    student.classId.let { classId ->
-                        Text(
-                            text = "班级: $classId",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                    Text(
+                        text = "班级: $studentClass",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
                     
                     Spacer(modifier = Modifier.width(8.dp))
                     

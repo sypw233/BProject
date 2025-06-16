@@ -10,22 +10,22 @@ object NetworkConfig {
     /**
      * API基础URL
      */
-    const val BASE_URL = "https://dee8-117-30-97-20.ngrok-free.app"
+    const val BASE_URL = "https://aaba-110-87-4-101.ngrok-free.app"
     
     /**
      * 连接超时时间（毫秒）
      */
-    const val CONNECT_TIMEOUT = 30_000L
+    const val CONNECT_TIMEOUT = 20_000L
     
     /**
      * 请求超时时间（毫秒）
      */
-    const val REQUEST_TIMEOUT = 30_000L
+    const val REQUEST_TIMEOUT = 20_000L
     
     /**
      * Socket超时时间（毫秒）
      */
-    const val SOCKET_TIMEOUT = 30_000L
+    const val SOCKET_TIMEOUT = 20_000L
         
     
     /**

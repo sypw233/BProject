@@ -1,6 +1,8 @@
 package ovo.sypw.bsp.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +46,7 @@ fun CustomPieChart(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            
+
             if (data.isNotEmpty()) {
                 val pieChartData = data.mapIndexed { index, item ->
                     PieChartData(
@@ -53,7 +55,7 @@ fun CustomPieChart(
                         color = getChartColor(index)
                     )
                 }
-                
+
                 PieChart(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -97,75 +99,101 @@ fun CustomBarChart(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier.padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // 标题样式优化
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontSize = 18.sp,
+                    letterSpacing = 0.5.sp
+                ),
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 20.dp)
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = 24.dp)
             )
-            
+
             if (data.categories.isNotEmpty() && data.values.isNotEmpty()) {
                 // 计算合适的图表高度
                 val chartHeight = when {
-                    data.categories.size <= 3 -> 280.dp
-                    data.categories.size <= 6 -> 320.dp
-                    data.categories.size <= 10 -> 360.dp
-                    else -> 400.dp
+                    data.categories.size <= 3 -> 300.dp
+                    data.categories.size <= 6 -> 340.dp
+                    data.categories.size <= 10 -> 380.dp
+                    else -> 420.dp
                 }
-                
-                // 计算合适的柱子宽度
+
+                // 计算合适的柱子宽度 - 优化对齐
                 val barWidth = when {
                     data.categories.size <= 3 -> 40.dp
-                    data.categories.size <= 6 -> 30.dp
-                    data.categories.size <= 10 -> 25.dp
+                    data.categories.size <= 6 -> 32.dp
+                    data.categories.size <= 10 -> 24.dp
                     else -> 20.dp
                 }
-                
+
+                // 使用棕色系配色方案
+                val barColors = listOf(
+                    Color(0xFF8B4513), // 深棕色
+                    Color(0xFFA0522D), // 中棕色
+                    Color(0xFFCD853F), // 浅棕色
+                    Color(0xFFD2691E), // 橙棕色
+                    Color(0xFF654321), // 深咖啡色
+                    Color(0xFF8B7355)  // 灰棕色
+                )
+
                 val barParameters = listOf(
                     BarParameters(
                         dataName = title,
                         data = data.values.map { it.toDouble() },
-                        barColor = MaterialTheme.colorScheme.primary
+                        barColor = barColors[0] // 使用棕色
                     )
                 )
-                
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(chartHeight)
                 ) {
                     BarChart(
+
                         chartParameters = barParameters,
-                        gridColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                        gridColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
                         xAxisData = data.categories,
                         isShowGrid = true,
                         animateChart = true,
-                        showGridWithSpacer = true,
+                        showGridWithSpacer = false, // 关闭间距，使用默认对齐
                         yAxisStyle = TextStyle(
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
                         ),
                         xAxisStyle = TextStyle(
                             fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.W500
                         ),
                         yAxisRange = (data.values.maxOrNull() ?: 10) + 5,
                         barWidth = barWidth
                     )
                 }
+                // 使用与官方示例相同的布局方式
+
+
             } else {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(320.dp),
+                        .height(340.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                            shape = RoundedCornerShape(12.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
@@ -174,12 +202,17 @@ fun CustomBarChart(
                     ) {
                         Text(
                             text = "📊",
-                            style = MaterialTheme.typography.displayMedium
+                            style = MaterialTheme.typography.displayMedium.copy(
+                                fontSize = 48.sp
+                            )
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "暂无数据",
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontSize = 16.sp,
+                                letterSpacing = 0.5.sp
+                            ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
                         )
@@ -191,22 +224,55 @@ fun CustomBarChart(
 }
 
 /**
- * 获取图表颜色
+ * 统计项组件
+ * @param label 标签
+ * @param value 数值
+ * @param color 颜色
+ */
+@Composable
+private fun StatisticItem(
+    label: String,
+    value: String,
+    color: Color
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            color = color
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontSize = 12.sp
+            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+/**
+ * 获取图表颜色 - 优化对比度
  * @param index 索引
  * @return 颜色
  */
 private fun getChartColor(index: Int): Color {
     val colors = listOf(
-        Color(0xFF6366F1), // Indigo
-        Color(0xFF8B5CF6), // Violet
-        Color(0xFF06B6D4), // Cyan
-        Color(0xFF10B981), // Emerald
-        Color(0xFFF59E0B), // Amber
-        Color(0xFFEF4444), // Red
-        Color(0xFFEC4899), // Pink
-        Color(0xFF84CC16), // Lime
-        Color(0xFF6B7280), // Gray
-        Color(0xFF14B8A6)  // Teal
+        Color(0xFF1E40AF), // 深蓝色
+        Color(0xFFDC2626), // 深红色
+        Color(0xFF059669), // 深绿色
+        Color(0xFFD97706), // 深橙色
+        Color(0xFF7C3AED), // 深紫色
+        Color(0xFF0891B2), // 深青色
+        Color(0xFFBE185D), // 深粉色
+        Color(0xFF65A30D), // 深黄绿色
+        Color(0xFF374151), // 深灰色
+        Color(0xFF0F766E)  // 深蓝绿色
     )
     return colors[index % colors.size]
 }

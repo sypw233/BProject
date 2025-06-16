@@ -77,16 +77,14 @@ fun <T> ManagementPageTemplate(
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(layoutConfig.verticalSpacing)
         ) {
             // 标题和操作按钮区域（仅在扩展型布局显示）
             if (layoutConfig.screenSize == ResponsiveUtils.ScreenSize.EXPANDED) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(layoutConfig.contentPadding)
                 )
-                
+
                 // 操作按钮和搜索过滤区域
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -110,7 +108,7 @@ fun <T> ManagementPageTemplate(
                             Text(addText)
                         }
                     }
-                    
+
                     // 搜索和过滤区域
                     Box {
                         searchAndFilterContent()
