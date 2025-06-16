@@ -21,6 +21,8 @@ val appModule = module {
     includes(classModule)
     // 包含员工管理模块
     includes(employeeModule)
+    // 包含学生管理模块
+    includes(studentModule)
     // 包含文件上传模块
     includes(fileUploadModule)
 }
@@ -37,5 +39,6 @@ fun getAllModules() = listOf(
     departmentModule,
     classModule,
     employeeModule,
+    studentModule,
     fileUploadModule
 )

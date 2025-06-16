@@ -89,32 +89,10 @@ private fun CompactAdminLayout(
                 .fillMaxSize()
                 .padding(layoutConfig.screenPadding)
         ) {
-            when (selectedTabIndex) {
-                0 -> DepartmentManagementTab(
-                    layoutConfig = layoutConfig
-                )
-
-                1 -> EmployeeManagementTab(
-                    layoutConfig = layoutConfig
-                )
-
-                2 -> ClassManagementTab(
-                    layoutConfig = layoutConfig
-                )
-
-                3 -> ImageTestScreen(
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                4 -> FileUploadTestScreen(
-                    fileUploadUseCase = koinInject<FileUploadUseCase>(),
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                else -> DepartmentManagementTab(
-                    layoutConfig = layoutConfig
-                )
-            }
+            GetAdminTab(
+                selectedTabIndex = selectedTabIndex,
+                layoutConfig = layoutConfig
+            )
         }
     }
 }
@@ -181,11 +159,15 @@ fun GetAdminTab(
             layoutConfig = layoutConfig
         )
 
-        3 -> ImageTestScreen(
+        3 -> StudentManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        4 -> ImageTestScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        4 -> FileUploadTestScreen(
+        5 -> FileUploadTestScreen(
             fileUploadUseCase = koinInject<FileUploadUseCase>(),
             modifier = Modifier.fillMaxSize()
         )

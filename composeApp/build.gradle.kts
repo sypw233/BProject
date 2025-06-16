@@ -34,26 +34,6 @@ kotlin {
     
     jvm("desktop")
     
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "composeApp"
-        browser {
-            val rootDirPath = project.rootDir.path
-            val projectDirPath = project.projectDir.path
-            commonWebpackConfig {
-                outputFileName = "composeApp.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(rootDirPath)
-                        add(projectDirPath)
-                    }
-                }
-            }
-        }
-        binaries.executable()
-    }
-    
     sourceSets {
         val desktopMain by getting
         
@@ -107,12 +87,7 @@ kotlin {
             // iOS平台特定的Ktor客户端
             implementation(libs.ktor.client.darwin)
         }
-        
-        wasmJsMain.dependencies {
-            // Web平台特定的Ktor客户端
-            implementation(libs.ktor.client.js)
 
-        }
     }
 }
 

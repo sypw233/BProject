@@ -120,7 +120,7 @@ object FileUploadUtils {
         val digitGroups = (kotlin.math.log10(sizeInBytes.toDouble()) / kotlin.math.log10(1024.0)).toInt()
         
         val size = sizeInBytes / 1024.0.pow(digitGroups.toDouble())
-        return String.format("%.1f %s", size, units[digitGroups])
+        return size.toString()
     }
 
     

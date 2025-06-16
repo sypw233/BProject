@@ -7,6 +7,7 @@ import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
 import ovo.sypw.bsp.presentation.viewmodel.ClassViewModel
+import ovo.sypw.bsp.presentation.viewmodel.StudentViewModel
 
 /**
  * ViewModel模块依赖注入配置
@@ -73,6 +74,17 @@ val viewModelModule = module {
      */
     factory {
         ClassViewModel(
+            classUseCase = get()
+        )
+    }
+    
+    /**
+     * 提供学生管理ViewModel
+     * 专门负责学生相关的状态管理和业务逻辑
+     */
+    factory {
+        StudentViewModel(
+            studentUseCase = get(),
             classUseCase = get()
         )
     }
