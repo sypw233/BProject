@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,12 +44,18 @@ object AdminConfig {
         ),
         AdminTab(
             index = 2,
+            title = "班级管理",
+            icon = Icons.Default.School,
+            route = "admin/class"
+        ),
+        AdminTab(
+            index = 3,
             title = "图片测试",
             icon = Icons.Default.Image,
             route = "admin/imagetest"
         ),
         AdminTab(
-            index = 3,
+            index = 4,
             title = "文件上传",
             icon = Icons.Default.Upload,
             route = "admin/fileupload"

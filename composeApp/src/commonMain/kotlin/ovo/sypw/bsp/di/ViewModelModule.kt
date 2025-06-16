@@ -6,6 +6,7 @@ import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
 import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
+import ovo.sypw.bsp.presentation.viewmodel.ClassViewModel
 
 /**
  * ViewModel模块依赖注入配置
@@ -63,6 +64,16 @@ val viewModelModule = module {
             employeeUseCase = get(),
             departmentUseCase = get(),
             fileUploadUseCase = get()
+        )
+    }
+    
+    /**
+     * 提供班级管理ViewModel
+     * 专门负责班级相关的状态管理和业务逻辑
+     */
+    factory {
+        ClassViewModel(
+            classUseCase = get()
         )
     }
 }

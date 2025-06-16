@@ -40,6 +40,7 @@ import ovo.sypw.bsp.presentation.screens.ProfileScreen
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
 import ovo.sypw.bsp.presentation.screens.admin.DepartmentManagementTab
 import ovo.sypw.bsp.presentation.screens.admin.EmployeeManagementTab
+import ovo.sypw.bsp.presentation.screens.admin.GetAdminTab
 import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
@@ -452,22 +453,10 @@ private fun AdminContentLayout(
                 .fillMaxSize()
                 .padding(layoutConfig.screenPadding)
         ) {
-            when (selectedTabIndex) {
-                0 -> DepartmentManagementTab(
-                    layoutConfig = layoutConfig
-                )
-
-                1 -> EmployeeManagementTab(
-                    layoutConfig = layoutConfig
-                )
-
-                else -> {
-                    // 默认显示部门管理
-                    DepartmentManagementTab(
-                        layoutConfig = layoutConfig
-                    )
-                }
-            }
+            GetAdminTab(
+                selectedTabIndex = selectedTabIndex,
+                layoutConfig = layoutConfig
+            )
         }
     }
 }

@@ -18,12 +18,14 @@ import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
 import ovo.sypw.bsp.utils.FileUtils
 import ovo.sypw.bsp.utils.FileUploadUtils
 import ovo.sypw.bsp.utils.rememberFileUtils
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * 文件上传测试界面
  * 演示文件上传功能的使用
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun FileUploadTestScreen(
     fileUploadUseCase: FileUploadUseCase,
@@ -76,7 +78,7 @@ fun FileUploadTestScreen(
                                     try {
                                         val imageBytes = fileUtils.selectImage()
                                         if (imageBytes != null) {
-                                            val fileName = "image_${System.currentTimeMillis()}.jpg"
+                                            val fileName = "image_${Clock.System.now().toEpochMilliseconds()}.jpg"
                                             selectedFiles = selectedFiles + (fileName to imageBytes)
                                             statusMessage = "已选择图片: $fileName (${FileUploadUtils.formatFileSize(imageBytes.size.toLong())})"
                                         } else {

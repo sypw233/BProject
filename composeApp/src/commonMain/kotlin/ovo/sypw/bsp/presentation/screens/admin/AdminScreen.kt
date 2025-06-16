@@ -97,16 +97,20 @@ private fun CompactAdminLayout(
                 1 -> EmployeeManagementTab(
                     layoutConfig = layoutConfig
                 )
-                
-                2 -> ImageTestScreen(
+
+                2 -> ClassManagementTab(
+                    layoutConfig = layoutConfig
+                )
+
+                3 -> ImageTestScreen(
                     modifier = Modifier.fillMaxSize()
                 )
-                
-                3 -> FileUploadTestScreen(
+
+                4 -> FileUploadTestScreen(
                     fileUploadUseCase = koinInject<FileUploadUseCase>(),
                     modifier = Modifier.fillMaxSize()
                 )
-                
+
                 else -> DepartmentManagementTab(
                     layoutConfig = layoutConfig
                 )
@@ -151,29 +155,44 @@ private fun ExpandedAdminLayout(
                 .fillMaxHeight()
                 .padding(layoutConfig.screenPadding)
         ) {
-            when (selectedTabIndex) {
-                0 -> DepartmentManagementTab(
-                    layoutConfig = layoutConfig
-                )
-
-                1 -> EmployeeManagementTab(
-                    layoutConfig = layoutConfig
-                )
-                
-                2 -> ImageTestScreen(
-                    modifier = Modifier.fillMaxSize()
-                )
-                
-                3 -> FileUploadTestScreen(
-                    fileUploadUseCase = koinInject<FileUploadUseCase>(),
-                    modifier = Modifier.fillMaxSize()
-                )
-                
-                else -> DepartmentManagementTab(
-                    layoutConfig = layoutConfig
-                )
-            }
+            GetAdminTab(
+                selectedTabIndex = selectedTabIndex,
+                layoutConfig = layoutConfig
+            )
         }
+    }
+}
+
+@Composable
+fun GetAdminTab(
+    selectedTabIndex: Int,
+    layoutConfig: ResponsiveLayoutConfig
+) {
+    when (selectedTabIndex) {
+        0 -> DepartmentManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        1 -> EmployeeManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        2 -> ClassManagementTab(
+            layoutConfig = layoutConfig
+        )
+
+        3 -> ImageTestScreen(
+            modifier = Modifier.fillMaxSize()
+        )
+
+        4 -> FileUploadTestScreen(
+            fileUploadUseCase = koinInject<FileUploadUseCase>(),
+            modifier = Modifier.fillMaxSize()
+        )
+
+        else -> DepartmentManagementTab(
+            layoutConfig = layoutConfig
+        )
     }
 }
 
