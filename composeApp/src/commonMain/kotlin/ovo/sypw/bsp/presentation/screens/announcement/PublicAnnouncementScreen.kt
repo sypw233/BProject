@@ -36,7 +36,8 @@ import ovo.sypw.bsp.utils.ResponsiveUtils
 @Composable
 fun PublicAnnouncementScreen(
     modifier: Modifier = Modifier,
-    layoutConfig: ResponsiveLayoutConfig
+    layoutConfig: ResponsiveLayoutConfig,
+    onAnnouncementClick: (AnnouncementDto) -> Unit = {}
 ) {
     val viewModel: PublicAnnouncementViewModel = koinInject()
     val announcementState by viewModel.announcementState.collectAsState()
@@ -114,7 +115,8 @@ fun PublicAnnouncementScreen(
                         announcements = announcementState.announcements,
                         isRefreshing = announcementState.isRefreshing,
                         onRefresh = { viewModel.refreshAnnouncements() },
-                        layoutConfig = layoutConfig
+                        layoutConfig = layoutConfig,
+                        onAnnouncementClick = onAnnouncementClick
                     )
                 }
             }
@@ -405,7 +407,8 @@ fun PublicAnnouncementList(
     announcements: List<AnnouncementDto>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    layoutConfig: ResponsiveLayoutConfig
+    layoutConfig: ResponsiveLayoutConfig,
+    onAnnouncementClick: (AnnouncementDto) -> Unit = {}
 ) {
     // 根据屏幕尺寸确定网格列数
     val columns = when (layoutConfig.screenSize) {
@@ -451,7 +454,8 @@ fun PublicAnnouncementList(
             ) { announcement ->
                 PublicAnnouncementCard(
                     announcement = announcement,
-                    layoutConfig = layoutConfig
+                    layoutConfig = layoutConfig,
+                    onClick = { onAnnouncementClick(announcement) }
                 )
             }
         }
@@ -485,7 +489,8 @@ fun PublicAnnouncementList(
 @Composable
 fun PublicAnnouncementCard(
     announcement: AnnouncementDto,
-    layoutConfig: ResponsiveLayoutConfig
+    layoutConfig: ResponsiveLayoutConfig,
+    onClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
@@ -494,7 +499,8 @@ fun PublicAnnouncementCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
-        )
+        ),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier
