@@ -2,13 +2,12 @@ package ovo.sypw.bsp.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.serialization.json.Json
 import ovo.sypw.bsp.data.api.FileUploadApiService
 import ovo.sypw.bsp.data.dto.FileUploadResponse
-import ovo.sypw.bsp.data.dto.isSuccess
-import ovo.sypw.bsp.data.dto.parseData
+import ovo.sypw.bsp.data.dto.result.isSuccess
+import ovo.sypw.bsp.data.dto.result.parseData
 import ovo.sypw.bsp.data.storage.TokenStorage
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.FileUploadRepository
 import ovo.sypw.bsp.utils.Logger
 

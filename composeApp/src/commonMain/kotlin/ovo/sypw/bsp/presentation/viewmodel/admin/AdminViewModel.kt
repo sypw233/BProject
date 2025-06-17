@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.viewmodel
+package ovo.sypw.bsp.presentation.viewmodel.admin
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

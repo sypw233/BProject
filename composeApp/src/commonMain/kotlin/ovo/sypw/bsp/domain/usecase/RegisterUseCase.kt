@@ -1,7 +1,7 @@
 package ovo.sypw.bsp.domain.usecase
 
 import ovo.sypw.bsp.data.dto.LoginResponse
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.AuthRepository
 
 /**

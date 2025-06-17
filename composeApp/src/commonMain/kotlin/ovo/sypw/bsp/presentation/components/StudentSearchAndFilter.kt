@@ -7,7 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ovo.sypw.bsp.data.dto.ClassDto
-import ovo.sypw.bsp.presentation.viewmodel.StudentFilterState
+import ovo.sypw.bsp.presentation.viewmodel.admin.StudentFilterState
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 

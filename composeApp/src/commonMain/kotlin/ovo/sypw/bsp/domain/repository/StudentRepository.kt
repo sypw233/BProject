@@ -1,7 +1,7 @@
 package ovo.sypw.bsp.domain.repository
 
 import ovo.sypw.bsp.data.dto.*
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 
 /**
  * 学生管理仓库接口

@@ -2,7 +2,7 @@ package ovo.sypw.bsp.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import ovo.sypw.bsp.data.dto.FileUploadResponse
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 
 /**
  * 文件上传仓库接口

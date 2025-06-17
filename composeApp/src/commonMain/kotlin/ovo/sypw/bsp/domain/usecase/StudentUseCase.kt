@@ -3,7 +3,7 @@ package ovo.sypw.bsp.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ovo.sypw.bsp.data.dto.*
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.StudentRepository
 import ovo.sypw.bsp.utils.Logger
 

@@ -3,7 +3,9 @@ package ovo.sypw.bsp.data.repository
 import ovo.sypw.bsp.data.api.ClassApiService
 import ovo.sypw.bsp.data.dto.*
 import ovo.sypw.bsp.data.storage.TokenStorage
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
+import ovo.sypw.bsp.data.dto.result.isSuccess
+import ovo.sypw.bsp.data.dto.result.parseData
 import ovo.sypw.bsp.domain.repository.ClassRepository
 import ovo.sypw.bsp.utils.Logger
 

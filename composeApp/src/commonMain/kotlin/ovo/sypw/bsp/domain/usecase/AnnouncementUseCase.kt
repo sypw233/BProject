@@ -4,7 +4,7 @@ import ovo.sypw.bsp.data.dto.AnnouncementCreateDto
 import ovo.sypw.bsp.data.dto.AnnouncementDto
 import ovo.sypw.bsp.data.dto.AnnouncementUpdateDto
 import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.AnnouncementRepository
 import ovo.sypw.bsp.utils.Logger
 

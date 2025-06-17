@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.ui.Modifier
+import ovo.sypw.bsp.utils.file.FileUtils
+import ovo.sypw.bsp.utils.file.createFileUtils
 
 /**
  * Android 平台的 Koin 应用初始化
@@ -33,6 +35,9 @@ actual fun PlatformKoinApplication(content: @Composable () -> Unit) {
             modules(getAllModules())
             modules(module {
                 single<Context> { context }
+                single<FileUtils> {
+                    createFileUtils(get<Context>())
+                }
             })
         }
     ) {

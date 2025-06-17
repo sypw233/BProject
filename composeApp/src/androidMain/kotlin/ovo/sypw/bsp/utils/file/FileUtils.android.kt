@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.utils
+package ovo.sypw.bsp.utils.file
 
 import android.content.Context
 import android.net.Uri
@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import android.graphics.BitmapFactory
-import ovo.sypw.bsp.utils.file.FileUtils
 
 /**
  * Android平台的FileUtils实现
@@ -57,7 +56,19 @@ class AndroidFileUtils(private val context: Context) : FileUtils {
             }
         }
     }
-    
+
+    override suspend fun selectFile(): ByteArray? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveFile(
+        data: ByteArray,
+        fileName: String,
+        mimeType: String
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
     /**
      * 将字节数组转换为ImageBitmap
      * Android平台使用BitmapFactory进行图片解码

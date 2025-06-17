@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.koin.compose.viewmodel.koinViewModel
-import ovo.sypw.bsp.domain.model.NetworkResult
-import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
+import ovo.sypw.bsp.data.dto.result.NetworkResult
+import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
 
 /**
  * 登录界面

@@ -1,6 +1,5 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,18 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import coil3.compose.AsyncImage
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,8 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,12 +43,11 @@ import ovo.sypw.bsp.presentation.components.ExtendedManagementPageTemplate
 import ovo.sypw.bsp.presentation.components.ExtendedManagementPageActions
 import ovo.sypw.bsp.presentation.components.EmployeeImportResultDialog
 import ovo.sypw.bsp.presentation.components.EmployeeExportResultDialog
-import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 import ovo.sypw.bsp.presentation.components.EmployeeSearchAndFilter
-import ovo.sypw.bsp.presentation.screens.admin.EmployeeDialog
 
 /**
  * 员工管理页面

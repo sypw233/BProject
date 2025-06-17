@@ -1,7 +1,8 @@
 package ovo.sypw.bsp.data.api
 
 import ovo.sypw.bsp.data.dto.*
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
+import ovo.sypw.bsp.data.dto.result.SaResult
 
 /**
  * 认证相关的API服务

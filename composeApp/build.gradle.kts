@@ -71,6 +71,8 @@ kotlin {
             // 图片加载库
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+            // 富文本编辑器
+            implementation(libs.richeditor.compose)
 
             implementation("io.github.thechance101:chart:1.1.0")
 

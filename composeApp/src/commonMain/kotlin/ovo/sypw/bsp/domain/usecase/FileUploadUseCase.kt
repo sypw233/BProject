@@ -2,7 +2,7 @@ package ovo.sypw.bsp.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import ovo.sypw.bsp.data.dto.FileUploadResponse
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.FileUploadRepository
 import ovo.sypw.bsp.utils.Logger
 

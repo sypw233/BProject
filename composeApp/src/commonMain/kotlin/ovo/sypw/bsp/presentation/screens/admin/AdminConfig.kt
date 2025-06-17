@@ -69,18 +69,18 @@ object AdminConfig {
             icon = Icons.Default.Campaign,
             route = "admin/announcement"
         ),
-        AdminTab(
-            index = 6,
-            title = "图片测试",
-            icon = Icons.Default.Image,
-            route = "admin/imagetest"
-        ),
-        AdminTab(
-            index = 7,
-            title = "文件上传",
-            icon = Icons.Default.Upload,
-            route = "admin/fileupload"
-        )
+//        AdminTab(
+//            index = 6,
+//            title = "图片测试",
+//            icon = Icons.Default.Image,
+//            route = "admin/imagetest"
+//        ),
+//        AdminTab(
+//            index = 7,
+//            title = "文件上传",
+//            icon = Icons.Default.Upload,
+//            route = "admin/fileupload"
+//        )
     )
     
     /**

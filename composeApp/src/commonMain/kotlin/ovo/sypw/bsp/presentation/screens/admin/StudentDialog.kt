@@ -1,35 +1,20 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PhotoCamera
-import coil3.compose.AsyncImage
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import ovo.sypw.bsp.presentation.viewmodel.StudentDialogState
-import ovo.sypw.bsp.presentation.viewmodel.StudentViewModel
-import ovo.sypw.bsp.utils.createFileUtils
+import ovo.sypw.bsp.presentation.viewmodel.admin.StudentDialogState
+import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
 
 /**
  * 学生添加/编辑Dialog组件

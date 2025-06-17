@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ovo.sypw.bsp.data.dto.DepartmentDto
 import ovo.sypw.bsp.data.dto.Options.jobOptions
-import ovo.sypw.bsp.presentation.viewmodel.EmployeeFilterState
+import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeFilterState
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 

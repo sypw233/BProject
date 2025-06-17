@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.data.paging.PagingLoadState
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 
 /**
  * 分页配置

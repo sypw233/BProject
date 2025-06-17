@@ -1,7 +1,7 @@
 package ovo.sypw.bsp.domain.repository
 
 
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import kotlinx.coroutines.flow.Flow
 
 /**

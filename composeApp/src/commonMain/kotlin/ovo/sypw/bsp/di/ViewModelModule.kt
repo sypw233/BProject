@@ -2,14 +2,14 @@ package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
 import ovo.sypw.bsp.presentation.viewmodel.ApiTestViewModel
-import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
-import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
-import ovo.sypw.bsp.presentation.viewmodel.AnnouncementViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.AdminViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementViewModel
 import ovo.sypw.bsp.presentation.viewmodel.PublicAnnouncementViewModel
-import ovo.sypw.bsp.presentation.viewmodel.DepartmentViewModel
-import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
-import ovo.sypw.bsp.presentation.viewmodel.ClassViewModel
-import ovo.sypw.bsp.presentation.viewmodel.StudentViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.ClassViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
 
 /**
  * ViewModel模块依赖注入配置
@@ -66,7 +66,8 @@ val viewModelModule = module {
         EmployeeViewModel(
             employeeUseCase = get(),
             departmentUseCase = get(),
-            fileUploadUseCase = get()
+            fileUploadUseCase = get(),
+            fileUtils = get()
         )
     }
     
@@ -87,7 +88,8 @@ val viewModelModule = module {
     factory {
         StudentViewModel(
             studentUseCase = get(),
-            classUseCase = get()
+            classUseCase = get(),
+            fileUtils = get()
         )
     }
     

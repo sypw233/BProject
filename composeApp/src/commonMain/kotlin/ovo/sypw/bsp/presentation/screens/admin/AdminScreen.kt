@@ -1,22 +1,18 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.rememberNavigationManager
-import ovo.sypw.bsp.presentation.viewmodel.AdminViewModel
-import ovo.sypw.bsp.presentation.ui.ImageTestScreen
-import ovo.sypw.bsp.presentation.ui.FileUploadTestScreen
+import ovo.sypw.bsp.presentation.viewmodel.admin.AdminViewModel
+import ovo.sypw.bsp.presentation.screens.test.ImageTestScreen
+import ovo.sypw.bsp.presentation.screens.test.FileUploadTestScreen
 import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
-import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
-import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
 
 /**
  * 后台管理主界面
@@ -172,14 +168,14 @@ fun GetAdminTab(
             layoutConfig = layoutConfig
         )
 
-        6 -> ImageTestScreen(
-            modifier = Modifier.fillMaxSize()
-        )
-
-        7 -> FileUploadTestScreen(
-            fileUploadUseCase = koinInject<FileUploadUseCase>(),
-            modifier = Modifier.fillMaxSize()
-        )
+//        6 -> ImageTestScreen(
+//            modifier = Modifier.fillMaxSize()
+//        )
+//
+//        7 -> FileUploadTestScreen(
+//            fileUploadUseCase = koinInject<FileUploadUseCase>(),
+//            modifier = Modifier.fillMaxSize()
+//        )
 
         else -> DashboardTab(
             modifier = Modifier.fillMaxSize()

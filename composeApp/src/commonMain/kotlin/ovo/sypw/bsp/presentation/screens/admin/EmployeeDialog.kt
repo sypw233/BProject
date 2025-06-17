@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,9 +28,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import ovo.sypw.bsp.presentation.viewmodel.EmployeeDialogState
-import ovo.sypw.bsp.presentation.viewmodel.EmployeeViewModel
-import ovo.sypw.bsp.utils.createFileUtils
+import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeDialogState
+import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
+import ovo.sypw.bsp.utils.file.createFileUtils
 
 /**
  * 员工添加/编辑Dialog组件

@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.viewmodel
+package ovo.sypw.bsp.presentation.viewmodel.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,7 @@ import ovo.sypw.bsp.data.dto.AnnouncementStatus
 import ovo.sypw.bsp.data.dto.AnnouncementPriority
 import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.paging.PagingData
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.usecase.AnnouncementUseCase
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager

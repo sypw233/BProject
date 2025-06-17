@@ -5,7 +5,7 @@ import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.data.api.DeleteResult
 import ovo.sypw.bsp.domain.repository.BaseRepository
 import ovo.sypw.bsp.domain.repository.ExampleRepository
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import kotlinx.coroutines.flow.Flow
 
 /**

@@ -1,9 +1,10 @@
-package ovo.sypw.bsp.utils
+package ovo.sypw.bsp.utils.file
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.skia.Image
-import ovo.sypw.bsp.utils.file.FileUtils
 import javax.swing.JFileChooser
 import javax.swing.SwingUtilities
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -23,7 +24,7 @@ class DesktopFileUtils : FileUtils {
      * @return 选择的图片文件字节数组，取消选择时返回null
      */
     override suspend fun selectImage(): ByteArray? {
-        return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
                 val resultRef = AtomicReference<ByteArray?>()
                 val exceptionRef = AtomicReference<Exception?>()
@@ -81,7 +82,7 @@ class DesktopFileUtils : FileUtils {
      * @return 选择的文件字节数组，取消选择时返回null
      */
     override suspend fun selectFile(): ByteArray? {
-        return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
                 val resultRef = AtomicReference<ByteArray?>()
                 val exceptionRef = AtomicReference<Exception?>()
@@ -129,7 +130,7 @@ class DesktopFileUtils : FileUtils {
      * @return 是否保存成功
      */
     override suspend fun saveFile(data: ByteArray, fileName: String, mimeType: String): Boolean {
-        return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             try {
                 val resultRef = AtomicReference<Boolean>(false)
                 val exceptionRef = AtomicReference<Exception?>()

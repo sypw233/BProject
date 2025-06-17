@@ -27,6 +27,7 @@ data class NavigationItem(
 enum class AppScreen(val route: String) {
     HOME("home"),
     ANNOUNCEMENTS("announcements"),
+    ANNOUNCEMENT_DETAIL("announcement_detail"),
     PROFILE("profile"),
     API_TEST("api_test"),
     ADMIN("admin"),
@@ -51,11 +52,11 @@ fun getNavigationItems(): List<NavigationItem> {
             title = "公告",
             icon = Icons.Default.Announcement
         ),
-        NavigationItem(
-            route = AppScreen.API_TEST.route,
-            title = "API测试",
-            icon = Icons.Default.Api
-        ),
+//        NavigationItem(
+//            route = AppScreen.API_TEST.route,
+//            title = "API测试",
+//            icon = Icons.Default.Api
+//        ),
         NavigationItem(
             route = AppScreen.ADMIN.route,
             title = "后台管理",

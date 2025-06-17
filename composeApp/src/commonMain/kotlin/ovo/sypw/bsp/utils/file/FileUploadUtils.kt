@@ -1,5 +1,7 @@
-package ovo.sypw.bsp.utils
+package ovo.sypw.bsp.utils.file
 
+import kotlinx.datetime.Clock
+import kotlin.math.log10
 import kotlin.math.pow
 /**
  * 文件上传工具类
@@ -117,7 +119,7 @@ object FileUploadUtils {
         if (sizeInBytes <= 0) return "0 B"
         
         val units = arrayOf("B", "KB", "MB", "GB", "TB")
-        val digitGroups = (kotlin.math.log10(sizeInBytes.toDouble()) / kotlin.math.log10(1024.0)).toInt()
+        val digitGroups = (log10(sizeInBytes.toDouble()) / log10(1024.0)).toInt()
         
         val size = sizeInBytes / 1024.0.pow(digitGroups.toDouble())
         return size.toString()
@@ -139,7 +141,7 @@ object FileUploadUtils {
         
         // 确保文件名不为空
         if (cleanName.isEmpty()) {
-            cleanName = "file_${kotlinx.datetime.Clock.System.now().toEpochMilliseconds()}"
+            cleanName = "file_${Clock.System.now().toEpochMilliseconds()}"
         }
         
         // 限制文件名长度

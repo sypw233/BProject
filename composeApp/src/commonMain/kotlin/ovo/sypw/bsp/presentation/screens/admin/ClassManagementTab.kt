@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,9 +27,8 @@ import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.presentation.components.ManagementPageState
 import ovo.sypw.bsp.presentation.components.ManagementPageActions
 import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
-import ovo.sypw.bsp.presentation.viewmodel.ClassViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.ClassViewModel
 import org.koin.compose.koinInject
-import ovo.sypw.bsp.presentation.components.SearchAndFilterTemplate
 import ovo.sypw.bsp.presentation.components.SearchBar
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 

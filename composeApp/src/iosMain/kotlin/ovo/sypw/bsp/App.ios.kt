@@ -12,6 +12,11 @@ actual fun PlatformKoinApplication(content: @Composable () -> Unit) {
     KoinApplication(
         application = {
             modules(getAllModules())
+            modules(org.koin.dsl.module {
+                single<ovo.sypw.bsp.utils.file.FileUtils> { 
+                    ovo.sypw.bsp.utils.file.createFileUtils() 
+                }
+            })
         }
     ) {
         content()

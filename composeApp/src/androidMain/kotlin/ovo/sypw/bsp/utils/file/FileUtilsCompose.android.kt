@@ -1,9 +1,8 @@
-package ovo.sypw.bsp.utils
+package ovo.sypw.bsp.utils.file
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import ovo.sypw.bsp.utils.file.FileUtils
 
 /**
  * Android平台的Compose集成实现

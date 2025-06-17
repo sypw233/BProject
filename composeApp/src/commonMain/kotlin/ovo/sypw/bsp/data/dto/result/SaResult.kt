@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.data.dto
+package ovo.sypw.bsp.data.dto.result
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement

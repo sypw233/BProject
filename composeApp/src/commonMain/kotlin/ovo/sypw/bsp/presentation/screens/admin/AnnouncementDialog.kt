@@ -2,7 +2,6 @@ package ovo.sypw.bsp.presentation.screens.admin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -11,12 +10,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import ovo.sypw.bsp.presentation.viewmodel.AnnouncementDialogState
-import ovo.sypw.bsp.presentation.viewmodel.AnnouncementViewModel
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
+import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
+import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementDialogState
+import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementViewModel
 import ovo.sypw.bsp.data.dto.AnnouncementPriority
 import ovo.sypw.bsp.data.dto.AnnouncementType
 import ovo.sypw.bsp.data.dto.AnnouncementStatus
@@ -112,16 +113,41 @@ fun AnnouncementDialog(
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        // 公告内容输入
-                        OutlinedTextField(
-                            value = dialogState.content,
-                            onValueChange = announcementViewModel::updateAnnouncementContent,
-                            label = { Text("公告内容") },
+                        // 公告内容富文本编辑器
+                        val richTextState = rememberRichTextState()
+                        
+                        // 同步富文本状态与对话框状态
+                        LaunchedEffect(dialogState.content) {
+                            if (richTextState.annotatedString.text != dialogState.content) {
+                                richTextState.setHtml(dialogState.content)
+                            }
+                        }
+                        
+                        LaunchedEffect(richTextState.annotatedString) {
+                            val htmlContent = richTextState.toHtml()
+                            if (htmlContent != dialogState.content) {
+                                announcementViewModel.updateAnnouncementContent(htmlContent)
+                            }
+                        }
+                        
+                        Text(
+                            text = "公告内容",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        RichTextEditor(
+                            state = richTextState,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp),
                             placeholder = { Text("请输入公告内容") },
-                            maxLines = 10
+                            colors = RichTextEditorDefaults.richTextEditorColors(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
+                            )
                         )
                         
                         Spacer(modifier = Modifier.height(16.dp))

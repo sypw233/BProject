@@ -7,7 +7,7 @@ import ovo.sypw.bsp.data.model.StatisticsData
 import ovo.sypw.bsp.data.model.PieChartItem
 import ovo.sypw.bsp.data.model.BarChartData
 import ovo.sypw.bsp.data.storage.TokenStorage
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.StatisticsRepository
 import ovo.sypw.bsp.utils.Logger
 

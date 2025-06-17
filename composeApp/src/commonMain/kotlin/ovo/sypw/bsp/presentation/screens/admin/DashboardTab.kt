@@ -5,9 +5,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
 import ovo.sypw.bsp.presentation.components.CustomBarChart
 import ovo.sypw.bsp.presentation.components.CustomPieChart
-import ovo.sypw.bsp.presentation.viewmodel.StatisticsViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.StatisticsViewModel
 
 /**
  * 仪表板标签页

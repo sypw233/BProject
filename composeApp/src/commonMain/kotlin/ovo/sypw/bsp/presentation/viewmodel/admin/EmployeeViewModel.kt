@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.viewmodel
+package ovo.sypw.bsp.presentation.viewmodel.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +12,7 @@ import ovo.sypw.bsp.data.dto.EmployeeUpdateDto
 import ovo.sypw.bsp.data.dto.EmployeeImportDto
 import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.paging.PagingData
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.usecase.EmployeeUseCase
 import ovo.sypw.bsp.domain.usecase.DepartmentUseCase
 import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
@@ -20,10 +20,9 @@ import ovo.sypw.bsp.data.dto.DepartmentDto
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager
 import ovo.sypw.bsp.utils.PagingUtils
-import ovo.sypw.bsp.utils.FileUtils
-import ovo.sypw.bsp.utils.createFileUtils
+import ovo.sypw.bsp.utils.file.FileUtils
+
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -34,11 +33,9 @@ import kotlin.time.ExperimentalTime
 class EmployeeViewModel(
     private val employeeUseCase: EmployeeUseCase,
     private val departmentUseCase: DepartmentUseCase,
-    private val fileUploadUseCase: FileUploadUseCase
+    private val fileUploadUseCase: FileUploadUseCase,
+    private val fileUtils: FileUtils
 ) : ViewModel() {
-
-    // 文件工具类实例
-    private val fileUtils: FileUtils = createFileUtils()
 
     companion object {
         private const val TAG = "EmployeeViewModel"

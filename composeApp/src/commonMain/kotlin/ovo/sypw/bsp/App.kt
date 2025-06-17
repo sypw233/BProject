@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import ovo.sypw.bsp.navigation.AppScreen
 import ovo.sypw.bsp.navigation.BottomNavigationBar
@@ -34,19 +33,18 @@ import ovo.sypw.bsp.navigation.NavigationManager
 import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.getNavigationItems
 import ovo.sypw.bsp.navigation.rememberNavigationManager
-import ovo.sypw.bsp.presentation.screens.ApiTestScreen
+import ovo.sypw.bsp.presentation.screens.announcement.AnnouncementDetailScreen
+import ovo.sypw.bsp.presentation.screens.test.ApiTestScreen
 import ovo.sypw.bsp.presentation.screens.HomeScreen
 import ovo.sypw.bsp.presentation.screens.ProfileScreen
-import ovo.sypw.bsp.presentation.screens.PublicAnnouncementScreen
+import ovo.sypw.bsp.presentation.screens.announcement.PublicAnnouncementScreen
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
-import ovo.sypw.bsp.presentation.screens.admin.DepartmentManagementTab
-import ovo.sypw.bsp.presentation.screens.admin.EmployeeManagementTab
 import ovo.sypw.bsp.presentation.screens.admin.GetAdminTab
 import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
 
-import ovo.sypw.bsp.presentation.viewmodel.AuthViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
@@ -379,12 +377,33 @@ private fun MainContent(
         AppScreen.ANNOUNCEMENTS.route -> {
             PublicAnnouncementScreen(
                 modifier = modifier,
-                layoutConfig = layoutConfig
+                layoutConfig = layoutConfig,
+                onAnnouncementClick = { announcement ->
+                    navigationManager.navigateToAnnouncementDetail(announcement.id as Long)
+                }
             )
         }
+        
+        AppScreen.ANNOUNCEMENT_DETAIL.route -> {
+            val selectedAnnouncementId = navigationManager.selectedAnnouncementId.value
+            if (selectedAnnouncementId != null) {
+                AnnouncementDetailScreen(
+                    announcementId = selectedAnnouncementId,
+                    onBackClick = {
+                        navigationManager.navigateBackFromAnnouncementDetail()
+                    },
+                    modifier = modifier
+                )
+            } else {
+                // 如果没有选中的公告ID，返回公告列表
+                LaunchedEffect(Unit) {
+                    navigationManager.navigateTo(AppScreen.ANNOUNCEMENTS.route)
+                }
+            }
+        }
 
-        AppScreen.API_TEST.route ->
-            ApiTestScreen(modifier = modifier)
+//        AppScreen.API_TEST.route ->
+//            ApiTestScreen(modifier = modifier)
 
         AppScreen.ADMIN.route -> {
             AdminScreen(

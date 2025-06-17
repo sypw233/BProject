@@ -6,7 +6,7 @@ import ovo.sypw.bsp.data.api.StatisticsApiService
 import ovo.sypw.bsp.data.repository.StatisticsRepositoryImpl
 import ovo.sypw.bsp.domain.repository.StatisticsRepository
 import ovo.sypw.bsp.domain.usecase.StatisticsUseCase
-import ovo.sypw.bsp.presentation.viewmodel.StatisticsViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.StatisticsViewModel
 
 /**
  * 统计模块依赖注入配置

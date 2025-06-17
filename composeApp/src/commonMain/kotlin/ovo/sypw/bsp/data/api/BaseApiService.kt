@@ -5,10 +5,8 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import ovo.sypw.bsp.data.dto.SaResult
-import ovo.sypw.bsp.domain.model.NetworkResult
-import ovo.sypw.bsp.data.api.NetworkConfig
-import ovo.sypw.bsp.data.api.HttpClientConfig
+import ovo.sypw.bsp.data.dto.result.SaResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.utils.Logger
 
 /**

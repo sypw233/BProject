@@ -28,9 +28,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import ovo.sypw.bsp.presentation.viewmodel.ClassViewModel
-import ovo.sypw.bsp.presentation.viewmodel.ClassDialogState
-import org.koin.compose.koinInject
+import ovo.sypw.bsp.presentation.viewmodel.admin.ClassViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.ClassDialogState
 
 /**
  * 班级添加/编辑Dialog

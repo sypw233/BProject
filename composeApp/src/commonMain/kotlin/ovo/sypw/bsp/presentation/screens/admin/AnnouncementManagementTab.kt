@@ -1,6 +1,5 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -19,11 +18,10 @@ import ovo.sypw.bsp.presentation.components.*
 import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
 import ovo.sypw.bsp.presentation.components.ManagementPageState
 import ovo.sypw.bsp.presentation.components.ManagementPageActions
-import ovo.sypw.bsp.presentation.viewmodel.AnnouncementViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementViewModel
 import ovo.sypw.bsp.data.dto.AnnouncementStatus
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
-import ovo.sypw.bsp.utils.ResponsiveUtils
 
 /**
  * 公告管理页面

@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.viewmodel
+package ovo.sypw.bsp.presentation.viewmodel.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,30 +13,24 @@ import ovo.sypw.bsp.data.dto.StudentImportDto
 import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.dto.ClassDto
 import ovo.sypw.bsp.data.paging.PagingData
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.usecase.StudentUseCase
 import ovo.sypw.bsp.domain.usecase.ClassUseCase
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager
 import ovo.sypw.bsp.utils.PagingUtils
-import ovo.sypw.bsp.utils.FileUtils
-import ovo.sypw.bsp.utils.createFileUtils
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
+import ovo.sypw.bsp.utils.file.FileUtils
+
 
 /**
  * 学生管理ViewModel
- * 专门负责学生相关的状态管理和业务逻辑
+ * 负责处理学生相关的业务逻辑，包括CRUD操作、文件导入导出等
  */
 class StudentViewModel(
     private val studentUseCase: StudentUseCase,
-    private val classUseCase: ClassUseCase
+    private val classUseCase: ClassUseCase,
+    private val fileUtils: FileUtils
 ) : ViewModel() {
-    
-    // 文件工具类实例
-    private val fileUtils: FileUtils = createFileUtils()
     
     companion object {
         private const val TAG = "StudentViewModel"

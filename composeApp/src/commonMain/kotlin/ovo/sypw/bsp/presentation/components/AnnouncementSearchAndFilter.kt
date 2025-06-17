@@ -5,7 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ovo.sypw.bsp.presentation.viewmodel.AnnouncementFilterState
+import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementFilterState
 import ovo.sypw.bsp.data.dto.AnnouncementStatus
 import ovo.sypw.bsp.data.dto.AnnouncementType
 import ovo.sypw.bsp.data.dto.AnnouncementPriority

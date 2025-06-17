@@ -1,7 +1,7 @@
 package ovo.sypw.bsp.data.api
 
-import ovo.sypw.bsp.data.dto.SaResult
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.SaResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.utils.Logger
 
 /**

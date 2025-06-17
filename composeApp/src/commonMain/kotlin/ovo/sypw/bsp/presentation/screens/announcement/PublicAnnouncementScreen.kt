@@ -1,18 +1,56 @@
-package ovo.sypw.bsp.presentation.screens
+package ovo.sypw.bsp.presentation.screens.announcement
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.automirrored.filled.Announcement
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.ClearAll
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.FilterListOff
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,8 +59,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.data.dto.AnnouncementDto
-import ovo.sypw.bsp.data.dto.AnnouncementType
 import ovo.sypw.bsp.data.dto.AnnouncementPriority
+import ovo.sypw.bsp.data.dto.AnnouncementType
 import ovo.sypw.bsp.presentation.viewmodel.PublicAnnouncementFilterState
 import ovo.sypw.bsp.presentation.viewmodel.PublicAnnouncementViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
@@ -200,7 +238,7 @@ fun PublicAnnouncementSearchAndFilter(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Divider()
+                    HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
 
                     // 筛选选项
                     if (layoutConfig.screenSize == ResponsiveUtils.ScreenSize.COMPACT) {
@@ -322,7 +360,7 @@ fun PublicAnnouncementTypeFilter(
                     }
                 )
 
-                AnnouncementType.values().forEach { type ->
+                AnnouncementType.entries.forEach { type ->
                     DropdownMenuItem(
                         text = { Text(type.displayName) },
                         onClick = {
@@ -385,7 +423,7 @@ fun PublicAnnouncementPriorityFilter(
                     }
                 )
 
-                AnnouncementPriority.values().forEach { priority ->
+                AnnouncementPriority.entries.forEach { priority ->
                     DropdownMenuItem(
                         text = { Text(priority.displayName) },
                         onClick = {
@@ -723,7 +761,7 @@ fun PublicAnnouncementEmptyState(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.Announcement,
+                imageVector = Icons.AutoMirrored.Filled.Announcement,
                 contentDescription = null,
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant

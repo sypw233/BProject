@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.viewmodel
+package ovo.sypw.bsp.presentation.viewmodel.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import ovo.sypw.bsp.data.dto.LoginResponse
 import ovo.sypw.bsp.data.dto.UserInfo
 import ovo.sypw.bsp.data.storage.TokenStorage
-import ovo.sypw.bsp.domain.model.NetworkResult
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.usecase.*
 import ovo.sypw.bsp.utils.Logger
 
