@@ -14,8 +14,8 @@ class NavigationManager {
     val currentScreen: State<String> = _currentScreen
 
     // 存储当前选中的公告ID
-    private val _selectedAnnouncementId = mutableStateOf<Long?>(null)
-    val selectedAnnouncementId: State<Long?> = _selectedAnnouncementId
+    private val _selectedAnnouncementId = mutableStateOf<Int?>(null)
+    val selectedAnnouncementId: State<Int?> = _selectedAnnouncementId
 
     /**
      * 导航到指定页面
@@ -29,7 +29,7 @@ class NavigationManager {
      * 导航到公告详情页面
      * @param announcementId 公告ID
      */
-    fun navigateToAnnouncementDetail(announcementId: Long) {
+    fun navigateToAnnouncementDetail(announcementId: Int) {
         _selectedAnnouncementId.value = announcementId
         _currentScreen.value = AppScreen.ANNOUNCEMENT_DETAIL.route
     }

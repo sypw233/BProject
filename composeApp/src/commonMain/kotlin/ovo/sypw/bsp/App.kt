@@ -43,7 +43,6 @@ import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
 import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
-import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
@@ -91,10 +90,13 @@ fun App() {
     Logger.i("APP START ON ${getPlatform().name}")
     PlatformKoinApplication {
         // 加载自定义字体并创建自定义主题
-        val contentFontFamily = FontUtils.getDefaultFontFamily()
-        val customTypography = createCustomTypography(contentFontFamily)
+//        val contentFontFamily = FontUtils.getDefaultFontFamily()
+//        val customTypography = createCustomTypography(contentFontFamily)
         MaterialTheme(
-            typography = customTypography
+//            typography = MaterialTheme.typography.copy(
+//                font
+//            )
+//            typography = customTypography
         ) {
             AppContent()
         }
@@ -377,7 +379,11 @@ private fun MainContent(
                 modifier = modifier,
                 layoutConfig = layoutConfig,
                 onAnnouncementClick = { announcement ->
-                    navigationManager.navigateToAnnouncementDetail(announcement.id as Long)
+                    if (announcement.id != null) {
+                        navigationManager.navigateToAnnouncementDetail(announcement.id)
+                    } else {
+                        Logger.e("公告ID为空")
+                    }
                 }
             )
         }

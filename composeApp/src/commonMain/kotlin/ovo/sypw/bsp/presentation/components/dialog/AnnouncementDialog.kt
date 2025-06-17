@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,14 +27,24 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
@@ -45,7 +58,7 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementViewModel
  * 公告添加/编辑Dialog组件
  * 提供公告信息的添加和编辑功能
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalRichTextApi::class)
 @Composable
 fun AnnouncementDialog(
     announcementViewModel: AnnouncementViewModel,
@@ -156,16 +169,29 @@ fun AnnouncementDialog(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
 
+                        // 富文本编辑工具栏 - 完全复制自RichEditorDemo
+                        RichTextStyleRow(
+                            state = richTextState,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // 富文本编辑器
                         RichTextEditor(
                             state = richTextState,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp),
-                            placeholder = { Text("请输入公告内容") },
+                            placeholder = { Text("请输入公告内容，可以选中文本进行格式化") },
                             colors = RichTextEditorDefaults.richTextEditorColors(
                                 containerColor = MaterialTheme.colorScheme.surface,
                                 focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                                 unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Default,
+                                keyboardType = KeyboardType.Text
                             )
                         )
 

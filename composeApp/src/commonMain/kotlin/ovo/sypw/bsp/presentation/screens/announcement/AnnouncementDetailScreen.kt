@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,7 +50,7 @@ import ovo.sypw.bsp.presentation.viewmodel.PublicAnnouncementViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnnouncementDetailScreen(
-    announcementId: Long,
+    announcementId: Int,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -57,25 +58,47 @@ fun AnnouncementDetailScreen(
     val announcementState by viewModel.announcementState.collectAsState()
 
     // 根据ID查找公告
-    val announcement = announcementState.announcements.find { it.id as Long == announcementId }
+    val announcement = announcementState.announcements.find { it.id == announcementId }
 
+    // 处理加载状态和数据不存在的情况
     if (announcement == null) {
-        // 如果找不到公告，显示错误信息
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = "公告不存在或已被删除",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Button(onClick = onBackClick) {
-                    Text("返回")
+            when {
+                // 正在加载中，显示加载指示器
+                announcementState.isLoading -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(48.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "正在加载公告详情...",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                // 加载完成但找不到公告，显示错误信息
+                else -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text(
+                            text = "公告不存在或已被删除",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Button(onClick = onBackClick) {
+                            Text("返回")
+                        }
+                    }
                 }
             }
         }
