@@ -5,24 +5,23 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import ovo.sypw.bsp.data.dto.EmployeeDto
-import ovo.sypw.bsp.data.dto.EmployeeCreateDto
-import ovo.sypw.bsp.data.dto.EmployeeUpdateDto
-import ovo.sypw.bsp.data.dto.EmployeeImportDto
-import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.data.paging.PagingData
-import ovo.sypw.bsp.data.dto.result.NetworkResult
-import ovo.sypw.bsp.domain.usecase.EmployeeUseCase
-import ovo.sypw.bsp.domain.usecase.DepartmentUseCase
-import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
 import ovo.sypw.bsp.data.dto.DepartmentDto
+import ovo.sypw.bsp.data.dto.EmployeeCreateDto
+import ovo.sypw.bsp.data.dto.EmployeeDto
+import ovo.sypw.bsp.data.dto.EmployeeImportDto
+import ovo.sypw.bsp.data.dto.EmployeeUpdateDto
+import ovo.sypw.bsp.data.dto.PageResultDto
+import ovo.sypw.bsp.data.dto.result.NetworkResult
+import ovo.sypw.bsp.data.paging.PagingData
+import ovo.sypw.bsp.domain.usecase.DepartmentUseCase
+import ovo.sypw.bsp.domain.usecase.EmployeeUseCase
+import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager
 import ovo.sypw.bsp.utils.PagingUtils
 import ovo.sypw.bsp.utils.file.FileUtils
-
-import kotlinx.coroutines.flow.catch
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -165,7 +164,8 @@ class EmployeeViewModel(
      * 设置部门筛选
      */
     fun setDepartmentFilter(departmentId: Int?) {
-        _employeeFilterState.value = _employeeFilterState.value.copy(selectedDepartmentId = departmentId)
+        _employeeFilterState.value =
+            _employeeFilterState.value.copy(selectedDepartmentId = departmentId)
         _employeePagingManager = null
         // 立即加载数据
         loadEmployees()
@@ -232,6 +232,7 @@ class EmployeeViewModel(
                         errorMessage = null
                     )
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "员工数据加载失败: ${result.message}")
                     _employeeState.value = _employeeState.value.copy(
@@ -239,9 +240,11 @@ class EmployeeViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = false
@@ -256,7 +259,10 @@ class EmployeeViewModel(
      * @param employeeCreateDto 员工创建数据
      */
     fun createEmployee(employeeCreateDto: EmployeeCreateDto) {
-        Logger.d(TAG, "创建员工: username=${employeeCreateDto.username}, realName=${employeeCreateDto.realName}")
+        Logger.d(
+            TAG,
+            "创建员工: username=${employeeCreateDto.username}, realName=${employeeCreateDto.realName}"
+        )
 
         viewModelScope.launch {
             _employeeState.value = _employeeState.value.copy(
@@ -274,6 +280,7 @@ class EmployeeViewModel(
                     // 重新加载员工列表
                     loadEmployees()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "员工创建失败: ${result.message}")
                     _employeeState.value = _employeeState.value.copy(
@@ -281,9 +288,11 @@ class EmployeeViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = false
@@ -298,7 +307,10 @@ class EmployeeViewModel(
      * @param employeeUpdateDto 员工更新数据
      */
     fun updateEmployee(employeeUpdateDto: EmployeeUpdateDto) {
-        Logger.d(TAG, "更新员工: id=${employeeUpdateDto.id}, realName=${employeeUpdateDto.realName}")
+        Logger.d(
+            TAG,
+            "更新员工: id=${employeeUpdateDto.id}, realName=${employeeUpdateDto.realName}"
+        )
 
         viewModelScope.launch {
             _employeeState.value = _employeeState.value.copy(
@@ -316,6 +328,7 @@ class EmployeeViewModel(
                     // 重新加载员工列表
                     loadEmployees()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "员工更新失败: ${result.message}")
                     _employeeState.value = _employeeState.value.copy(
@@ -323,9 +336,11 @@ class EmployeeViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = false
@@ -358,6 +373,7 @@ class EmployeeViewModel(
                     // 重新加载员工列表
                     loadEmployees()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "员工删除失败: ${result.message}")
                     _employeeState.value = _employeeState.value.copy(
@@ -365,9 +381,11 @@ class EmployeeViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = false
@@ -400,6 +418,7 @@ class EmployeeViewModel(
                     // 重新加载员工列表
                     loadEmployees()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "员工批量删除失败: ${result.message}")
                     _employeeState.value = _employeeState.value.copy(
@@ -407,9 +426,11 @@ class EmployeeViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = false
@@ -454,6 +475,7 @@ class EmployeeViewModel(
                     // 刷新员工列表
                     refreshEmployees()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "员工导入失败: ${result.message}")
                     _employeeState.value = _employeeState.value.copy(
@@ -461,11 +483,13 @@ class EmployeeViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = true
                     )
                 }
+
                 is NetworkResult.Idle -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = false
@@ -521,6 +545,7 @@ class EmployeeViewModel(
                         errorMessage = null
                     )
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "员工导出失败: ${result.message}")
                     _employeeState.value = _employeeState.value.copy(
@@ -528,11 +553,13 @@ class EmployeeViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = true
                     )
                 }
+
                 is NetworkResult.Idle -> {
                     _employeeState.value = _employeeState.value.copy(
                         isLoading = false
@@ -587,14 +614,14 @@ class EmployeeViewModel(
     @OptIn(ExperimentalTime::class)
     fun saveExportedEmployeeData() {
         val exportData = _employeeState.value.exportData
-        if (exportData!=null && exportData.isEmpty()) {
+        if (exportData != null && exportData.isEmpty()) {
             Logger.w(TAG, "没有可保存的导出数据")
             return
         }
 
         viewModelScope.launch {
             try {
-                if(exportData==null)return@launch
+                if (exportData == null) return@launch
                 val success = fileUtils.saveFile(
                     data = exportData,
                     fileName = "employees_export_${Clock.System.now().toEpochMilliseconds()}.xlsx",
@@ -631,9 +658,11 @@ class EmployeeViewModel(
                     _departments.value = result.data.records
                     Logger.d(TAG, "部门数据加载成功，共${result.data.records.size}条")
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "部门数据加载失败: ${result.message}")
                 }
+
                 else -> {
                     // 其他状态不处理
                 }
@@ -844,6 +873,7 @@ class EmployeeViewModel(
                         )
                         uploadedUrl = avatarUrl
                     }
+
                     is NetworkResult.Error -> {
                         Logger.e(TAG, "头像上传失败: ${result.message}")
                         _employeeDialogState.value = _employeeDialogState.value.copy(
@@ -852,9 +882,11 @@ class EmployeeViewModel(
                         )
                         throw Exception(result.message)
                     }
+
                     is NetworkResult.Loading -> {
                         // 保持加载状态
                     }
+
                     else -> {}
                 }
             }
@@ -945,6 +977,7 @@ class EmployeeViewModel(
                         _employeePagingManager = null
                         refreshEmployees()
                     }
+
                     is NetworkResult.Error -> {
                         Logger.e(TAG, "员工保存失败: ${result.message}")
                         _employeeDialogState.value = _employeeDialogState.value.copy(
@@ -952,11 +985,13 @@ class EmployeeViewModel(
                             errorMessage = result.message ?: "保存失败"
                         )
                     }
+
                     NetworkResult.Idle -> {
                         _employeeDialogState.value = _employeeDialogState.value.copy(
                             isLoading = false
                         )
                     }
+
                     NetworkResult.Loading -> {
                         // 保持加载状态
                     }
@@ -1099,10 +1134,10 @@ data class EmployeeFilterState(
      */
     fun hasActiveFilters(): Boolean {
         return selectedGender != null ||
-               selectedJob != null ||
-               selectedDepartmentId != null ||
-               !entryDateStart.isNullOrBlank() ||
-               !entryDateEnd.isNullOrBlank()
+                selectedJob != null ||
+                selectedDepartmentId != null ||
+                !entryDateStart.isNullOrBlank() ||
+                !entryDateEnd.isNullOrBlank()
     }
 
     /**

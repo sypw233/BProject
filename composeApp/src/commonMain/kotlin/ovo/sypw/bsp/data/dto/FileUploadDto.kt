@@ -23,12 +23,12 @@ data class FileUploadRequest(
      * 文件字节数组
      */
     val fileBytes: ByteArray,
-    
+
     /**
      * 文件名
      */
     val fileName: String,
-    
+
     /**
      * 文件MIME类型
      */
@@ -64,12 +64,12 @@ data class ImageUploadRequest(
      * 图片字节数组
      */
     val imageBytes: ByteArray,
-    
+
     /**
      * 图片文件名
      */
     val fileName: String,
-    
+
     /**
      * 图片质量 (0-100)
      */

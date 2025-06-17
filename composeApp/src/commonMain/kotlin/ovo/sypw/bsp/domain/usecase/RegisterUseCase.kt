@@ -11,7 +11,7 @@ import ovo.sypw.bsp.domain.repository.AuthRepository
 class RegisterUseCase(
     private val authRepository: AuthRepository
 ) {
-    
+
     /**
      * 执行注册操作
      * @param username 用户名
@@ -33,14 +33,14 @@ class RegisterUseCase(
                 message = validationResult
             )
         }
-        
+
         // 执行注册
         return authRepository.register(
             username = username.trim(),
             password = password
         )
     }
-    
+
     /**
      * 验证输入参数
      * @param username 用户名
@@ -63,7 +63,7 @@ class RegisterUseCase(
             else -> null
         }
     }
-    
+
     /**
      * 验证用户名格式
      * @param username 用户名
@@ -73,7 +73,7 @@ class RegisterUseCase(
         val regex = Regex("^[a-zA-Z0-9_]+$")
         return regex.matches(username)
     }
-    
+
     /**
      * 验证密码强度
      * @param password 密码
@@ -84,6 +84,6 @@ class RegisterUseCase(
         val hasDigit = password.any { it.isDigit() }
         return hasLetter && hasDigit
     }
-    
+
 
 }

@@ -16,21 +16,21 @@ expect fun createLocalStorage(): LocalStorage
  * 提供LocalStorage和TokenStorage的实例
  */
 val storageModule = module {
-    
+
     /**
      * 提供LocalStorage单例实例
      * 各平台会有不同的实现
      */
-    single<LocalStorage> { 
+    single<LocalStorage> {
         // 平台特定的LocalStorage实现将通过expect/actual机制提供
         createLocalStorage()
     }
-    
+
     /**
      * 提供TokenStorage单例实例
      * 依赖于LocalStorage
      */
-    single<TokenStorage> { 
+    single<TokenStorage> {
         TokenStorageImpl(get())
     }
 }

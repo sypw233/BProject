@@ -1,11 +1,14 @@
 package ovo.sypw.bsp.data.repository
 
 import ovo.sypw.bsp.data.api.DepartmentApiService
-import ovo.sypw.bsp.data.dto.*
-import ovo.sypw.bsp.data.storage.TokenStorage
+import ovo.sypw.bsp.data.dto.DepartmentCreateDto
+import ovo.sypw.bsp.data.dto.DepartmentDto
+import ovo.sypw.bsp.data.dto.DepartmentUpdateDto
+import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.isSuccess
 import ovo.sypw.bsp.data.dto.result.parseData
+import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.domain.repository.DepartmentRepository
 import ovo.sypw.bsp.utils.Logger
 
@@ -17,11 +20,11 @@ class DepartmentRepositoryImpl(
     private val departmentApiService: DepartmentApiService,
     private val tokenStorage: TokenStorage
 ) : DepartmentRepository {
-    
+
     companion object {
         private const val TAG = "DepartmentRepositoryImpl"
     }
-    
+
     /**
      * 获取认证令牌
      * @return 认证令牌，如果未登录则返回null
@@ -29,7 +32,7 @@ class DepartmentRepositoryImpl(
     private suspend fun getAuthToken(): String? {
         return tokenStorage.getAccessToken()
     }
-    
+
     /**
      * 获取部门分页列表
      */
@@ -39,7 +42,7 @@ class DepartmentRepositoryImpl(
         name: String?
     ): NetworkResult<PageResultDto<DepartmentDto>> {
 //        Logger.d(TAG, "获取部门分页列表: current=$current, size=$size, name=$name")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "获取部门分页列表失败: 未找到认证令牌")
@@ -48,8 +51,9 @@ class DepartmentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
-        return when (val result = departmentApiService.getDepartmentPage(current, size, name, token)) {
+
+        return when (val result =
+            departmentApiService.getDepartmentPage(current, size, name, token)) {
             is NetworkResult.Success -> {
 //                Logger.i(TAG, "获取部门分页列表请求成功")
                 val saResult = result.data
@@ -73,21 +77,23 @@ class DepartmentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "获取部门分页列表网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 获取部门详情
      */
     override suspend fun getDepartmentById(id: Int): NetworkResult<DepartmentDto> {
         Logger.d(TAG, "获取部门详情: id=$id")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "获取部门详情失败: 未找到认证令牌")
@@ -96,7 +102,7 @@ class DepartmentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = departmentApiService.getDepartmentById(id, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "获取部门详情请求成功")
@@ -121,21 +127,23 @@ class DepartmentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "获取部门详情网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 创建部门
      */
     override suspend fun createDepartment(name: String): NetworkResult<Unit> {
         Logger.d(TAG, "创建部门: name=$name")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "创建部门失败: 未找到认证令牌")
@@ -144,9 +152,9 @@ class DepartmentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         val createDto = DepartmentCreateDto(name = name)
-        
+
         return when (val result = departmentApiService.createDepartment(createDto, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "创建部门请求成功")
@@ -162,21 +170,23 @@ class DepartmentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "创建部门网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 更新部门
      */
     override suspend fun updateDepartment(id: Int, name: String): NetworkResult<Unit> {
         Logger.d(TAG, "更新部门: id=$id, name=$name")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "更新部门失败: 未找到认证令牌")
@@ -185,9 +195,9 @@ class DepartmentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         val updateDto = DepartmentUpdateDto(id = id, name = name)
-        
+
         return when (val result = departmentApiService.updateDepartment(updateDto, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "更新部门请求成功")
@@ -203,21 +213,23 @@ class DepartmentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "更新部门网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 删除部门
      */
     override suspend fun deleteDepartment(id: Int?): NetworkResult<Unit> {
         Logger.d(TAG, "删除部门: id=$id")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "删除部门失败: 未找到认证令牌")
@@ -226,7 +238,7 @@ class DepartmentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = departmentApiService.deleteDepartment(id, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "删除部门请求成功")
@@ -242,21 +254,23 @@ class DepartmentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "删除部门网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 批量删除部门
      */
     override suspend fun batchDeleteDepartments(ids: List<Int>): NetworkResult<Unit> {
         Logger.d(TAG, "批量删除部门: ids=$ids")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "批量删除部门失败: 未找到认证令牌")
@@ -265,7 +279,7 @@ class DepartmentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = departmentApiService.batchDeleteDepartments(ids, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "批量删除部门请求成功")
@@ -281,10 +295,12 @@ class DepartmentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "批量删除部门网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }

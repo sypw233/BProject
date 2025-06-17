@@ -30,25 +30,30 @@ src/commonMain/kotlin/ovo/sypw/bsp/
 ## 核心组件说明
 
 ### 1. NetworkConfig.kt
+
 - 定义API基础URL、超时时间等配置
 - 提供生成完整API URL的工具方法
 
 ### 2. HttpClientConfig.kt
+
 - 配置Ktor HTTP客户端
 - 包含内容协商、日志、超时等设置
 - 提供普通和调试模式的客户端
 
 ### 3. BaseApiService.kt
+
 - 提供通用的HTTP请求方法（GET、POST、PUT、DELETE）
 - 统一的错误处理和响应解析
 - 自动处理常见HTTP状态码
 
 ### 4. NetworkResult.kt
+
 - 封装网络请求结果的密封类
 - 包含Success、Error、Loading、Idle四种状态
 - 提供便捷的状态判断和数据处理方法
 
 ### 5. BaseRepository.kt
+
 - 提供通用的数据访问方法
 - 支持带缓存的网络请求
 - 返回Flow<NetworkResult<T>>格式的响应式数据流
@@ -143,16 +148,19 @@ val networkModule = module {
 ## 配置说明
 
 ### 网络配置
+
 - 基础URL：可在`NetworkConfig.kt`中修改
 - 超时时间：连接超时30秒，请求超时60秒
 - 内容类型：默认使用JSON格式
 
 ### 错误处理
+
 - 自动处理常见HTTP状态码
 - 统一的错误消息格式
 - 支持自定义错误处理逻辑
 
 ### 日志配置
+
 - 开发模式下启用详细日志
 - 生产模式下关闭敏感信息日志
 

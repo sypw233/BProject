@@ -14,19 +14,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
-import coil3.compose.AsyncImage
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,19 +34,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import org.koin.compose.koinInject
 import ovo.sypw.bsp.data.dto.EmployeeDto
 import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.presentation.components.ManagementPageState
-import ovo.sypw.bsp.presentation.components.ManagementPageActions
-import ovo.sypw.bsp.presentation.components.ExtendedManagementPageTemplate
-import ovo.sypw.bsp.presentation.components.ExtendedManagementPageActions
-import ovo.sypw.bsp.presentation.components.EmployeeImportResultDialog
-import ovo.sypw.bsp.presentation.components.EmployeeExportResultDialog
+import ovo.sypw.bsp.presentation.components.dialog.EmployeeDialog
+import ovo.sypw.bsp.presentation.components.dialog.EmployeeExportResultDialog
+import ovo.sypw.bsp.presentation.components.dialog.EmployeeImportResultDialog
+import ovo.sypw.bsp.presentation.components.search.EmployeeSearchAndFilter
+import ovo.sypw.bsp.presentation.components.template.ExtendedManagementPageActions
+import ovo.sypw.bsp.presentation.components.template.ExtendedManagementPageTemplate
+import ovo.sypw.bsp.presentation.components.template.ManagementPageActions
+import ovo.sypw.bsp.presentation.components.template.ManagementPageState
 import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
-import org.koin.compose.koinInject
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
-import ovo.sypw.bsp.presentation.components.EmployeeSearchAndFilter
 
 /**
  * 员工管理页面
@@ -63,18 +64,18 @@ fun EmployeeManagementTab(
     val searchQuery by viewModel.employeeSearchQuery.collectAsState()
     val filterState by viewModel.employeeFilterState.collectAsState()
     val departments by viewModel.departments.collectAsState()
-    
+
     // 加载部门数据
     LaunchedEffect(Unit) {
         viewModel.loadDepartments()
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        
+
         // 员工列表
         Box(modifier = Modifier.weight(1f)) {
             // 创建状态适配器
@@ -84,18 +85,19 @@ fun EmployeeManagementTab(
                 override val pageInfo: PageResultDto<EmployeeDto>? = employeeState.pageInfo
                 override val errorMessage: String? = employeeState.errorMessage
             }
-            
+
             // 创建操作适配器
-            val pageActions = object : ManagementPageActions {
+            object : ManagementPageActions {
                 override fun refresh() = viewModel.refreshEmployees()
                 override fun loadData(current: Int, size: Int) {
                     // 使用当前的搜索和筛选条件加载数据
                     val currentQuery = searchQuery.takeIf { it.isNotBlank() }
                     viewModel.loadEmployees(current, size, currentQuery)
                 }
+
                 override fun showAddDialog() = viewModel.showAddEmployeeDialog()
             }
-            
+
             // 使用扩展管理页面模板
             ExtendedManagementPageTemplate(
                 state = pageState,
@@ -105,6 +107,7 @@ fun EmployeeManagementTab(
                         val currentQuery = searchQuery.takeIf { it.isNotBlank() }
                         viewModel.loadEmployees(current, size, currentQuery)
                     }
+
                     override fun showAddDialog() = viewModel.showAddEmployeeDialog()
                     override fun importData() = viewModel.selectAndImportEmployeeFile()
                     override fun exportData() = viewModel.exportEmployees()
@@ -131,13 +134,13 @@ fun EmployeeManagementTab(
                         dialogState = dialogState,
                         onDismiss = { viewModel.hideEmployeeDialog() }
                     )
-                    
+
                     // 导入结果对话框
                     EmployeeImportResultDialog(
                         importResult = employeeState.importResult,
                         onDismiss = { viewModel.clearImportResult() }
                     )
-                    
+
                     // 导出结果对话框
                     EmployeeExportResultDialog(
                         hasExportData = employeeState.exportData?.isNotEmpty() ?: false,
@@ -155,7 +158,7 @@ fun EmployeeManagementTab(
                         onToggleFilterExpanded = viewModel::toggleFilterExpanded,
                         onClearAllFilters = viewModel::clearAllFilters,
                         departments = departments,
-                        layoutConfig=layoutConfig
+                        layoutConfig = layoutConfig
                     )
                 }
             )
@@ -218,9 +221,9 @@ private fun EmployeeCard(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             // 员工信息区域
             Column(
                 modifier = Modifier
@@ -236,9 +239,9 @@ private fun EmployeeCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                
+
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 // 用户名
                 Text(
                     text = "用户名: ${employee.username}",
@@ -247,9 +250,9 @@ private fun EmployeeCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                
+
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 // 性别和职位信息 - 根据屏幕尺寸调整布局
                 if (layoutConfig.screenSize == ResponsiveUtils.ScreenSize.COMPACT) {
                     // 小屏幕：垂直排列
@@ -276,9 +279,9 @@ private fun EmployeeCard(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1
                         )
-                        
+
                         Spacer(modifier = Modifier.width(16.dp))
-                        
+
                         Text(
                             text = "职位: ${getJobName(employee.job)}",
                             style = MaterialTheme.typography.bodySmall,
@@ -289,9 +292,9 @@ private fun EmployeeCard(
                         )
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 // 入职日期
                 employee.entryDate?.let { entryDate ->
                     Text(
@@ -303,7 +306,7 @@ private fun EmployeeCard(
                     )
                 }
             }
-            
+
             // 操作按钮区域
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally

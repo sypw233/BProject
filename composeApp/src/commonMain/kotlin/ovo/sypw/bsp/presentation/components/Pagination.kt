@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -41,7 +39,7 @@ import ovo.sypw.bsp.utils.ResponsiveUtils
  * 分页组件
  */
 @Composable
-fun<T> PaginationComponent(
+fun <T> PaginationComponent(
     pageInfo: PageResultDto<T>,
     onPageChange: (Int) -> Unit,
     onPageSizeChange: (Int) -> Unit,

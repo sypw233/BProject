@@ -1,10 +1,13 @@
 package ovo.sypw.bsp.data.api
 
-import io.ktor.client.request.forms.*
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.header
-import io.ktor.http.*
-import ovo.sypw.bsp.data.dto.result.SaResult
+import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import ovo.sypw.bsp.data.dto.result.NetworkResult
+import ovo.sypw.bsp.data.dto.result.SaResult
 import ovo.sypw.bsp.utils.Logger
 
 /**
@@ -12,7 +15,7 @@ import ovo.sypw.bsp.utils.Logger
  * 提供文件上传相关的网络请求功能
  */
 class FileUploadApiService : BaseApiService() {
-    
+
     /**
      * 上传文件
      * @param token 认证令牌
@@ -28,7 +31,7 @@ class FileUploadApiService : BaseApiService() {
         contentType: ContentType = ContentType.Application.OctetStream
     ): NetworkResult<SaResult> {
         Logger.d("FileUploadApiService", "开始上传文件: $fileName, 大小: ${fileBytes.size} bytes")
-        
+
         return safeApiCall {
             httpClient.submitFormWithBinaryData(
                 url = NetworkConfig.getApiUrl("/files/upload"),
@@ -43,7 +46,7 @@ class FileUploadApiService : BaseApiService() {
             }
         }
     }
-    
+
     /**
      * 上传图片文件
      * @param token 认证令牌
@@ -62,7 +65,7 @@ class FileUploadApiService : BaseApiService() {
             "gif" -> ContentType.Image.GIF
             else -> ContentType.Image.Any
         }
-        
+
         return uploadFile(token, imageBytes, fileName, contentType)
     }
 }

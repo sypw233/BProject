@@ -6,15 +6,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ovo.sypw.bsp.data.dto.AnnouncementDto
 import ovo.sypw.bsp.data.dto.AnnouncementCreateDto
-import ovo.sypw.bsp.data.dto.AnnouncementUpdateDto
-import ovo.sypw.bsp.data.dto.AnnouncementType
-import ovo.sypw.bsp.data.dto.AnnouncementStatus
+import ovo.sypw.bsp.data.dto.AnnouncementDto
 import ovo.sypw.bsp.data.dto.AnnouncementPriority
+import ovo.sypw.bsp.data.dto.AnnouncementStatus
+import ovo.sypw.bsp.data.dto.AnnouncementType
+import ovo.sypw.bsp.data.dto.AnnouncementUpdateDto
 import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.data.dto.result.NetworkResult
+import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.domain.usecase.AnnouncementUseCase
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager
@@ -38,7 +38,8 @@ class AnnouncementViewModel(
 
     // 公告Dialog状态
     private val _announcementDialogState = MutableStateFlow(AnnouncementDialogState())
-    val announcementDialogState: StateFlow<AnnouncementDialogState> = _announcementDialogState.asStateFlow()
+    val announcementDialogState: StateFlow<AnnouncementDialogState> =
+        _announcementDialogState.asStateFlow()
 
     // 公告搜索关键词
     private val _announcementSearchQuery = MutableStateFlow("")
@@ -46,7 +47,8 @@ class AnnouncementViewModel(
 
     // 公告筛选状态
     private val _announcementFilterState = MutableStateFlow(AnnouncementFilterState())
-    val announcementFilterState: StateFlow<AnnouncementFilterState> = _announcementFilterState.asStateFlow()
+    val announcementFilterState: StateFlow<AnnouncementFilterState> =
+        _announcementFilterState.asStateFlow()
 
     // 公告分页数据流
     private var _announcementPagingManager: PagingManager<AnnouncementDto>? = null
@@ -132,7 +134,8 @@ class AnnouncementViewModel(
      * 设置状态筛选
      */
     fun setStatusFilter(status: Int?) {
-        _announcementFilterState.value = _announcementFilterState.value.copy(selectedStatus = status)
+        _announcementFilterState.value =
+            _announcementFilterState.value.copy(selectedStatus = status)
         _announcementPagingManager = null
         // 立即加载数据
         loadAnnouncements()
@@ -142,7 +145,8 @@ class AnnouncementViewModel(
      * 设置优先级筛选
      */
     fun setPriorityFilter(priority: Int?) {
-        _announcementFilterState.value = _announcementFilterState.value.copy(selectedPriority = priority)
+        _announcementFilterState.value =
+            _announcementFilterState.value.copy(selectedPriority = priority)
         _announcementPagingManager = null
         // 立即加载数据
         loadAnnouncements()
@@ -220,6 +224,7 @@ class AnnouncementViewModel(
                         errorMessage = null
                     )
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "公告数据加载失败: ${result.message}")
                     _announcementState.value = _announcementState.value.copy(
@@ -227,9 +232,11 @@ class AnnouncementViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _announcementState.value = _announcementState.value.copy(
                         isLoading = false
@@ -264,6 +271,7 @@ class AnnouncementViewModel(
                     // 关闭对话框
                     hideAnnouncementDialog()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "公告创建失败: ${result.message}")
                     _announcementDialogState.value = _announcementDialogState.value.copy(
@@ -273,9 +281,11 @@ class AnnouncementViewModel(
                         isLoading = false
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _announcementState.value = _announcementState.value.copy(
                         isLoading = false
@@ -290,7 +300,10 @@ class AnnouncementViewModel(
      * @param announcementUpdateDto 公告更新数据
      */
     fun updateAnnouncement(announcementUpdateDto: AnnouncementUpdateDto) {
-        Logger.d(TAG, "更新公告: id=${announcementUpdateDto.id}, title=${announcementUpdateDto.title}")
+        Logger.d(
+            TAG,
+            "更新公告: id=${announcementUpdateDto.id}, title=${announcementUpdateDto.title}"
+        )
 
         viewModelScope.launch {
             _announcementState.value = _announcementState.value.copy(
@@ -310,6 +323,7 @@ class AnnouncementViewModel(
                     // 关闭对话框
                     hideAnnouncementDialog()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "公告更新失败: ${result.message}")
                     _announcementDialogState.value = _announcementDialogState.value.copy(
@@ -319,9 +333,11 @@ class AnnouncementViewModel(
                         isLoading = false
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _announcementState.value = _announcementState.value.copy(
                         isLoading = false
@@ -354,6 +370,7 @@ class AnnouncementViewModel(
                     // 重新加载公告列表
                     loadAnnouncements()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "公告删除失败: ${result.message}")
                     _announcementState.value = _announcementState.value.copy(
@@ -361,9 +378,11 @@ class AnnouncementViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _announcementState.value = _announcementState.value.copy(
                         isLoading = false
@@ -396,6 +415,7 @@ class AnnouncementViewModel(
                     // 重新加载公告列表
                     loadAnnouncements()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "公告批量删除失败: ${result.message}")
                     _announcementState.value = _announcementState.value.copy(
@@ -403,9 +423,11 @@ class AnnouncementViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _announcementState.value = _announcementState.value.copy(
                         isLoading = false
@@ -438,6 +460,7 @@ class AnnouncementViewModel(
                     // 重新加载公告列表
                     loadAnnouncements()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "公告发布失败: ${result.message}")
                     _announcementState.value = _announcementState.value.copy(
@@ -445,9 +468,11 @@ class AnnouncementViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _announcementState.value = _announcementState.value.copy(
                         isLoading = false
@@ -480,6 +505,7 @@ class AnnouncementViewModel(
                     // 重新加载公告列表
                     loadAnnouncements()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "公告下线失败: ${result.message}")
                     _announcementState.value = _announcementState.value.copy(
@@ -487,9 +513,11 @@ class AnnouncementViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _announcementState.value = _announcementState.value.copy(
                         isLoading = false
@@ -597,7 +625,7 @@ class AnnouncementViewModel(
      */
     fun saveAnnouncement() {
         val dialogState = _announcementDialogState.value
-        
+
         if (dialogState.isEditMode) {
             // 编辑模式
             val updateDto = AnnouncementUpdateDto(

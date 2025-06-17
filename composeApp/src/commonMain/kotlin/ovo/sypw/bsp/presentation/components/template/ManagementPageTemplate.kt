@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.components
+package ovo.sypw.bsp.presentation.components.template
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,8 +24,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.Month
 import ovo.sypw.bsp.data.dto.PageResultDto
+import ovo.sypw.bsp.presentation.components.ErrorMessageCard
+import ovo.sypw.bsp.presentation.components.LoadingIndicator
+import ovo.sypw.bsp.presentation.components.ResponsiveListLayoutWithPagination
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 
@@ -271,7 +273,7 @@ fun <T> ExtendedManagementPageTemplate(
                         ) {
                             Text(addText)
                         }
-                        
+
                         // 导入按钮
                         OutlinedButton(
                             onClick = actions::importData,
@@ -287,7 +289,7 @@ fun <T> ExtendedManagementPageTemplate(
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         }
-                        
+
                         // 导出按钮
                         OutlinedButton(
                             onClick = actions::exportData,
@@ -365,7 +367,7 @@ fun <T> ExtendedManagementPageTemplate(
                         contentDescription = importText
                     )
                 }
-                
+
                 // 导出FAB
                 FloatingActionButton(
                     onClick = actions::exportData,
@@ -377,7 +379,7 @@ fun <T> ExtendedManagementPageTemplate(
                         contentDescription = exportText
                     )
                 }
-                
+
                 // 刷新FAB
                 FloatingActionButton(
                     onClick = actions::refresh,

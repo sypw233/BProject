@@ -2,15 +2,14 @@ package ovo.sypw.bsp.presentation.viewmodel.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ovo.sypw.bsp.data.dto.DepartmentDto
 import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.data.dto.result.NetworkResult
+import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.domain.usecase.DepartmentUseCase
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager
@@ -23,28 +22,29 @@ import ovo.sypw.bsp.utils.PagingUtils
 class DepartmentViewModel(
     private val departmentUseCase: DepartmentUseCase
 ) : ViewModel() {
-    
+
     companion object {
         private const val TAG = "DepartmentViewModel"
     }
-    
+
     // 部门管理状态
     private val _departmentState = MutableStateFlow(DepartmentState())
     val departmentState: StateFlow<DepartmentState> = _departmentState.asStateFlow()
-    
+
     // 部门Dialog状态
     private val _departmentDialogState = MutableStateFlow(DepartmentDialogState())
-    val departmentDialogState: StateFlow<DepartmentDialogState> = _departmentDialogState.asStateFlow()
-    
+    val departmentDialogState: StateFlow<DepartmentDialogState> =
+        _departmentDialogState.asStateFlow()
+
     // 部门搜索关键词
     private val _departmentSearchQuery = MutableStateFlow("")
     val departmentSearchQuery: StateFlow<String> = _departmentSearchQuery.asStateFlow()
-    
+
     // 部门分页数据流
     private var _departmentPagingManager: PagingManager<DepartmentDto>? = null
     val departmentPagingData: StateFlow<PagingData<DepartmentDto>>
         get() = getDepartmentPagingManager().pagingData
-    
+
     /**
      * 获取部门分页管理器
      */
@@ -62,7 +62,7 @@ class DepartmentViewModel(
         }
         return _departmentPagingManager!!
     }
-    
+
     /**
      * 更新搜索关键词并刷新分页数据
      * @param query 搜索关键词
@@ -78,7 +78,7 @@ class DepartmentViewModel(
             name = query.takeIf { it.isNotBlank() }
         )
     }
-    
+
     /**
      * 清空搜索条件
      */
@@ -87,7 +87,7 @@ class DepartmentViewModel(
         // 重新加载所有数据
         loadDepartments(current = 1, size = _departmentState.value.pageInfo?.size ?: 5)
     }
-    
+
     /**
      * 刷新部门数据
      */
@@ -97,7 +97,7 @@ class DepartmentViewModel(
         // 同时保持原有的加载方法以兼容现有代码
         loadDepartments()
     }
-    
+
     /**
      * 加载部门分页数据
      * @param current 当前页码
@@ -114,7 +114,7 @@ class DepartmentViewModel(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             when (val result = departmentUseCase.getDepartmentPage(current, size, name)) {
                 is NetworkResult.Success -> {
                     _departmentState.value = _departmentState.value.copy(
@@ -124,6 +124,7 @@ class DepartmentViewModel(
                         errorMessage = null
                     )
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "部门数据加载失败: ${result.message}")
                     _departmentState.value = _departmentState.value.copy(
@@ -131,9 +132,11 @@ class DepartmentViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _departmentState.value = _departmentState.value.copy(
                         isLoading = false
@@ -142,20 +145,20 @@ class DepartmentViewModel(
             }
         }
     }
-    
+
     /**
      * 创建部门
      * @param name 部门名称
      */
     fun createDepartment(name: String) {
         Logger.d(TAG, "创建部门: name=$name")
-        
+
         viewModelScope.launch {
             _departmentState.value = _departmentState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             when (val result = departmentUseCase.createDepartment(name)) {
                 is NetworkResult.Success -> {
                     Logger.i(TAG, "部门创建成功")
@@ -166,6 +169,7 @@ class DepartmentViewModel(
                     // 重新加载部门列表
                     loadDepartments()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "部门创建失败: ${result.message}")
                     _departmentState.value = _departmentState.value.copy(
@@ -173,9 +177,11 @@ class DepartmentViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _departmentState.value = _departmentState.value.copy(
                         isLoading = false
@@ -184,7 +190,7 @@ class DepartmentViewModel(
             }
         }
     }
-    
+
     /**
      * 更新部门
      * @param id 部门ID
@@ -192,13 +198,13 @@ class DepartmentViewModel(
      */
     fun updateDepartment(id: Int, name: String) {
         Logger.d(TAG, "更新部门: id=$id, name=$name")
-        
+
         viewModelScope.launch {
             _departmentState.value = _departmentState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             when (val result = departmentUseCase.updateDepartment(id, name)) {
                 is NetworkResult.Success -> {
                     Logger.i(TAG, "部门更新成功")
@@ -209,6 +215,7 @@ class DepartmentViewModel(
                     // 重新加载部门列表
                     loadDepartments()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "部门更新失败: ${result.message}")
                     _departmentState.value = _departmentState.value.copy(
@@ -216,9 +223,11 @@ class DepartmentViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _departmentState.value = _departmentState.value.copy(
                         isLoading = false
@@ -227,20 +236,20 @@ class DepartmentViewModel(
             }
         }
     }
-    
+
     /**
      * 删除部门
      * @param id 部门ID
      */
     fun deleteDepartment(id: Int?) {
         Logger.d(TAG, "删除部门: id=$id")
-        
+
         viewModelScope.launch {
             _departmentState.value = _departmentState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             when (val result = departmentUseCase.deleteDepartment(id)) {
                 is NetworkResult.Success -> {
                     Logger.i(TAG, "部门删除成功")
@@ -251,6 +260,7 @@ class DepartmentViewModel(
                     // 重新加载部门列表
                     loadDepartments()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "部门删除失败: ${result.message}")
                     _departmentState.value = _departmentState.value.copy(
@@ -258,9 +268,11 @@ class DepartmentViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _departmentState.value = _departmentState.value.copy(
                         isLoading = false
@@ -269,20 +281,20 @@ class DepartmentViewModel(
             }
         }
     }
-    
+
     /**
      * 批量删除部门
      * @param ids 部门ID列表
      */
     fun batchDeleteDepartments(ids: List<Int>) {
         Logger.d(TAG, "批量删除部门: ids=$ids")
-        
+
         viewModelScope.launch {
             _departmentState.value = _departmentState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             when (val result = departmentUseCase.batchDeleteDepartments(ids)) {
                 is NetworkResult.Success -> {
                     Logger.i(TAG, "部门批量删除成功")
@@ -293,6 +305,7 @@ class DepartmentViewModel(
                     // 重新加载部门列表
                     loadDepartments()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "部门批量删除失败: ${result.message}")
                     _departmentState.value = _departmentState.value.copy(
@@ -300,9 +313,11 @@ class DepartmentViewModel(
                         errorMessage = result.message
                     )
                 }
+
                 is NetworkResult.Loading -> {
                     // 保持加载状态
                 }
+
                 is NetworkResult.Idle -> {
                     _departmentState.value = _departmentState.value.copy(
                         isLoading = false
@@ -311,7 +326,7 @@ class DepartmentViewModel(
             }
         }
     }
-    
+
     /**
      * 清除错误消息
      */
@@ -320,7 +335,7 @@ class DepartmentViewModel(
             errorMessage = null
         )
     }
-    
+
     /**
      * 显示添加部门Dialog
      */
@@ -334,7 +349,7 @@ class DepartmentViewModel(
         )
         Logger.d(TAG, "Dialog状态已更新: ${_departmentDialogState.value}")
     }
-    
+
     /**
      * 显示编辑部门Dialog
      * @param department 要编辑的部门
@@ -347,14 +362,14 @@ class DepartmentViewModel(
             editingDepartmentId = department.id
         )
     }
-    
+
     /**
      * 隐藏部门Dialog
      */
     fun hideDepartmentDialog() {
         _departmentDialogState.value = DepartmentDialogState()
     }
-    
+
     /**
      * 更新部门名称输入
      * @param name 部门名称
@@ -364,34 +379,34 @@ class DepartmentViewModel(
             departmentName = name
         )
     }
-    
+
     /**
      * 保存部门（添加或编辑）
      */
     fun saveDepartment() {
         val dialogState = _departmentDialogState.value
         val name = dialogState.departmentName.trim()
-        
+
         if (name.isBlank()) {
             _departmentDialogState.value = dialogState.copy(
                 errorMessage = "部门名称不能为空"
             )
             return
         }
-        
+
         if (name.length > 50) {
             _departmentDialogState.value = dialogState.copy(
                 errorMessage = "部门名称不能超过50个字符"
             )
             return
         }
-        
+
         viewModelScope.launch {
             _departmentDialogState.value = dialogState.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             val result = if (dialogState.isEditMode && dialogState.editingDepartmentId != null) {
                 // 编辑模式
                 departmentUseCase.updateDepartment(dialogState.editingDepartmentId, name)
@@ -399,7 +414,7 @@ class DepartmentViewModel(
                 // 添加模式
                 departmentUseCase.createDepartment(name)
             }
-            
+
             when (result) {
                 is NetworkResult.Success -> {
                     Logger.i(TAG, "部门保存成功")
@@ -408,6 +423,7 @@ class DepartmentViewModel(
                     _departmentPagingManager = null
                     refreshDepartments()
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "部门保存失败: ${result.message}")
                     _departmentDialogState.value = _departmentDialogState.value.copy(
@@ -415,11 +431,13 @@ class DepartmentViewModel(
                         errorMessage = result.message ?: "保存失败"
                     )
                 }
+
                 NetworkResult.Idle -> {
                     _departmentDialogState.value = _departmentDialogState.value.copy(
                         isLoading = false
                     )
                 }
+
                 NetworkResult.Loading -> {
                     // 保持加载状态
                 }

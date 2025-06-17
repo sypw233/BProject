@@ -1,7 +1,7 @@
 package ovo.sypw.bsp.data.api
 
-import ovo.sypw.bsp.data.dto.result.NetworkResult
 import kotlinx.serialization.Serializable
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.SaResult
 
 /**
@@ -22,13 +22,16 @@ class ExampleApiService : BaseApiService() {
         )
         return resWeibo
     }
+
     /**
      * 获取示例数据（用于API测试）
      * @return 示例数据字符串
      */
     suspend fun getExampleData(): String {
         // 模拟API调用，返回示例数据
-        return "这是来自服务器的GET响应数据，时间戳: ${kotlinx.datetime.Clock.System.now().toEpochMilliseconds()}"
+        return "这是来自服务器的GET响应数据，时间戳: ${
+            kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+        }"
     }
 
     /**
@@ -38,10 +41,11 @@ class ExampleApiService : BaseApiService() {
      */
     suspend fun postExampleData(data: String): String {
         // 模拟API调用，返回处理结果
-        return "服务器已接收数据: '$data'，处理时间: ${kotlinx.datetime.Clock.System.now().toEpochMilliseconds()}"
+        return "服务器已接收数据: '$data'，处理时间: ${
+            kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+        }"
     }
 }
-
 
 
 /**

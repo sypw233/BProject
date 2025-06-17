@@ -5,7 +5,7 @@ package ovo.sypw.bsp.utils
  * 使用expect/actual机制实现不同平台的日志输出
  */
 object Logger {
-    
+
     /**
      * 日志级别枚举
      */
@@ -15,7 +15,7 @@ object Logger {
         WARN,
         ERROR
     }
-    
+
     /**
      * 调试日志
      * @param tag 标签
@@ -25,7 +25,7 @@ object Logger {
     fun d(tag: String, message: String, throwable: Throwable? = null) {
         log(Level.DEBUG, tag, message, throwable)
     }
-    
+
     /**
      * 信息日志
      * @param tag 标签
@@ -35,7 +35,7 @@ object Logger {
     fun i(tag: String, message: String, throwable: Throwable? = null) {
         log(Level.INFO, tag, message, throwable)
     }
-    
+
     /**
      * 警告日志
      * @param tag 标签
@@ -45,7 +45,7 @@ object Logger {
     fun w(tag: String, message: String, throwable: Throwable? = null) {
         log(Level.WARN, tag, message, throwable)
     }
-    
+
     /**
      * 错误日志
      * @param tag 标签
@@ -55,7 +55,7 @@ object Logger {
     fun e(tag: String, message: String, throwable: Throwable? = null) {
         log(Level.ERROR, tag, message, throwable)
     }
-    
+
     /**
      * 简化的调试日志（使用默认标签）
      * @param message 消息
@@ -63,7 +63,7 @@ object Logger {
     fun d(message: String) {
         d("KMP", message)
     }
-    
+
     /**
      * 简化的信息日志（使用默认标签）
      * @param message 消息
@@ -71,7 +71,7 @@ object Logger {
     fun i(message: String) {
         i("KMP", message)
     }
-    
+
     /**
      * 简化的警告日志（使用默认标签）
      * @param message 消息
@@ -79,7 +79,7 @@ object Logger {
     fun w(message: String) {
         w("KMP", message)
     }
-    
+
     /**
      * 简化的错误日志（使用默认标签）
      * @param message 消息
@@ -87,7 +87,7 @@ object Logger {
     fun e(message: String) {
         e("KMP", message)
     }
-    
+
     /**
      * 打印对象信息（调试用）
      * @param tag 标签
@@ -96,7 +96,7 @@ object Logger {
     fun printObject(tag: String, obj: Any?) {
         d(tag, "Object: $obj")
     }
-    
+
     /**
      * 打印对象信息（使用默认标签）
      * @param obj 对象

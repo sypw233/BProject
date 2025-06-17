@@ -1,12 +1,10 @@
 package ovo.sypw.bsp.data.repository
 
 import ovo.sypw.bsp.data.api.ExampleApiService
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.storage.TokenStorage
-import ovo.sypw.bsp.data.api.DeleteResult
 import ovo.sypw.bsp.domain.repository.BaseRepository
 import ovo.sypw.bsp.domain.repository.ExampleRepository
-import ovo.sypw.bsp.data.dto.result.NetworkResult
-import kotlinx.coroutines.flow.Flow
 
 /**
  * 示例Repository实现类
@@ -16,8 +14,6 @@ class ExampleRepositoryImpl(
     private val apiService: ExampleApiService,
     private val tokenStorage: TokenStorage
 ) : ExampleRepository, BaseRepository {
-    
-
 
 
     /**
@@ -33,14 +29,14 @@ class ExampleRepositoryImpl(
                     message = "请先登录"
                 )
             }
-            
+
             val response = apiService.getWeiboData(token)
             NetworkResult.Success("GET请求成功，返回数据: $response")
         } catch (e: Exception) {
             NetworkResult.Error(e)
         }
     }
-    
+
     /**
      * 发送示例数据（用于API测试）
      * @param data 要发送的数据

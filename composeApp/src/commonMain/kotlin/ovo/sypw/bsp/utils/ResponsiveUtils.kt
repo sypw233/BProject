@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
  * 定义不同屏幕尺寸的断点和布局配置
  */
 object ResponsiveUtils {
-    
+
     /**
      * 屏幕尺寸类型枚举
      */
@@ -18,7 +18,7 @@ object ResponsiveUtils {
         MEDIUM,     // 中等型 (手机横屏/小平板)
         EXPANDED    // 扩展型 (大平板/桌面)
     }
-    
+
     /**
      * Material Design 3 推荐的断点
      */
@@ -26,7 +26,7 @@ object ResponsiveUtils {
         val COMPACT_MAX = 600.dp
         val MEDIUM_MAX = 840.dp
     }
-    
+
     /**
      * 根据屏幕宽度获取屏幕尺寸类型
      */
@@ -37,7 +37,7 @@ object ResponsiveUtils {
             else -> ScreenSize.EXPANDED
         }
     }
-    
+
     /**
      * 响应式内边距配置
      */
@@ -49,7 +49,7 @@ object ResponsiveUtils {
                 ScreenSize.EXPANDED -> 32.dp
             }
         }
-        
+
         fun getContentPadding(screenSize: ScreenSize): Dp {
             return when (screenSize) {
                 ScreenSize.COMPACT -> 12.dp
@@ -57,7 +57,7 @@ object ResponsiveUtils {
                 ScreenSize.EXPANDED -> 20.dp
             }
         }
-        
+
         fun getCardPadding(screenSize: ScreenSize): Dp {
             return when (screenSize) {
                 ScreenSize.COMPACT -> 16.dp
@@ -66,7 +66,7 @@ object ResponsiveUtils {
             }
         }
     }
-    
+
     /**
      * 响应式间距配置
      */
@@ -78,7 +78,7 @@ object ResponsiveUtils {
                 ScreenSize.EXPANDED -> 20.dp
             }
         }
-        
+
         fun getHorizontalSpacing(screenSize: ScreenSize): Dp {
             return when (screenSize) {
                 ScreenSize.COMPACT -> 8.dp
@@ -87,7 +87,7 @@ object ResponsiveUtils {
             }
         }
     }
-    
+
     /**
      * 响应式列数配置
      */
@@ -99,7 +99,7 @@ object ResponsiveUtils {
                 ScreenSize.EXPANDED -> 3
             }
         }
-        
+
         fun getMaxCardWidth(screenSize: ScreenSize): Dp {
             return when (screenSize) {
                 ScreenSize.COMPACT -> Dp.Unspecified
@@ -108,7 +108,7 @@ object ResponsiveUtils {
             }
         }
     }
-    
+
     /**
      * 响应式按钮配置
      */
@@ -120,12 +120,12 @@ object ResponsiveUtils {
                 ScreenSize.EXPANDED -> 56.dp
             }
         }
-        
+
         fun shouldUseFullWidthButtons(screenSize: ScreenSize): Boolean {
             return screenSize == ScreenSize.COMPACT
         }
     }
-    
+
     /**
      * 响应式Tab配置
      */
@@ -133,7 +133,7 @@ object ResponsiveUtils {
         fun shouldUseScrollableTabs(screenSize: ScreenSize): Boolean {
             return screenSize == ScreenSize.COMPACT
         }
-        
+
         fun getTabMinWidth(screenSize: ScreenSize): Dp {
             return when (screenSize) {
                 ScreenSize.COMPACT -> 90.dp
@@ -149,7 +149,7 @@ object ResponsiveUtils {
  */
 data class ResponsiveLayoutConfig(
     val screenSize: ResponsiveUtils.ScreenSize,
-    val screenSizeOrigin:Dp,
+    val screenSizeOrigin: Dp,
     val screenPadding: Dp,
     val contentPadding: Dp,
     val cardPadding: Dp,
@@ -166,7 +166,7 @@ data class ResponsiveLayoutConfig(
 @Composable
 fun getResponsiveLayoutConfig(screenWidth: Dp): ResponsiveLayoutConfig {
     val screenSize = ResponsiveUtils.getScreenSize(screenWidth)
-    
+
     return ResponsiveLayoutConfig(
         screenSize = screenSize,
         screenSizeOrigin = screenWidth,

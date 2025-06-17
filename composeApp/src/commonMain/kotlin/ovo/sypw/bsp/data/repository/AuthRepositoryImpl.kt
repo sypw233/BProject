@@ -2,11 +2,15 @@ package ovo.sypw.bsp.data.repository
 
 import kotlinx.serialization.json.Json
 import ovo.sypw.bsp.data.api.AuthApiService
-import ovo.sypw.bsp.data.dto.*
-import ovo.sypw.bsp.data.storage.TokenStorage
+import ovo.sypw.bsp.data.dto.ChangePasswordRequest
+import ovo.sypw.bsp.data.dto.LoginRequest
+import ovo.sypw.bsp.data.dto.LoginResponse
+import ovo.sypw.bsp.data.dto.RegisterRequest
+import ovo.sypw.bsp.data.dto.UserInfo
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.isSuccess
 import ovo.sypw.bsp.data.dto.result.parseData
+import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.domain.repository.AuthRepository
 import ovo.sypw.bsp.utils.Logger
 
@@ -18,7 +22,7 @@ class AuthRepositoryImpl(
     private val authApiService: AuthApiService,
     private val tokenStorage: TokenStorage
 ) : AuthRepository {
-    
+
     /**
      * 用户登录
      */
@@ -30,7 +34,7 @@ class AuthRepositoryImpl(
             username = username,
             password = password
         )
-        
+
         return when (val result = authApiService.login(loginRequest)) {
             is NetworkResult.Success -> {
                 Logger.i("AuthRepository", "登录请求成功")
@@ -42,10 +46,10 @@ class AuthRepositoryImpl(
                         // 保存登录信息到本地存储
                         saveLoginInfo(loginResponse)
                         Logger.i("AuthRepository", "登录信息已保存$loginResponse")
-                        
+
                         // 登录成功后自动获取用户信息
                         fetchAndSaveUserInfo(loginResponse.token)
-                        
+
                         NetworkResult.Success(loginResponse)
                     } else {
                         Logger.w("AuthRepository", "登录响应数据解析失败")
@@ -62,12 +66,13 @@ class AuthRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> result
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 用户注册
      */
@@ -79,7 +84,7 @@ class AuthRepositoryImpl(
             username = username,
             password = password
         )
-        
+
         return when (val result = authApiService.register(registerRequest)) {
             is NetworkResult.Success -> {
                 val saResult = result.data
@@ -89,10 +94,10 @@ class AuthRepositoryImpl(
                     if (loginResponse != null) {
                         // 注册成功后自动保存登录信息
                         saveLoginInfo(loginResponse)
-                        
+
                         // 注册成功后自动获取用户信息
                         fetchAndSaveUserInfo(loginResponse.token)
-                        
+
                         NetworkResult.Success(loginResponse)
                     } else {
                         Logger.w("AuthRepository", "注册响应数据解析失败")
@@ -108,14 +113,14 @@ class AuthRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> result
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
 
-    
+
     /**
      * 获取当前用户信息
      */
@@ -127,7 +132,7 @@ class AuthRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = authApiService.getCurrentUser(token)) {
             is NetworkResult.Success -> {
                 val saResult = result.data
@@ -156,6 +161,7 @@ class AuthRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> result
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
@@ -168,14 +174,14 @@ class AuthRepositoryImpl(
     override suspend fun isLoggedIn(): Boolean {
         return tokenStorage.hasValidToken()
     }
-    
+
     /**
      * 获取当前访问令牌
      */
     override suspend fun getAccessToken(): String? {
         return tokenStorage.getAccessToken()
     }
-    
+
 
     /**
      * 获取当前用户ID
@@ -183,7 +189,7 @@ class AuthRepositoryImpl(
     override suspend fun getCurrentUserId(): String? {
         return tokenStorage.getUserId()
     }
-    
+
     /**
      * 修改密码
      */
@@ -198,12 +204,12 @@ class AuthRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         val changePasswordRequest = ChangePasswordRequest(
             oldPassword = oldPassword,
             newPassword = newPassword
         )
-        
+
         return when (val result = authApiService.changePassword(token, changePasswordRequest)) {
             is NetworkResult.Success -> {
                 val saResult = result.data
@@ -216,12 +222,13 @@ class AuthRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> result
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
 
     /**
      * 清除本地认证信息
@@ -229,7 +236,7 @@ class AuthRepositoryImpl(
     override suspend fun clearAuthData() {
         tokenStorage.clearTokens()
     }
-    
+
     /**
      * 保存登录信息到本地存储
      */
@@ -237,7 +244,7 @@ class AuthRepositoryImpl(
         // 保存访问令牌
         tokenStorage.saveAccessToken(loginResponse.token)
 
-        
+
         // 保存用户信息（如果有）
 //        loginResponse.user?.let { userInfo ->
 //            tokenStorage.saveUserId(userInfo.id)
@@ -245,7 +252,7 @@ class AuthRepositoryImpl(
 //            tokenStorage.saveUserInfo(userInfoJson)
 //        }
     }
-    
+
     /**
      * 获取并保存用户信息
      * @param token 访问令牌
@@ -271,9 +278,11 @@ class AuthRepositoryImpl(
                         Logger.w("AuthRepository", "获取用户信息失败: ${saResult.msg}")
                     }
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e("AuthRepository", "获取用户信息网络请求失败: ${result.message}")
                 }
+
                 else -> {
                     Logger.w("AuthRepository", "获取用户信息请求状态异常")
                 }

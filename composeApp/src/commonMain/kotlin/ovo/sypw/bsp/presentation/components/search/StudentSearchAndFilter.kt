@@ -1,12 +1,25 @@
-package ovo.sypw.bsp.presentation.components
+package ovo.sypw.bsp.presentation.components.search
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ovo.sypw.bsp.data.dto.ClassDto
+import ovo.sypw.bsp.presentation.components.template.ActiveFiltersRow
+import ovo.sypw.bsp.presentation.components.template.DateRangeInput
+import ovo.sypw.bsp.presentation.components.template.DropdownSelector
+import ovo.sypw.bsp.presentation.components.template.FilterOptionsLazyRow
+import ovo.sypw.bsp.presentation.components.template.FilterOptionsRow
+import ovo.sypw.bsp.presentation.components.template.FilterSection
+import ovo.sypw.bsp.presentation.components.template.RemovableFilterChip
+import ovo.sypw.bsp.presentation.components.template.SearchAndFilterTemplate
 import ovo.sypw.bsp.presentation.viewmodel.admin.StudentFilterState
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
@@ -54,7 +67,13 @@ fun StudentSearchAndFilter(
                         "gender" -> onChange(filterState.copy(selectedGender = null))
                         "status" -> onChange(filterState.copy(selectedStatus = null))
                         "class" -> onChange(filterState.copy(selectedClassId = null))
-                        "enrollmentDate" -> onChange(filterState.copy(joinDateStart = null, joinDateEnd = null))
+                        "enrollmentDate" -> onChange(
+                            filterState.copy(
+                                joinDateStart = null,
+                                joinDateEnd = null
+                            )
+                        )
+
                         else -> {}
                     }
                 }
@@ -75,7 +94,7 @@ fun StudentFilterContent(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     val isSmallScreen = layoutConfig.screenSize == ResponsiveUtils.ScreenSize.COMPACT
-    
+
     if (isSmallScreen) {
         // 小屏幕垂直布局
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -174,7 +193,7 @@ fun StudentStatusFilter(
         3 to "休学",
         4 to "退学"
     )
-    
+
     FilterSection(title = "状态") {
         FilterOptionsLazyRow {
             items(statusOptions.entries.toList()) { (statusId, statusName) ->
@@ -211,7 +230,6 @@ fun StudentClassFilter(
         )
     }
 }
-
 
 
 /**
@@ -281,7 +299,7 @@ fun StudentActiveFilters(
                 )
             }
         }
-        
+
         // 状态筛选
         filterState.selectedStatus?.let { status ->
             item {
@@ -291,7 +309,7 @@ fun StudentActiveFilters(
                 )
             }
         }
-        
+
         // 班级筛选
         filterState.selectedClassId?.let { classId ->
             val classItem = classes.find { it.id == classId }
@@ -304,9 +322,8 @@ fun StudentActiveFilters(
                 }
             }
         }
-        
 
-        
+
         // 入学日期筛选
         if (!filterState.joinDateStart.isNullOrBlank() || !filterState.joinDateEnd.isNullOrBlank()) {
             item {

@@ -21,14 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import ovo.sypw.bsp.data.dto.DepartmentDto
 import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.presentation.components.ManagementPageState
-import ovo.sypw.bsp.presentation.components.ManagementPageActions
-import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
+import ovo.sypw.bsp.presentation.components.dialog.DepartmentDialog
+import ovo.sypw.bsp.presentation.components.template.ManagementPageActions
+import ovo.sypw.bsp.presentation.components.template.ManagementPageState
+import ovo.sypw.bsp.presentation.components.template.ManagementPageTemplate
+import ovo.sypw.bsp.presentation.components.template.SearchBar
 import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentViewModel
-import org.koin.compose.koinInject
-import ovo.sypw.bsp.presentation.components.SearchBar
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 
 /**

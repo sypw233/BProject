@@ -1,12 +1,21 @@
 package ovo.sypw.bsp.data.api
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import ovo.sypw.bsp.data.dto.result.SaResult
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import ovo.sypw.bsp.data.dto.result.NetworkResult
+import ovo.sypw.bsp.data.dto.result.SaResult
 import ovo.sypw.bsp.utils.Logger
 
 /**
@@ -14,14 +23,14 @@ import ovo.sypw.bsp.utils.Logger
  * 提供通用的网络请求方法
  */
 abstract class BaseApiService {
-    
+
     /**
      * HTTP客户端实例
      */
     protected val httpClient: HttpClient by lazy {
         HttpClientConfig.createHttpClient()
     }
-    
+
     /**
      * 执行GET请求
      * @param endpoint API端点
@@ -41,7 +50,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 执行带Token的GET请求
      * @param endpoint API端点
@@ -65,7 +74,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 执行带Token的文件下载GET请求
      * @param endpoint API端点
@@ -88,7 +97,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 执行POST请求
      * @param endpoint API端点
@@ -111,7 +120,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 执行带Token的POST请求
      * @param endpoint API端点
@@ -137,7 +146,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 执行PUT请求
      * @param endpoint API端点
@@ -160,7 +169,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 执行带Token的PUT请求
      * @param endpoint API端点
@@ -186,7 +195,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 执行DELETE请求
      * @param endpoint API端点
@@ -205,7 +214,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 执行带Token的DELETE请求
      * @param endpoint API端点
@@ -227,7 +236,7 @@ abstract class BaseApiService {
             }
         }
     }
-    
+
     /**
      * 安全的文件下载API调用方法
      * 统一处理文件下载请求异常和响应解析
@@ -239,7 +248,7 @@ abstract class BaseApiService {
     ): NetworkResult<ByteArray> {
         return try {
             val response = apiCall()
-            
+
             when (response.status) {
                 HttpStatusCode.OK -> {
                     try {
@@ -254,30 +263,35 @@ abstract class BaseApiService {
                         )
                     }
                 }
+
                 HttpStatusCode.Unauthorized -> {
                     NetworkResult.Error(
                         Exception("Unauthorized"),
                         "认证失败，请重新登录"
                     )
                 }
+
                 HttpStatusCode.Forbidden -> {
                     NetworkResult.Error(
                         Exception("Forbidden"),
                         "权限不足"
                     )
                 }
+
                 HttpStatusCode.NotFound -> {
                     NetworkResult.Error(
                         Exception("Not Found"),
                         "请求的资源不存在"
                     )
                 }
+
                 HttpStatusCode.InternalServerError -> {
                     NetworkResult.Error(
                         Exception("Internal Server Error"),
                         "服务器内部错误"
                     )
                 }
+
                 else -> {
                     Logger.e("BaseApiService", "文件下载失败，状态码: ${response.status}")
                     NetworkResult.Error(
@@ -291,7 +305,7 @@ abstract class BaseApiService {
             NetworkResult.Error(e, "网络请求失败: ${e.message}")
         }
     }
-    
+
     /**
      * 安全的API调用方法
      * 统一处理网络请求异常和响应解析
@@ -303,14 +317,14 @@ abstract class BaseApiService {
     ): NetworkResult<SaResult> {
         return try {
             val response = apiCall()
-            
+
             when (response.status) {
                 HttpStatusCode.OK -> {
                     try {
                         // 先获取原始响应文本用于调试
 //                        val responseText = response.bodyAsText()
 //                        Logger.d("BaseApiService", "服务器原始响应: $responseText")
-                        
+
                         val saResult = response.body<SaResult>()
 //                        Logger.d("BaseApiService", "解析后的SaResult: $saResult")
                         NetworkResult.Success(saResult)
@@ -322,30 +336,35 @@ abstract class BaseApiService {
                         )
                     }
                 }
+
                 HttpStatusCode.Unauthorized -> {
                     NetworkResult.Error(
                         Exception("Unauthorized"),
                         "认证失败，请重新登录"
                     )
                 }
+
                 HttpStatusCode.Forbidden -> {
                     NetworkResult.Error(
                         Exception("Forbidden"),
                         "权限不足"
                     )
                 }
+
                 HttpStatusCode.NotFound -> {
                     NetworkResult.Error(
                         Exception("Not Found"),
                         "请求的资源不存在"
                     )
                 }
+
                 HttpStatusCode.InternalServerError -> {
                     NetworkResult.Error(
                         Exception("Internal Server Error"),
                         "服务器内部错误"
                     )
                 }
+
                 else -> {
                     NetworkResult.Error(
                         Exception("HTTP ${response.status.value}"),
@@ -360,7 +379,7 @@ abstract class BaseApiService {
             )
         }
     }
-    
+
     /**
      * 关闭HTTP客户端
      */

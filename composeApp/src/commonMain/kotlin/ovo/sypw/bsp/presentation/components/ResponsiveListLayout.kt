@@ -42,6 +42,7 @@ fun <T> ResponsiveListLayout(
                     layoutConfig = layoutConfig
                 )
             }
+
             layoutConfig.screenSize == ResponsiveUtils.ScreenSize.COMPACT -> {
                 // 紧凑型：垂直列表
                 LazyColumn(
@@ -52,6 +53,7 @@ fun <T> ResponsiveListLayout(
                     }
                 }
             }
+
             else -> {
                 // 中等型和扩展型：网格布局
                 LazyVerticalGrid(
@@ -110,7 +112,7 @@ fun <T> ResponsiveListLayoutWithPagination(
                 itemContent = itemContent
             )
         }
-        
+
         // 分页组件
         pageInfo?.let {
             PaginationComponent(

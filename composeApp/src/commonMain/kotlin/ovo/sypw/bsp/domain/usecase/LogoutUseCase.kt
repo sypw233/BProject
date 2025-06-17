@@ -1,6 +1,5 @@
 package ovo.sypw.bsp.domain.usecase
 
-import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.AuthRepository
 
 /**
@@ -10,7 +9,7 @@ import ovo.sypw.bsp.domain.repository.AuthRepository
 class LogoutUseCase(
     private val authRepository: AuthRepository
 ) {
-    
+
     /**
      * 执行登出操作
      * @return 登出结果

@@ -418,7 +418,7 @@ class AnnouncementUseCase(
 
         return announcementRepository.offlineAnnouncement(id)
     }
-    
+
     /**
      * 获取已发布的公告列表（无需认证）
      * @param current 当前页码

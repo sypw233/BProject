@@ -1,17 +1,17 @@
 package ovo.sypw.bsp.domain.repository
 
-import ovo.sypw.bsp.data.dto.result.NetworkResult
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 
 /**
  * 基础Repository接口
  * 提供通用的数据访问方法
  */
 interface BaseRepository {
-    
+
     /**
      * 执行网络请求并返回Flow
      * @param apiCall 网络请求函数
@@ -27,7 +27,7 @@ interface BaseRepository {
     }.catch { exception ->
         emit(NetworkResult.Error(exception, exception.message ?: "Unknown error"))
     }
-    
+
     /**
      * 执行带缓存的网络请求
      * @param cacheCall 缓存获取函数
@@ -47,23 +47,25 @@ interface BaseRepository {
         if (cachedData != null) {
             emit(NetworkResult.Success(cachedData))
         }
-        
+
         // 判断是否需要从网络获取数据
         if (shouldFetch(cachedData)) {
             emit(NetworkResult.Loading)
-            
+
             when (val networkResult = networkCall()) {
                 is NetworkResult.Success -> {
                     // 保存到缓存
                     saveCall(networkResult.data)
                     emit(networkResult)
                 }
+
                 is NetworkResult.Error -> {
                     // 如果有缓存数据，则不发送错误
                     if (cachedData == null) {
                         emit(networkResult)
                     }
                 }
+
                 else -> {
                     // 其他状态不处理
                 }
@@ -72,7 +74,7 @@ interface BaseRepository {
     }.catch { exception ->
         emit(NetworkResult.Error(exception, exception.message ?: "Unknown error"))
     }
-    
+
     /**
      * 执行简单的网络请求（不带加载状态）
      * @param apiCall 网络请求函数

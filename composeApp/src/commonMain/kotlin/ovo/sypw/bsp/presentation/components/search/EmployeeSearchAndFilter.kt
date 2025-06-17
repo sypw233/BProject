@@ -1,13 +1,26 @@
-package ovo.sypw.bsp.presentation.components
+package ovo.sypw.bsp.presentation.components.search
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ovo.sypw.bsp.data.dto.DepartmentDto
 import ovo.sypw.bsp.data.dto.Options.jobOptions
+import ovo.sypw.bsp.presentation.components.template.ActiveFiltersRow
+import ovo.sypw.bsp.presentation.components.template.DateRangeInput
+import ovo.sypw.bsp.presentation.components.template.DropdownSelector
+import ovo.sypw.bsp.presentation.components.template.FilterOptionsLazyRow
+import ovo.sypw.bsp.presentation.components.template.FilterOptionsRow
+import ovo.sypw.bsp.presentation.components.template.FilterSection
+import ovo.sypw.bsp.presentation.components.template.RemovableFilterChip
+import ovo.sypw.bsp.presentation.components.template.SearchAndFilterTemplate
 import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeFilterState
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
@@ -55,7 +68,13 @@ fun EmployeeSearchAndFilter(
                         "gender" -> onChange(filterState.copy(selectedGender = null))
                         "job" -> onChange(filterState.copy(selectedJob = null))
                         "department" -> onChange(filterState.copy(selectedDepartmentId = null))
-                        "entryDate" -> onChange(filterState.copy(entryDateStart = null, entryDateEnd = null))
+                        "entryDate" -> onChange(
+                            filterState.copy(
+                                entryDateStart = null,
+                                entryDateEnd = null
+                            )
+                        )
+
                         else -> {}
                     }
                 }
@@ -76,7 +95,7 @@ fun EmployeeFilterContent(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     val isSmallScreen = layoutConfig.screenSize == ResponsiveUtils.ScreenSize.COMPACT
-    
+
     if (isSmallScreen) {
         // 小屏幕垂直布局
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -237,7 +256,7 @@ fun EmployeeActiveFilters(
                 )
             }
         }
-        
+
         // 职位筛选
         filterState.selectedJob?.let { job ->
             item {
@@ -247,7 +266,7 @@ fun EmployeeActiveFilters(
                 )
             }
         }
-        
+
         // 部门筛选
         filterState.selectedDepartmentId?.let { departmentId ->
             val department = departments.find { it.id == departmentId }
@@ -260,7 +279,7 @@ fun EmployeeActiveFilters(
                 }
             }
         }
-        
+
         // 入职日期筛选
         if (!filterState.entryDateStart.isNullOrBlank() || !filterState.entryDateEnd.isNullOrBlank()) {
             item {

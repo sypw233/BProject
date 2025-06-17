@@ -13,7 +13,7 @@ import ovo.sypw.bsp.utils.Logger
 class FileUploadUseCase(
     private val fileUploadRepository: FileUploadRepository
 ) {
-    
+
     /**
      * 上传单个文件
      * @param fileBytes 文件字节数组
@@ -37,11 +37,11 @@ class FileUploadUseCase(
                 )
             )
         }
-        
+
         Logger.i("FileUploadUseCase", "开始上传文件: $fileName")
         return fileUploadRepository.uploadFile(fileBytes, fileName, mimeType)
     }
-    
+
     /**
      * 上传图片文件
      * @param imageBytes 图片字节数组
@@ -65,11 +65,11 @@ class FileUploadUseCase(
                 )
             )
         }
-        
+
         Logger.i("FileUploadUseCase", "开始上传图片: $fileName")
         return fileUploadRepository.uploadImage(imageBytes, fileName, quality)
     }
-    
+
     /**
      * 批量上传文件
      * @param files 文件列表，每个元素包含文件字节数组、文件名和MIME类型
@@ -89,7 +89,7 @@ class FileUploadUseCase(
                 )
             )
         }
-        
+
         // 验证每个文件
         files.forEachIndexed { index, (fileBytes, fileName, _) ->
             val validationResult = validateInput(fileBytes, fileName)
@@ -105,11 +105,11 @@ class FileUploadUseCase(
                 )
             }
         }
-        
+
         Logger.i("FileUploadUseCase", "开始批量上传${files.size}个文件")
         return fileUploadRepository.uploadMultipleFiles(files)
     }
-    
+
     /**
      * 验证文件输入
      * @param fileBytes 文件字节数组
@@ -130,7 +130,7 @@ class FileUploadUseCase(
             else -> null
         }
     }
-    
+
     /**
      * 验证图片输入
      * @param imageBytes 图片字节数组
@@ -147,14 +147,14 @@ class FileUploadUseCase(
         if (baseValidation != null) {
             return baseValidation
         }
-        
+
         return when {
             quality < 0 || quality > 100 -> "图片质量必须在0-100之间"
             !isImageFile(fileName) -> "文件不是支持的图片格式"
             else -> null
         }
     }
-    
+
     /**
      * 检查是否为图片文件
      * @param fileName 文件名
@@ -165,7 +165,7 @@ class FileUploadUseCase(
         val extension = fileName.substringAfterLast('.', "").lowercase()
         return imageExtensions.contains(extension)
     }
-    
+
     /**
      * 获取文件MIME类型
      * @param fileName 文件名

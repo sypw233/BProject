@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.screens.admin
+package ovo.sypw.bsp.presentation.components.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,8 +28,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import ovo.sypw.bsp.presentation.viewmodel.admin.ClassViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.ClassDialogState
+import ovo.sypw.bsp.presentation.viewmodel.admin.ClassViewModel
 
 /**
  * 班级添加/编辑Dialog
@@ -37,14 +37,14 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.ClassDialogState
 @Composable
 fun ClassDialog(viewModel: ClassViewModel) {
     val dialogState by viewModel.classDialogState.collectAsState()
-    
+
     // 添加调试日志
     SideEffect {
         println("ClassDialog重组: isVisible=${dialogState.isVisible}, isEditMode=${dialogState.isEditMode}")
     }
-    
+
     println("ClassDialog被调用: isVisible=${dialogState.isVisible}")
-    
+
     if (dialogState.isVisible) {
         println("显示ClassDialogContent")
         ClassDialogContent(
@@ -76,7 +76,7 @@ private fun ClassDialogContent(
     onDismiss: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-    
+
     AlertDialog(
         onDismissRequest = {
             if (!dialogState.isLoading) {
@@ -102,7 +102,9 @@ private fun ClassDialogContent(
                     label = { Text("班级名称") },
                     placeholder = { Text("请输入班级名称") },
                     enabled = !dialogState.isLoading,
-                    isError = dialogState.errorMessage != null && dialogState.errorMessage.contains("班级名称"),
+                    isError = dialogState.errorMessage != null && dialogState.errorMessage.contains(
+                        "班级名称"
+                    ),
                     supportingText = {
                         if (dialogState.errorMessage != null && dialogState.errorMessage.contains("班级名称")) {
                             Text(
@@ -117,7 +119,7 @@ private fun ClassDialogContent(
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
                 )
-                
+
                 // 年级输入框
                 OutlinedTextField(
                     value = dialogState.classGrade,
@@ -125,7 +127,9 @@ private fun ClassDialogContent(
                     label = { Text("年级") },
                     placeholder = { Text("请输入年级") },
                     enabled = !dialogState.isLoading,
-                    isError = dialogState.errorMessage != null && dialogState.errorMessage.contains("年级"),
+                    isError = dialogState.errorMessage != null && dialogState.errorMessage.contains(
+                        "年级"
+                    ),
                     supportingText = {
                         if (dialogState.errorMessage != null && dialogState.errorMessage.contains("年级")) {
                             Text(
@@ -138,18 +142,19 @@ private fun ClassDialogContent(
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
-                
+
                 // 通用错误消息
-                if (dialogState.errorMessage != null && 
-                    !dialogState.errorMessage.contains("班级名称") && 
-                    !dialogState.errorMessage.contains("年级")) {
+                if (dialogState.errorMessage != null &&
+                    !dialogState.errorMessage.contains("班级名称") &&
+                    !dialogState.errorMessage.contains("年级")
+                ) {
                     Text(
                         text = dialogState.errorMessage,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
-                
+
                 // 加载指示器
                 if (dialogState.isLoading) {
                     Row(
@@ -172,9 +177,9 @@ private fun ClassDialogContent(
         confirmButton = {
             Button(
                 onClick = onSave,
-                enabled = !dialogState.isLoading && 
-                         dialogState.className.isNotBlank() && 
-                         dialogState.classGrade.isNotBlank()
+                enabled = !dialogState.isLoading &&
+                        dialogState.className.isNotBlank() &&
+                        dialogState.classGrade.isNotBlank()
             ) {
                 Text(if (dialogState.isEditMode) "更新" else "添加")
             }
@@ -193,7 +198,7 @@ private fun ClassDialogContent(
         ),
         modifier = Modifier.widthIn(min = 400.dp, max = 600.dp)
     )
-    
+
     // 自动聚焦到输入框
     LaunchedEffect(dialogState.isVisible) {
         if (dialogState.isVisible && !dialogState.isEditMode) {

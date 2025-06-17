@@ -1,16 +1,28 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.viewmodel.admin.AdminViewModel
-import ovo.sypw.bsp.presentation.screens.test.ImageTestScreen
-import ovo.sypw.bsp.presentation.screens.test.FileUploadTestScreen
-import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 

@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.screens.admin
+package ovo.sypw.bsp.presentation.components.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,8 +28,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentDialogState
+import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentViewModel
 
 /**
  * 部门添加/编辑Dialog
@@ -37,14 +37,14 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentDialogState
 @Composable
 fun DepartmentDialog(viewModel: DepartmentViewModel) {
     val dialogState by viewModel.departmentDialogState.collectAsState()
-    
+
     // 添加调试日志
     SideEffect {
         println("DepartmentDialog重组: isVisible=${dialogState.isVisible}, isEditMode=${dialogState.isEditMode}")
     }
-    
+
     println("DepartmentDialog被调用: isVisible=${dialogState.isVisible}")
-    
+
     if (dialogState.isVisible) {
         println("显示DepartmentDialogContent")
         DepartmentDialogContent(
@@ -73,7 +73,7 @@ private fun DepartmentDialogContent(
     onDismiss: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-    
+
     AlertDialog(
         onDismissRequest = {
             if (!dialogState.isLoading) {
@@ -114,7 +114,7 @@ private fun DepartmentDialogContent(
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
                 )
-                
+
                 // 加载指示器
                 if (dialogState.isLoading) {
                     Row(
@@ -156,7 +156,7 @@ private fun DepartmentDialogContent(
         ),
         modifier = Modifier.widthIn(min = 400.dp, max = 600.dp)
     )
-    
+
     // 自动聚焦到输入框
     LaunchedEffect(dialogState.isVisible) {
         if (dialogState.isVisible && !dialogState.isEditMode) {

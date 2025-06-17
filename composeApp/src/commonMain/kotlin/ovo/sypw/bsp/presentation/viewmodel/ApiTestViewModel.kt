@@ -16,13 +16,13 @@ import ovo.sypw.bsp.domain.repository.ExampleRepository
 class ApiTestViewModel(
     private val repository: ExampleRepository
 ) : ViewModel() {
-    
+
     // 私有可变状态
     private val _uiState = MutableStateFlow(ApiTestUiState())
-    
+
     // 公开只读状态
     val uiState: StateFlow<ApiTestUiState> = _uiState.asStateFlow()
-    
+
     /**
      * 执行GET请求测试
      */
@@ -32,7 +32,7 @@ class ApiTestViewModel(
                 isLoading = true,
                 error = null
             )
-            
+
             try {
                 when (val result = repository.getExampleData()) {
                     is NetworkResult.Success -> {
@@ -42,12 +42,14 @@ class ApiTestViewModel(
                             error = null
                         )
                     }
+
                     is NetworkResult.Error -> {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             error = "GET请求失败: ${result.message}"
                         )
                     }
+
                     is NetworkResult.Loading -> {
                         // 处理加载状态
                         _uiState.value = _uiState.value.copy(
@@ -55,6 +57,7 @@ class ApiTestViewModel(
                             error = null
                         )
                     }
+
                     is NetworkResult.Idle -> {
                         // 处理空闲状态
                         _uiState.value = _uiState.value.copy(
@@ -71,7 +74,7 @@ class ApiTestViewModel(
             }
         }
     }
-    
+
     /**
      * 执行POST请求测试
      * @param data 要发送的数据
@@ -82,7 +85,7 @@ class ApiTestViewModel(
                 isLoading = true,
                 error = null
             )
-            
+
             try {
                 when (val result = repository.postExampleData(data)) {
                     is NetworkResult.Success -> {
@@ -92,12 +95,14 @@ class ApiTestViewModel(
                             error = null
                         )
                     }
+
                     is NetworkResult.Error -> {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             error = "POST请求失败: ${result.message}"
                         )
                     }
+
                     is NetworkResult.Loading -> {
                         // 处理加载状态
                         _uiState.value = _uiState.value.copy(
@@ -105,6 +110,7 @@ class ApiTestViewModel(
                             error = null
                         )
                     }
+
                     is NetworkResult.Idle -> {
                         // 处理空闲状态
                         _uiState.value = _uiState.value.copy(
@@ -121,14 +127,14 @@ class ApiTestViewModel(
             }
         }
     }
-    
+
     /**
      * 清除错误信息
      */
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
-    
+
     /**
      * 清除所有结果
      */

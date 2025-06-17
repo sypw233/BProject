@@ -16,26 +16,26 @@ import ovo.sypw.bsp.utils.Logger
 class StatisticsViewModel(
     private val statisticsUseCase: StatisticsUseCase
 ) : ViewModel() {
-    
+
     private val _statisticsState = MutableStateFlow(StatisticsState())
     val statisticsState: StateFlow<StatisticsState> = _statisticsState.asStateFlow()
-    
+
     init {
         loadStatistics()
     }
-    
+
     /**
      * 加载统计数据
      */
     fun loadStatistics() {
         Logger.d("StatisticsViewModel", "开始加载统计数据")
-        
+
         viewModelScope.launch {
             _statisticsState.value = _statisticsState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             try {
                 val data = statisticsUseCase.getDashboardStatistics()
                 _statisticsState.value = _statisticsState.value.copy(
@@ -53,7 +53,7 @@ class StatisticsViewModel(
             }
         }
     }
-    
+
     /**
      * 清除错误信息
      */

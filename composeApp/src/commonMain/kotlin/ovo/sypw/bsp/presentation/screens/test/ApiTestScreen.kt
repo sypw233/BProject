@@ -47,7 +47,7 @@ fun ApiTestScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var postData by remember { mutableStateOf("") }
-    
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -61,7 +61,7 @@ fun ApiTestScreen(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
-        
+
         // GET请求测试区域
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -76,7 +76,7 @@ fun ApiTestScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-                
+
                 Button(
                     onClick = { viewModel.testGetRequest() },
                     enabled = !uiState.isLoading,
@@ -91,7 +91,7 @@ fun ApiTestScreen(
                     }
                     Text("执行 GET 请求")
                 }
-                
+
                 // GET请求结果显示
                 uiState.getResult?.let { result ->
                     Card(
@@ -108,7 +108,7 @@ fun ApiTestScreen(
                 }
             }
         }
-        
+
         // POST请求测试区域
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -123,7 +123,7 @@ fun ApiTestScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-                
+
                 OutlinedTextField(
                     value = postData,
                     onValueChange = { postData = it },
@@ -132,7 +132,7 @@ fun ApiTestScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !uiState.isLoading
                 )
-                
+
                 Button(
                     onClick = { viewModel.testPostRequest(postData) },
                     enabled = !uiState.isLoading && postData.isNotBlank(),
@@ -147,7 +147,7 @@ fun ApiTestScreen(
                     }
                     Text("执行 POST 请求")
                 }
-                
+
                 // POST请求结果显示
                 uiState.postResult?.let { result ->
                     Card(
@@ -164,7 +164,7 @@ fun ApiTestScreen(
                 }
             }
         }
-        
+
         // 错误信息显示
         uiState.error?.let { error ->
             Card(
@@ -190,7 +190,7 @@ fun ApiTestScreen(
                 }
             }
         }
-        
+
         // 操作按钮区域
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -203,7 +203,7 @@ fun ApiTestScreen(
                 Text("清除结果")
             }
         }
-        
+
         // 依赖注入状态信息
         Card(
             modifier = Modifier.fillMaxWidth(),

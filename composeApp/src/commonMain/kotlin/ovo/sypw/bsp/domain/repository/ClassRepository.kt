@@ -1,6 +1,7 @@
 package ovo.sypw.bsp.domain.repository
 
-import ovo.sypw.bsp.data.dto.*
+import ovo.sypw.bsp.data.dto.ClassDto
+import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 
 /**
@@ -8,7 +9,7 @@ import ovo.sypw.bsp.data.dto.result.NetworkResult
  * 定义班级管理相关的业务操作
  */
 interface ClassRepository : BaseRepository {
-    
+
     /**
      * 获取班级分页列表
      * @param current 当前页码
@@ -21,14 +22,14 @@ interface ClassRepository : BaseRepository {
         size: Int = 9,
         name: String? = null
     ): NetworkResult<PageResultDto<ClassDto>>
-    
+
     /**
      * 获取班级详情
      * @param id 班级ID
      * @return 班级详情数据结果
      */
     suspend fun getClassById(id: Int): NetworkResult<ClassDto>
-    
+
     /**
      * 创建班级
      * @param name 班级名称
@@ -36,7 +37,7 @@ interface ClassRepository : BaseRepository {
      * @return 创建结果
      */
     suspend fun createClass(name: String, grade: String): NetworkResult<Unit>
-    
+
     /**
      * 更新班级
      * @param id 班级ID
@@ -45,14 +46,14 @@ interface ClassRepository : BaseRepository {
      * @return 更新结果
      */
     suspend fun updateClass(id: Int, name: String, grade: String): NetworkResult<Unit>
-    
+
     /**
      * 删除班级
      * @param id 班级ID
      * @return 删除结果
      */
     suspend fun deleteClass(id: Int?): NetworkResult<Unit>
-    
+
     /**
      * 批量删除班级
      * @param ids 班级ID列表

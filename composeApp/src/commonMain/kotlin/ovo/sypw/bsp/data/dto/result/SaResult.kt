@@ -1,8 +1,8 @@
 package ovo.sypw.bsp.data.dto.result
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 
 /**
@@ -16,12 +16,12 @@ data class SaResult(
      * 响应状态码
      */
     val code: Int,
-    
+
     /**
      * 响应消息
      */
     val msg: String,
-    
+
     /**
      * 响应数据，可以是任意JSON结构
      */
@@ -72,14 +72,14 @@ inline fun <reified T> SaResult.parseData(): T? {
             return null
         }
 //        println("[SaResult.parseData] 原始data: $data")
-        
+
         // 创建宽松的Json配置，允许非标准JSON格式
         val lenientJson = Json {
             isLenient = true
             ignoreUnknownKeys = true
             allowStructuredMapKeys = true
         }
-        
+
         val result = lenientJson.decodeFromJsonElement<T>(data)
 //        println("[SaResult.parseData] 反序列化成功: $result")
         result

@@ -37,7 +37,7 @@ fun HomeScreen(
 ) {
     var showContent by remember { mutableStateOf(false) }
     val greeting = remember { Greeting().greet() }
-    
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -51,7 +51,7 @@ fun HomeScreen(
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
-        
+
         // 交互按钮
         Button(
             onClick = { showContent = !showContent },
@@ -59,7 +59,7 @@ fun HomeScreen(
         ) {
             Text(if (showContent) "隐藏内容" else "显示内容")
         }
-        
+
         // 动画显示内容
         AnimatedVisibility(showContent) {
             Card(
@@ -88,9 +88,9 @@ fun HomeScreen(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.weight(1f))
-        
+
         // 底部信息
         Text(
             text = "Kotlin Multiplatform 强力驱动",

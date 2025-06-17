@@ -1,6 +1,8 @@
 package ovo.sypw.bsp.data.api
 
-import ovo.sypw.bsp.data.dto.*
+import ovo.sypw.bsp.data.dto.ChangePasswordRequest
+import ovo.sypw.bsp.data.dto.LoginRequest
+import ovo.sypw.bsp.data.dto.RegisterRequest
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.SaResult
 
@@ -10,7 +12,7 @@ import ovo.sypw.bsp.data.dto.result.SaResult
  */
 class AuthApiService : BaseApiService() {
     private val path = "/auth"
-    
+
     /**
      * 用户登录
      * @param loginRequest 登录请求参数
@@ -22,7 +24,7 @@ class AuthApiService : BaseApiService() {
             body = loginRequest
         )
     }
-    
+
     /**
      * 用户注册
      * @param registerRequest 注册请求参数
@@ -36,7 +38,6 @@ class AuthApiService : BaseApiService() {
     }
 
 
-    
     /**
      * 获取当前用户信息（带Token）
      * @param token 认证令牌
@@ -48,7 +49,7 @@ class AuthApiService : BaseApiService() {
             token = token
         )
     }
-    
+
 
     /**
      * 修改密码（需要认证）

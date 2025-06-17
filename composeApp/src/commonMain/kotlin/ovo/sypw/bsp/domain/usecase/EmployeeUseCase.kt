@@ -1,6 +1,10 @@
 package ovo.sypw.bsp.domain.usecase
 
-import ovo.sypw.bsp.data.dto.*
+import ovo.sypw.bsp.data.dto.EmployeeCreateDto
+import ovo.sypw.bsp.data.dto.EmployeeDto
+import ovo.sypw.bsp.data.dto.EmployeeImportDto
+import ovo.sypw.bsp.data.dto.EmployeeUpdateDto
+import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.EmployeeRepository
 import ovo.sypw.bsp.utils.Logger
@@ -12,11 +16,11 @@ import ovo.sypw.bsp.utils.Logger
 class EmployeeUseCase(
     private val employeeRepository: EmployeeRepository
 ) {
-    
+
     companion object {
         private const val TAG = "EmployeeUseCase"
     }
-    
+
     /**
      * 获取员工分页列表
      * @param current 当前页码
@@ -42,7 +46,7 @@ class EmployeeUseCase(
         entryDateEnd: String? = null
     ): NetworkResult<PageResultDto<EmployeeDto>> {
         Logger.d(TAG, "获取员工分页列表: current=$current, size=$size")
-        
+
         // 参数验证
         if (current < 1) {
             Logger.w(TAG, "页码参数无效: current=$current")
@@ -51,7 +55,7 @@ class EmployeeUseCase(
                 message = "页码参数无效"
             )
         }
-        
+
         if (size < 1 || size > 100) {
             Logger.w(TAG, "页面大小参数无效: size=$size")
             return NetworkResult.Error(
@@ -59,7 +63,7 @@ class EmployeeUseCase(
                 message = "页面大小参数无效"
             )
         }
-        
+
         return try {
             employeeRepository.getEmployeePage(
                 current = current,
@@ -80,7 +84,7 @@ class EmployeeUseCase(
             )
         }
     }
-    
+
     /**
      * 获取员工详情
      * @param id 员工ID
@@ -88,7 +92,7 @@ class EmployeeUseCase(
      */
     suspend fun getEmployeeById(id: Int): NetworkResult<EmployeeDto> {
         Logger.d(TAG, "获取员工详情: id=$id")
-        
+
         // 参数验证
         if (id <= 0) {
             Logger.w(TAG, "员工ID参数无效: id=$id")
@@ -97,7 +101,7 @@ class EmployeeUseCase(
                 message = "员工ID参数无效"
             )
         }
-        
+
         return try {
             employeeRepository.getEmployeeById(id)
         } catch (e: Exception) {
@@ -108,15 +112,18 @@ class EmployeeUseCase(
             )
         }
     }
-    
+
     /**
      * 创建员工
      * @param employeeCreateDto 员工创建数据
      * @return 创建结果
      */
     suspend fun createEmployee(employeeCreateDto: EmployeeCreateDto): NetworkResult<Unit> {
-        Logger.d(TAG, "创建员工: username=${employeeCreateDto.username}, realName=${employeeCreateDto.realName}")
-        
+        Logger.d(
+            TAG,
+            "创建员工: username=${employeeCreateDto.username}, realName=${employeeCreateDto.realName}"
+        )
+
         // 参数验证
         val validationResult = validateEmployeeCreateData(employeeCreateDto)
         if (validationResult != null) {
@@ -126,7 +133,7 @@ class EmployeeUseCase(
                 message = validationResult
             )
         }
-        
+
         return try {
             employeeRepository.createEmployee(employeeCreateDto)
         } catch (e: Exception) {
@@ -137,15 +144,18 @@ class EmployeeUseCase(
             )
         }
     }
-    
+
     /**
      * 更新员工
      * @param employeeUpdateDto 员工更新数据
      * @return 更新结果
      */
     suspend fun updateEmployee(employeeUpdateDto: EmployeeUpdateDto): NetworkResult<Unit> {
-        Logger.d(TAG, "更新员工: id=${employeeUpdateDto.id}, realName=${employeeUpdateDto.realName}")
-        
+        Logger.d(
+            TAG,
+            "更新员工: id=${employeeUpdateDto.id}, realName=${employeeUpdateDto.realName}"
+        )
+
         // 参数验证
         val validationResult = validateEmployeeUpdateData(employeeUpdateDto)
         if (validationResult != null) {
@@ -155,7 +165,7 @@ class EmployeeUseCase(
                 message = validationResult
             )
         }
-        
+
         return try {
             employeeRepository.updateEmployee(employeeUpdateDto)
         } catch (e: Exception) {
@@ -166,7 +176,7 @@ class EmployeeUseCase(
             )
         }
     }
-    
+
     /**
      * 删除员工
      * @param id 员工ID
@@ -174,7 +184,7 @@ class EmployeeUseCase(
      */
     suspend fun deleteEmployee(id: Int): NetworkResult<Unit> {
         Logger.d(TAG, "删除员工: id=$id")
-        
+
         // 参数验证
         if (id <= 0) {
             Logger.w(TAG, "员工ID参数无效: id=$id")
@@ -183,7 +193,7 @@ class EmployeeUseCase(
                 message = "员工ID参数无效"
             )
         }
-        
+
         return try {
             employeeRepository.deleteEmployee(id)
         } catch (e: Exception) {
@@ -194,7 +204,7 @@ class EmployeeUseCase(
             )
         }
     }
-    
+
     /**
      * 批量删除员工
      * @param ids 员工ID列表
@@ -202,7 +212,7 @@ class EmployeeUseCase(
      */
     suspend fun batchDeleteEmployees(ids: List<Int>): NetworkResult<Unit> {
         Logger.d(TAG, "批量删除员工: ids=$ids")
-        
+
         // 参数验证
         if (ids.isEmpty()) {
             Logger.w(TAG, "员工ID列表为空")
@@ -211,7 +221,7 @@ class EmployeeUseCase(
                 message = "请选择要删除的员工"
             )
         }
-        
+
         if (ids.any { it <= 0 }) {
             Logger.w(TAG, "员工ID列表包含无效ID: $ids")
             return NetworkResult.Error(
@@ -219,7 +229,7 @@ class EmployeeUseCase(
                 message = "员工ID参数无效"
             )
         }
-        
+
         if (ids.size > 100) {
             Logger.w(TAG, "批量删除员工数量过多: ${ids.size}")
             return NetworkResult.Error(
@@ -227,7 +237,7 @@ class EmployeeUseCase(
                 message = "单次最多删除100个员工"
             )
         }
-        
+
         return try {
             employeeRepository.batchDeleteEmployees(ids)
         } catch (e: Exception) {
@@ -238,7 +248,7 @@ class EmployeeUseCase(
             )
         }
     }
-    
+
     /**
      * 批量导入员工
      * @param file 导入文件数据
@@ -246,7 +256,7 @@ class EmployeeUseCase(
      */
     suspend fun importEmployees(file: ByteArray): NetworkResult<EmployeeImportDto> {
         Logger.d(TAG, "批量导入员工: 文件大小=${file.size}字节")
-        
+
         // 参数验证
         if (file.isEmpty()) {
             Logger.w(TAG, "导入文件为空")
@@ -255,7 +265,7 @@ class EmployeeUseCase(
                 message = "请选择要导入的文件"
             )
         }
-        
+
         // 文件大小限制 (10MB)
         if (file.size > 10 * 1024 * 1024) {
             Logger.w(TAG, "导入文件过大: ${file.size}字节")
@@ -264,7 +274,7 @@ class EmployeeUseCase(
                 message = "文件大小不能超过10MB"
             )
         }
-        
+
         return try {
             employeeRepository.importEmployees(file)
         } catch (e: Exception) {
@@ -275,7 +285,7 @@ class EmployeeUseCase(
             )
         }
     }
-    
+
     /**
      * 批量导出员工
      * @param username 用户名筛选
@@ -297,7 +307,7 @@ class EmployeeUseCase(
         entryDateEnd: String? = null
     ): NetworkResult<ByteArray> {
         Logger.d(TAG, "批量导出员工")
-        
+
         return try {
             employeeRepository.exportEmployees(
                 username = username?.trim()?.takeIf { it.isNotEmpty() },
@@ -316,7 +326,7 @@ class EmployeeUseCase(
             )
         }
     }
-    
+
     /**
      * 验证员工创建数据
      * @param employeeCreateDto 员工创建数据
@@ -333,7 +343,7 @@ class EmployeeUseCase(
         if (!employeeCreateDto.username.matches(Regex("^[a-zA-Z0-9_]+$"))) {
             return "用户名只能包含字母、数字和下划线"
         }
-        
+
         // 真实姓名验证
         if (employeeCreateDto.realName.isBlank()) {
             return "真实姓名不能为空"
@@ -341,7 +351,7 @@ class EmployeeUseCase(
         if (employeeCreateDto.realName.length > 50) {
             return "真实姓名长度不能超过50个字符"
         }
-        
+
         // 密码验证
         if (employeeCreateDto.password.isBlank()) {
             return "密码不能为空"
@@ -349,20 +359,20 @@ class EmployeeUseCase(
         if (employeeCreateDto.password.length < 6 || employeeCreateDto.password.length > 20) {
             return "密码长度必须在6-20个字符之间"
         }
-        
+
         // 性别验证
         if (employeeCreateDto.gender !in listOf(1, 2)) {
             return "性别参数无效"
         }
-        
+
         // 部门ID验证
         if (employeeCreateDto.departmentId <= 0) {
             return "请选择部门"
         }
-        
+
         return null
     }
-    
+
     /**
      * 验证员工更新数据
      * @param employeeUpdateDto 员工更新数据
@@ -373,7 +383,7 @@ class EmployeeUseCase(
         if (employeeUpdateDto.id <= 0) {
             return "员工ID无效"
         }
-        
+
         // 真实姓名验证
         if (employeeUpdateDto.realName.isBlank()) {
             return "真实姓名不能为空"
@@ -382,17 +392,17 @@ class EmployeeUseCase(
             return "真实姓名长度不能超过50个字符"
         }
 
-        
+
         // 性别验证
         if (employeeUpdateDto.gender !in listOf(1, 2)) {
             return "性别参数无效"
         }
-        
+
         // 部门ID验证
         if (employeeUpdateDto.departmentId <= 0) {
             return "请选择部门"
         }
-        
+
         return null
     }
 }

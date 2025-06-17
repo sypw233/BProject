@@ -1,14 +1,25 @@
-package ovo.sypw.bsp.presentation.components
+package ovo.sypw.bsp.presentation.components.search
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementFilterState
+import ovo.sypw.bsp.data.dto.AnnouncementPriority
 import ovo.sypw.bsp.data.dto.AnnouncementStatus
 import ovo.sypw.bsp.data.dto.AnnouncementType
-import ovo.sypw.bsp.data.dto.AnnouncementPriority
+import ovo.sypw.bsp.presentation.components.template.ActiveFiltersRow
+import ovo.sypw.bsp.presentation.components.template.DateRangeInput
+import ovo.sypw.bsp.presentation.components.template.FilterOptionsRow
+import ovo.sypw.bsp.presentation.components.template.FilterSection
+import ovo.sypw.bsp.presentation.components.template.RemovableFilterChip
+import ovo.sypw.bsp.presentation.components.template.SearchAndFilterTemplate
+import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementFilterState
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
 

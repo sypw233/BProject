@@ -13,11 +13,11 @@ import ovo.sypw.bsp.utils.Logger
 class DepartmentUseCase(
     private val departmentRepository: DepartmentRepository
 ) {
-    
+
     companion object {
         private const val TAG = "DepartmentUseCase"
     }
-    
+
     /**
      * 获取部门分页列表
      * @param current 当前页码
@@ -31,7 +31,7 @@ class DepartmentUseCase(
         name: String? = null
     ): NetworkResult<PageResultDto<DepartmentDto>> {
 //        Logger.d(TAG, "获取部门分页列表用例: current=$current, size=$size, name=$name")
-        
+
         // 参数验证
         if (current < 1) {
             Logger.w(TAG, "页码参数无效: $current")
@@ -40,7 +40,7 @@ class DepartmentUseCase(
                 message = "页码参数无效"
             )
         }
-        
+
         if (size < 1 || size > 9999) {
             Logger.w(TAG, "每页大小参数无效: $size")
             return NetworkResult.Error(
@@ -48,10 +48,10 @@ class DepartmentUseCase(
                 message = "每页大小参数无效"
             )
         }
-        
+
         return departmentRepository.getDepartmentPage(current, size, name)
     }
-    
+
     /**
      * 获取部门详情
      * @param id 部门ID
@@ -59,7 +59,7 @@ class DepartmentUseCase(
      */
     suspend fun getDepartmentById(id: Int): NetworkResult<DepartmentDto> {
         Logger.d(TAG, "获取部门详情用例: id=$id")
-        
+
         // 参数验证
         if (id <= 0) {
             Logger.w(TAG, "部门ID参数无效: $id")
@@ -68,10 +68,10 @@ class DepartmentUseCase(
                 message = "部门ID参数无效"
             )
         }
-        
+
         return departmentRepository.getDepartmentById(id)
     }
-    
+
     /**
      * 创建部门
      * @param name 部门名称
@@ -79,7 +79,7 @@ class DepartmentUseCase(
      */
     suspend fun createDepartment(name: String): NetworkResult<Unit> {
         Logger.d(TAG, "创建部门用例: name=$name")
-        
+
         // 参数验证
         if (name.isBlank()) {
             Logger.w(TAG, "部门名称不能为空")
@@ -88,7 +88,7 @@ class DepartmentUseCase(
                 message = "部门名称不能为空"
             )
         }
-        
+
         if (name.length > 50) {
             Logger.w(TAG, "部门名称过长: ${name.length}")
             return NetworkResult.Error(
@@ -96,10 +96,10 @@ class DepartmentUseCase(
                 message = "部门名称不能超过50个字符"
             )
         }
-        
+
         return departmentRepository.createDepartment(name.trim())
     }
-    
+
     /**
      * 更新部门
      * @param id 部门ID
@@ -108,7 +108,7 @@ class DepartmentUseCase(
      */
     suspend fun updateDepartment(id: Int, name: String): NetworkResult<Unit> {
         Logger.d(TAG, "更新部门用例: id=$id, name=$name")
-        
+
         // 参数验证
         if (id <= 0) {
             Logger.w(TAG, "部门ID参数无效: $id")
@@ -117,7 +117,7 @@ class DepartmentUseCase(
                 message = "部门ID参数无效"
             )
         }
-        
+
         if (name.isBlank()) {
             Logger.w(TAG, "部门名称不能为空")
             return NetworkResult.Error(
@@ -125,7 +125,7 @@ class DepartmentUseCase(
                 message = "部门名称不能为空"
             )
         }
-        
+
         if (name.length > 50) {
             Logger.w(TAG, "部门名称过长: ${name.length}")
             return NetworkResult.Error(
@@ -133,10 +133,10 @@ class DepartmentUseCase(
                 message = "部门名称不能超过50个字符"
             )
         }
-        
+
         return departmentRepository.updateDepartment(id, name.trim())
     }
-    
+
     /**
      * 删除部门
      * @param id 部门ID
@@ -144,7 +144,7 @@ class DepartmentUseCase(
      */
     suspend fun deleteDepartment(id: Int?): NetworkResult<Unit> {
         Logger.d(TAG, "删除部门用例: id=$id")
-        
+
         // 参数验证
         if (id != null) {
             if (id <= 0) {
@@ -155,10 +155,10 @@ class DepartmentUseCase(
                 )
             }
         }
-        
+
         return departmentRepository.deleteDepartment(id)
     }
-    
+
     /**
      * 批量删除部门
      * @param ids 部门ID列表
@@ -166,7 +166,7 @@ class DepartmentUseCase(
      */
     suspend fun batchDeleteDepartments(ids: List<Int>): NetworkResult<Unit> {
         Logger.d(TAG, "批量删除部门用例: ids=$ids")
-        
+
         // 参数验证
         if (ids.isEmpty()) {
             Logger.w(TAG, "部门ID列表不能为空")
@@ -175,7 +175,7 @@ class DepartmentUseCase(
                 message = "请选择要删除的部门"
             )
         }
-        
+
         if (ids.size > 50) {
             Logger.w(TAG, "批量删除数量过多: ${ids.size}")
             return NetworkResult.Error(
@@ -183,7 +183,7 @@ class DepartmentUseCase(
                 message = "单次批量删除不能超过50个部门"
             )
         }
-        
+
         // 验证所有ID都是有效的
         val invalidIds = ids.filter { it <= 0 }
         if (invalidIds.isNotEmpty()) {
@@ -193,7 +193,7 @@ class DepartmentUseCase(
                 message = "包含无效的部门ID"
             )
         }
-        
+
         return departmentRepository.batchDeleteDepartments(ids)
     }
 }

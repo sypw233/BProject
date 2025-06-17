@@ -33,17 +33,15 @@ import ovo.sypw.bsp.navigation.NavigationManager
 import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.getNavigationItems
 import ovo.sypw.bsp.navigation.rememberNavigationManager
-import ovo.sypw.bsp.presentation.screens.announcement.AnnouncementDetailScreen
-import ovo.sypw.bsp.presentation.screens.test.ApiTestScreen
 import ovo.sypw.bsp.presentation.screens.HomeScreen
 import ovo.sypw.bsp.presentation.screens.ProfileScreen
-import ovo.sypw.bsp.presentation.screens.announcement.PublicAnnouncementScreen
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
 import ovo.sypw.bsp.presentation.screens.admin.GetAdminTab
+import ovo.sypw.bsp.presentation.screens.announcement.AnnouncementDetailScreen
+import ovo.sypw.bsp.presentation.screens.announcement.PublicAnnouncementScreen
 import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
-
 import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
 import ovo.sypw.bsp.utils.FontUtils
 import ovo.sypw.bsp.utils.Logger
@@ -383,7 +381,7 @@ private fun MainContent(
                 }
             )
         }
-        
+
         AppScreen.ANNOUNCEMENT_DETAIL.route -> {
             val selectedAnnouncementId = navigationManager.selectedAnnouncementId.value
             if (selectedAnnouncementId != null) {

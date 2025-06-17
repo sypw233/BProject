@@ -11,7 +11,7 @@ import ovo.sypw.bsp.domain.repository.AuthRepository
 class GetUserInfoUseCase(
     private val authRepository: AuthRepository
 ) {
-    
+
     /**
      * 获取当前用户信息
      * @param forceRefresh 是否强制从服务器刷新
@@ -26,13 +26,13 @@ class GetUserInfoUseCase(
                     message = "用户未登录"
                 )
             }
-            
+
             // 如果不强制刷新，可以先尝试从本地获取
             if (!forceRefresh) {
                 // 这里可以添加从本地缓存获取用户信息的逻辑
                 // 暂时直接从服务器获取
             }
-            
+
             // 从服务器获取用户信息
             authRepository.getCurrentUser()
         } catch (e: Exception) {

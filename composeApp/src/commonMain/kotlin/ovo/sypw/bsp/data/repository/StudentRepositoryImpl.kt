@@ -1,11 +1,15 @@
 package ovo.sypw.bsp.data.repository
 
 import ovo.sypw.bsp.data.api.StudentApiService
-import ovo.sypw.bsp.data.dto.*
-import ovo.sypw.bsp.data.storage.TokenStorage
+import ovo.sypw.bsp.data.dto.PageResultDto
+import ovo.sypw.bsp.data.dto.StudentCreateDto
+import ovo.sypw.bsp.data.dto.StudentDto
+import ovo.sypw.bsp.data.dto.StudentImportDto
+import ovo.sypw.bsp.data.dto.StudentUpdateDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.isSuccess
 import ovo.sypw.bsp.data.dto.result.parseData
+import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.domain.repository.StudentRepository
 import ovo.sypw.bsp.utils.Logger
 
@@ -17,11 +21,11 @@ class StudentRepositoryImpl(
     private val studentApiService: StudentApiService,
     private val tokenStorage: TokenStorage
 ) : StudentRepository {
-    
+
     companion object {
         private const val TAG = "StudentRepositoryImpl"
     }
-    
+
     /**
      * 获取认证令牌
      * @return 认证令牌，如果未登录则返回null
@@ -29,7 +33,7 @@ class StudentRepositoryImpl(
     private suspend fun getAuthToken(): String? {
         return tokenStorage.getAccessToken()
     }
-    
+
     /**
      * 获取学生分页列表
      */
@@ -46,7 +50,7 @@ class StudentRepositoryImpl(
         joinDateEnd: String?
     ): NetworkResult<PageResultDto<StudentDto>> {
 //        Logger.d(TAG, "获取学生分页列表: current=$current, size=$size")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "获取学生分页列表失败: 未找到认证令牌")
@@ -55,9 +59,19 @@ class StudentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = studentApiService.getStudentPage(
-            current, size, name, gender, classId, status, birthDateStart, birthDateEnd, joinDateStart, joinDateEnd, token
+            current,
+            size,
+            name,
+            gender,
+            classId,
+            status,
+            birthDateStart,
+            birthDateEnd,
+            joinDateStart,
+            joinDateEnd,
+            token
         )) {
             is NetworkResult.Success -> {
 //                Logger.i(TAG, "获取学生分页列表请求成功")
@@ -82,21 +96,23 @@ class StudentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "获取学生分页列表网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 获取学生详情
      */
     override suspend fun getStudentById(id: Int): NetworkResult<StudentDto> {
         Logger.d(TAG, "获取学生详情: id=$id")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "获取学生详情失败: 未找到认证令牌")
@@ -105,7 +121,7 @@ class StudentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = studentApiService.getStudentById(id, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "获取学生详情请求成功")
@@ -130,21 +146,23 @@ class StudentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "获取学生详情网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 创建学生
      */
     override suspend fun createStudent(studentCreateDto: StudentCreateDto): NetworkResult<Unit> {
         Logger.d(TAG, "创建学生: name=${studentCreateDto.name}")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "创建学生失败: 未找到认证令牌")
@@ -153,7 +171,7 @@ class StudentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = studentApiService.createStudent(studentCreateDto, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "创建学生请求成功")
@@ -169,21 +187,23 @@ class StudentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "创建学生网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 更新学生
      */
     override suspend fun updateStudent(studentUpdateDto: StudentUpdateDto): NetworkResult<Unit> {
         Logger.d(TAG, "更新学生: id=${studentUpdateDto.id}, name=${studentUpdateDto.name}")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "更新学生失败: 未找到认证令牌")
@@ -192,13 +212,16 @@ class StudentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = studentApiService.updateStudent(studentUpdateDto, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "更新学生请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    Logger.i(TAG, "学生更新成功: id=${studentUpdateDto.id}, name=${studentUpdateDto.name}")
+                    Logger.i(
+                        TAG,
+                        "学生更新成功: id=${studentUpdateDto.id}, name=${studentUpdateDto.name}"
+                    )
                     NetworkResult.Success(Unit)
                 } else {
                     Logger.w(TAG, "更新学生失败: ${saResult.msg}")
@@ -208,21 +231,23 @@ class StudentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "更新学生网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 删除学生
      */
     override suspend fun deleteStudent(id: Int): NetworkResult<Unit> {
         Logger.d(TAG, "删除学生: id=$id")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "删除学生失败: 未找到认证令牌")
@@ -231,7 +256,7 @@ class StudentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = studentApiService.deleteStudent(id, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "删除学生请求成功")
@@ -247,21 +272,23 @@ class StudentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "删除学生网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 批量删除学生
      */
     override suspend fun batchDeleteStudents(ids: List<Int>): NetworkResult<Unit> {
         Logger.d(TAG, "批量删除学生: ids=$ids")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "批量删除学生失败: 未找到认证令牌")
@@ -270,7 +297,7 @@ class StudentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = studentApiService.batchDeleteStudents(ids, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "批量删除学生请求成功")
@@ -286,21 +313,23 @@ class StudentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "批量删除学生网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 批量导入学生
      */
     override suspend fun importStudents(file: ByteArray): NetworkResult<StudentImportDto> {
         Logger.d(TAG, "批量导入学生: 文件大小=${file.size}字节")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "批量导入学生失败: 未找到认证令牌")
@@ -309,7 +338,7 @@ class StudentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = studentApiService.importStudents(file, token)) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "批量导入学生请求成功")
@@ -317,7 +346,10 @@ class StudentRepositoryImpl(
                 if (saResult.isSuccess()) {
                     val importResult = saResult.parseData<StudentImportDto>()
                     if (importResult != null) {
-                        Logger.i(TAG, "学生导入成功: 成功${importResult.successCount}个，失败${importResult.failureCount}个")
+                        Logger.i(
+                            TAG,
+                            "学生导入成功: 成功${importResult.successCount}个，失败${importResult.failureCount}个"
+                        )
                         NetworkResult.Success(importResult)
                     } else {
                         Logger.w(TAG, "学生导入结果解析失败")
@@ -334,15 +366,17 @@ class StudentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "批量导入学生网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }
     }
-    
+
     /**
      * 批量导出学生
      */
@@ -357,7 +391,7 @@ class StudentRepositoryImpl(
         joinDateEnd: String?
     ): NetworkResult<ByteArray> {
         Logger.d(TAG, "批量导出学生")
-        
+
         val token = getAuthToken()
         if (token == null) {
             Logger.w(TAG, "批量导出学生失败: 未找到认证令牌")
@@ -366,9 +400,17 @@ class StudentRepositoryImpl(
                 message = "请先登录"
             )
         }
-        
+
         return when (val result = studentApiService.exportStudents(
-            name, gender, classId, status, birthDateStart, birthDateEnd, joinDateStart, joinDateEnd, token
+            name,
+            gender,
+            classId,
+            status,
+            birthDateStart,
+            birthDateEnd,
+            joinDateStart,
+            joinDateEnd,
+            token
         )) {
             is NetworkResult.Success -> {
                 Logger.i(TAG, "批量导出学生请求成功")
@@ -395,10 +437,12 @@ class StudentRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "批量导出学生网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> result
             is NetworkResult.Idle -> result
         }

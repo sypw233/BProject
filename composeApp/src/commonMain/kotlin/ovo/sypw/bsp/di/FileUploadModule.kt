@@ -11,12 +11,12 @@ import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
  * 提供文件上传相关的依赖注入配置
  */
 val fileUploadModule = module {
-    
+
     // API服务
     single<FileUploadApiService> {
         FileUploadApiService()
     }
-    
+
     // Repository
     single<FileUploadRepository> {
         FileUploadRepositoryImpl(
@@ -24,7 +24,7 @@ val fileUploadModule = module {
             tokenStorage = get()
         )
     }
-    
+
     // UseCase
     single<FileUploadUseCase> {
         FileUploadUseCase(

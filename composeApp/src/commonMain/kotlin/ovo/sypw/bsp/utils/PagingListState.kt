@@ -2,8 +2,6 @@ package ovo.sypw.bsp.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.flow.StateFlow
 import ovo.sypw.bsp.data.paging.PagingData
@@ -17,38 +15,38 @@ import ovo.sypw.bsp.data.paging.PagingLoadState
 class PagingListState<T>(
     private val pagingManager: PagingManager<T>
 ) {
-    
+
     /**
      * 分页数据流
      */
     val pagingData: StateFlow<PagingData<T>> = pagingManager.pagingData
-    
+
     /**
      * 加载状态流
      */
     val loadState: StateFlow<PagingLoadState> = pagingManager.loadState
-    
+
     /**
      * 刷新数据
      */
     suspend fun refresh() {
         pagingManager.refresh()
     }
-    
+
     /**
      * 重试加载
      */
     suspend fun retry() {
         pagingManager.retry()
     }
-    
+
     /**
      * 加载下一页
      */
     suspend fun loadNextPage() {
         pagingManager.loadNextPage()
     }
-    
+
     /**
      * 检查预加载
      * @param visibleItemIndex 当前可见的最后一个项目索引
@@ -56,7 +54,7 @@ class PagingListState<T>(
     suspend fun checkPreload(visibleItemIndex: Int) {
         pagingManager.checkPreload(visibleItemIndex)
     }
-    
+
     /**
      * 获取指定位置的数据项
      * @param index 索引
@@ -65,14 +63,14 @@ class PagingListState<T>(
     fun getItem(index: Int): T? {
         return pagingManager.getItem(index)
     }
-    
+
     /**
      * 获取当前数据项总数
      */
     fun getItemCount(): Int {
         return pagingManager.getItemCount()
     }
-    
+
     /**
      * 清空数据
      */
@@ -95,14 +93,14 @@ fun <T> rememberPagingListState(
     val state = remember(pagingManager) {
         PagingListState(pagingManager)
     }
-    
+
     // 自动初始化
     if (autoInitialize) {
         LaunchedEffect(pagingManager) {
             pagingManager.initialize()
         }
     }
-    
+
     return state
 }
 
@@ -115,12 +113,12 @@ data class PagingListItem<T>(
      * 数据项
      */
     val item: T?,
-    
+
     /**
      * 索引
      */
     val index: Int,
-    
+
     /**
      * 是否为占位符
      */
@@ -131,7 +129,7 @@ data class PagingListItem<T>(
  * 分页列表工具函数
  */
 object PagingListUtils {
-    
+
     /**
      * 获取分页列表项
      * @param pagingData 分页数据
@@ -156,7 +154,7 @@ object PagingListUtils {
             )
         }
     }
-    
+
     /**
      * 检查是否应该显示加载更多指示器
      * @param pagingData 分页数据
@@ -169,7 +167,7 @@ object PagingListUtils {
     ): Boolean {
         return pagingData.hasNextPage && loadState == PagingLoadState.Loading
     }
-    
+
     /**
      * 检查是否应该显示错误重试
      * @param loadState 加载状态
@@ -178,7 +176,7 @@ object PagingListUtils {
     fun shouldShowRetry(loadState: PagingLoadState): Boolean {
         return loadState is PagingLoadState.Error
     }
-    
+
     /**
      * 检查是否应该显示空状态
      * @param pagingData 分页数据
@@ -189,11 +187,11 @@ object PagingListUtils {
         pagingData: PagingData<T>,
         loadState: PagingLoadState
     ): Boolean {
-        return pagingData.items.isEmpty() && 
-               loadState != PagingLoadState.Loading && 
-               loadState !is PagingLoadState.Error
+        return pagingData.items.isEmpty() &&
+                loadState != PagingLoadState.Loading &&
+                loadState !is PagingLoadState.Error
     }
-    
+
     /**
      * 获取加载状态文本
      * @param loadState 加载状态
@@ -207,7 +205,7 @@ object PagingListUtils {
             is PagingLoadState.Error -> "加载失败: ${loadState.error}"
         }
     }
-    
+
     /**
      * 格式化分页信息文本
      * @param pagingData 分页数据
@@ -219,7 +217,7 @@ object PagingListUtils {
             pageSize = pagingData.pageSize,
             currentPage = pagingData.currentPage
         )
-        
+
         return "第 ${pageInfo.startIndex}-${pageInfo.endIndex} 项，共 ${pageInfo.totalCount} 项"
     }
 }

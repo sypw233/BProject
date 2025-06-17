@@ -12,19 +12,19 @@ interface FileUtils {
      * @return 是否支持文件选择
      */
     fun isFileSelectionSupported(): Boolean
-    
+
     /**
      * 选择图片文件
      * @return 图片的字节数组，如果取消选择则返回null
      */
     suspend fun selectImage(): ByteArray?
-    
+
     /**
      * 选择文件
      * @return 文件的字节数组，如果取消选择则返回null
      */
     suspend fun selectFile(): ByteArray?
-    
+
     /**
      * 保存文件
      * @param data 文件数据
@@ -33,7 +33,7 @@ interface FileUtils {
      * @return 是否保存成功
      */
     suspend fun saveFile(data: ByteArray, fileName: String, mimeType: String): Boolean
-    
+
     /**
      * 将字节数组转换为ImageBitmap
      * @param bytes 图片字节数组
@@ -54,7 +54,7 @@ object SupportedImageFormats {
     val extensions = listOf("jpg", "jpeg", "png", "gif", "bmp", "webp")
     val mimeTypes = listOf(
         "image/jpeg",
-        "image/png", 
+        "image/png",
         "image/gif",
         "image/bmp",
         "image/webp"

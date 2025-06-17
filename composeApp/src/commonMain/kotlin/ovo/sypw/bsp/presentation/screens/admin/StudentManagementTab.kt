@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -21,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,16 +29,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ovo.sypw.bsp.data.dto.StudentDto
-import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.presentation.components.ManagementPageState
-import ovo.sypw.bsp.presentation.components.ManagementPageActions
-import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
-import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
 import org.koin.compose.koinInject
+import ovo.sypw.bsp.data.dto.PageResultDto
+import ovo.sypw.bsp.data.dto.StudentDto
+import ovo.sypw.bsp.presentation.components.dialog.StudentDialog
+import ovo.sypw.bsp.presentation.components.search.StudentSearchAndFilter
+import ovo.sypw.bsp.presentation.components.template.ManagementPageActions
+import ovo.sypw.bsp.presentation.components.template.ManagementPageState
+import ovo.sypw.bsp.presentation.components.template.ManagementPageTemplate
+import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
-import ovo.sypw.bsp.presentation.components.StudentSearchAndFilter
 
 /**
  * 学生管理页面
@@ -54,18 +55,18 @@ fun StudentManagementTab(
     val searchQuery by viewModel.studentSearchQuery.collectAsState()
     val filterState by viewModel.studentFilterState.collectAsState()
     val classes by viewModel.classes.collectAsState()
-    
+
     // 加载班级数据
     LaunchedEffect(Unit) {
         viewModel.loadClasses()
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        
+
         // 学生列表
         Box(modifier = Modifier.weight(1f)) {
             // 创建状态适配器
@@ -75,7 +76,7 @@ fun StudentManagementTab(
                 override val pageInfo: PageResultDto<StudentDto>? = studentState.pageInfo
                 override val errorMessage: String? = studentState.errorMessage
             }
-            
+
             // 创建操作适配器
             val pageActions = object : ManagementPageActions {
                 override fun refresh() = viewModel.refreshStudents()
@@ -84,9 +85,10 @@ fun StudentManagementTab(
                     val currentQuery = searchQuery.takeIf { it.isNotBlank() }
                     viewModel.loadStudents(current, size, currentQuery)
                 }
+
                 override fun showAddDialog() = viewModel.showAddStudentDialog()
             }
-            
+
             // 使用通用管理页面模板
             ManagementPageTemplate(
                 state = pageState,
@@ -171,7 +173,7 @@ private fun StudentCard(
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 // 性别和年龄信息 - 根据屏幕尺寸调整布局
                 if (layoutConfig.screenSize == ResponsiveUtils.ScreenSize.COMPACT) {
                     // 小屏幕：垂直排列
@@ -195,9 +197,9 @@ private fun StudentCard(
                         )
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 // 班级和状态信息
                 Row {
                     Text(
@@ -208,9 +210,9 @@ private fun StudentCard(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
                     )
-                    
+
                     Spacer(modifier = Modifier.width(8.dp))
-                    
+
                     Text(
                         text = getStatusName(student.status),
                         style = MaterialTheme.typography.bodySmall,
@@ -219,7 +221,7 @@ private fun StudentCard(
                     )
                 }
             }
-            
+
             // 操作按钮区域
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally

@@ -53,13 +53,17 @@ fun FileUploadTestScreen(
 ) {
     val fileUtils = rememberFileUtils()
     val scope = rememberCoroutineScope()
-    
+
     // 状态管理
     var isUploading by remember { mutableStateOf(false) }
-    var uploadResults by remember { mutableStateOf<List<Pair<String, NetworkResult<FileUploadResponse>>>>(emptyList()) }
+    var uploadResults by remember {
+        mutableStateOf<List<Pair<String, NetworkResult<FileUploadResponse>>>>(
+            emptyList()
+        )
+    }
     var selectedFiles by remember { mutableStateOf<List<Pair<String, ByteArray>>>(emptyList()) }
     var statusMessage by remember { mutableStateOf("") }
-    
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -72,7 +76,7 @@ fun FileUploadTestScreen(
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
-        
+
         // 文件选择区域
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -86,7 +90,7 @@ fun FileUploadTestScreen(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
                 )
-                
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -98,9 +102,13 @@ fun FileUploadTestScreen(
                                     try {
                                         val imageBytes = fileUtils.selectImage()
                                         if (imageBytes != null) {
-                                            val fileName = "image_${Clock.System.now().toEpochMilliseconds()}.jpg"
+                                            val fileName = "image_${
+                                                Clock.System.now().toEpochMilliseconds()
+                                            }.jpg"
                                             selectedFiles = selectedFiles + (fileName to imageBytes)
-                                            statusMessage = "已选择图片: $fileName (${FileUploadUtils.formatFileSize(imageBytes.size.toLong())})"
+                                            statusMessage = "已选择图片: $fileName (${
+                                                FileUploadUtils.formatFileSize(imageBytes.size.toLong())
+                                            })"
                                         } else {
                                             statusMessage = "未选择图片"
                                         }
@@ -116,7 +124,7 @@ fun FileUploadTestScreen(
                     ) {
                         Text("选择图片")
                     }
-                    
+
                     // 清空选择按钮
                     OutlinedButton(
                         onClick = {
@@ -128,7 +136,7 @@ fun FileUploadTestScreen(
                         Text("清空选择")
                     }
                 }
-                
+
                 // 显示已选择的文件
                 if (selectedFiles.isNotEmpty()) {
                     Text(
@@ -136,7 +144,7 @@ fun FileUploadTestScreen(
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
+
                     LazyColumn(
                         modifier = Modifier.heightIn(max = 120.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -163,7 +171,7 @@ fun FileUploadTestScreen(
                 }
             }
         }
-        
+
         // 上传控制区域
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -177,7 +185,7 @@ fun FileUploadTestScreen(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
                 )
-                
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -188,35 +196,44 @@ fun FileUploadTestScreen(
                                 scope.launch {
                                     isUploading = true
                                     statusMessage = "正在上传文件..."
-                                    
+
                                     try {
-                                        val results = mutableListOf<Pair<String, NetworkResult<FileUploadResponse>>>()
-                                        
+                                        val results =
+                                            mutableListOf<Pair<String, NetworkResult<FileUploadResponse>>>()
+
                                         selectedFiles.forEach { (fileName, fileBytes) ->
                                             val mimeType = fileUploadUseCase.getMimeType(fileName)
-                                            
-                                            fileUploadUseCase(fileBytes, fileName, mimeType).collect { result ->
+
+                                            fileUploadUseCase(
+                                                fileBytes,
+                                                fileName,
+                                                mimeType
+                                            ).collect { result ->
                                                 when (result) {
                                                     is NetworkResult.Loading -> {
                                                         statusMessage = "正在上传: $fileName"
                                                     }
+
                                                     is NetworkResult.Success -> {
                                                         results.add(fileName to result)
                                                         statusMessage = "上传成功: $fileName"
                                                     }
+
                                                     is NetworkResult.Error -> {
                                                         results.add(fileName to result)
-                                                        statusMessage = "上传失败: $fileName - ${result.message}"
+                                                        statusMessage =
+                                                            "上传失败: $fileName - ${result.message}"
                                                     }
 
                                                     NetworkResult.Idle -> TODO()
                                                 }
                                             }
                                         }
-                                        
+
                                         uploadResults = results
-                                        statusMessage = "上传完成，成功 ${results.count { it.second is NetworkResult.Success }} 个，失败 ${results.count { it.second is NetworkResult.Error }} 个"
-                                        
+                                        statusMessage =
+                                            "上传完成，成功 ${results.count { it.second is NetworkResult.Success }} 个，失败 ${results.count { it.second is NetworkResult.Error }} 个"
+
                                     } catch (e: Exception) {
                                         statusMessage = "上传过程中发生错误: ${e.message}"
                                     } finally {
@@ -238,7 +255,7 @@ fun FileUploadTestScreen(
                         }
                         Text(if (isUploading) "上传中..." else "开始上传")
                     }
-                    
+
                     // 清空结果按钮
                     OutlinedButton(
                         onClick = {
@@ -250,7 +267,7 @@ fun FileUploadTestScreen(
                         Text("清空结果")
                     }
                 }
-                
+
                 // 状态消息
                 if (statusMessage.isNotEmpty()) {
                     Text(
@@ -267,7 +284,7 @@ fun FileUploadTestScreen(
                 }
             }
         }
-        
+
         // 上传结果区域
         if (uploadResults.isNotEmpty()) {
             Card(
@@ -282,7 +299,7 @@ fun FileUploadTestScreen(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium
                     )
-                    
+
                     LazyColumn(
                         modifier = Modifier.heightIn(max = 200.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -305,7 +322,7 @@ fun FileUploadTestScreen(
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Medium
                                     )
-                                    
+
                                     when (result) {
                                         is NetworkResult.Success -> {
                                             Text(
@@ -319,6 +336,7 @@ fun FileUploadTestScreen(
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
+
                                         is NetworkResult.Error -> {
                                             Text(
                                                 text = "✗ 上传失败",
@@ -331,6 +349,7 @@ fun FileUploadTestScreen(
                                                 color = MaterialTheme.colorScheme.error
                                             )
                                         }
+
                                         is NetworkResult.Loading -> {
                                             Text(
                                                 text = "⏳ 上传中...",
@@ -348,7 +367,7 @@ fun FileUploadTestScreen(
                 }
             }
         }
-        
+
         // 使用说明
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -362,7 +381,7 @@ fun FileUploadTestScreen(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
                 )
-                
+
                 val instructions = listOf(
                     "1. 点击'选择图片'按钮选择要上传的图片文件",
                     "2. 可以选择多个文件进行批量上传",
@@ -371,7 +390,7 @@ fun FileUploadTestScreen(
                     "5. 支持的图片格式: JPG, PNG, GIF, WebP, BMP",
                     "6. 单个图片文件大小限制: 5MB"
                 )
-                
+
                 instructions.forEach { instruction ->
                     Text(
                         text = instruction,

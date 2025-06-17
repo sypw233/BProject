@@ -1,6 +1,7 @@
 package ovo.sypw.bsp.data.api
 
-import ovo.sypw.bsp.data.dto.*
+import ovo.sypw.bsp.data.dto.AnnouncementCreateDto
+import ovo.sypw.bsp.data.dto.AnnouncementUpdateDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.SaResult
 import ovo.sypw.bsp.utils.Logger
@@ -10,10 +11,10 @@ import ovo.sypw.bsp.utils.Logger
  * 提供公告相关的所有API调用方法
  */
 class AnnouncementApiService : BaseApiService() {
-    
+
     companion object {
         private const val TAG = "AnnouncementApiService"
-        
+
         // API端点常量
         private const val ANNOUNCEMENTS_ENDPOINT = "/announcements"
         private const val ANNOUNCEMENTS_PAGE_ENDPOINT = "/announcements/page"
@@ -21,7 +22,7 @@ class AnnouncementApiService : BaseApiService() {
         private const val ANNOUNCEMENTS_PUBLISH_ENDPOINT = "/announcements/{id}/publish"
         private const val ANNOUNCEMENTS_OFFLINE_ENDPOINT = "/announcements/{id}/offline"
     }
-    
+
     /**
      * 获取公告分页列表
      * @param current 当前页码
@@ -49,12 +50,12 @@ class AnnouncementApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "获取公告分页列表: current=$current, size=$size, title=$title")
-        
+
         val parameters = mutableMapOf<String, Any>(
             "current" to current,
             "size" to size
         )
-        
+
         // 添加可选参数
         title?.let { parameters["title"] = it }
         type?.let { parameters["type"] = it }
@@ -63,14 +64,14 @@ class AnnouncementApiService : BaseApiService() {
         publishTimeStart?.let { parameters["publishTimeStart"] = it }
         publishTimeEnd?.let { parameters["publishTimeEnd"] = it }
         creatorId?.let { parameters["creatorId"] = it }
-        
+
         return getWithToken(
             endpoint = ANNOUNCEMENTS_PAGE_ENDPOINT,
             token = token,
             parameters = parameters
         )
     }
-    
+
     /**
      * 获取公告详情
      * @param id 公告ID
@@ -82,13 +83,13 @@ class AnnouncementApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "获取公告详情: id=$id")
-        
+
         return getWithToken(
             endpoint = "$ANNOUNCEMENTS_ENDPOINT/$id",
             token = token
         )
     }
-    
+
     /**
      * 创建公告
      * @param announcementCreateDto 创建公告请求数据
@@ -100,14 +101,14 @@ class AnnouncementApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "创建公告: title=${announcementCreateDto.title}")
-        
+
         return postWithToken(
             endpoint = ANNOUNCEMENTS_ENDPOINT,
             token = token,
             body = announcementCreateDto
         )
     }
-    
+
     /**
      * 更新公告
      * @param announcementUpdateDto 更新公告请求数据
@@ -118,15 +119,18 @@ class AnnouncementApiService : BaseApiService() {
         announcementUpdateDto: AnnouncementUpdateDto,
         token: String
     ): NetworkResult<SaResult> {
-        Logger.d(TAG, "更新公告: id=${announcementUpdateDto.id}, title=${announcementUpdateDto.title}")
-        
+        Logger.d(
+            TAG,
+            "更新公告: id=${announcementUpdateDto.id}, title=${announcementUpdateDto.title}"
+        )
+
         return putWithToken(
             endpoint = ANNOUNCEMENTS_ENDPOINT,
             token = token,
             body = announcementUpdateDto
         )
     }
-    
+
     /**
      * 删除公告
      * @param id 公告ID
@@ -138,13 +142,13 @@ class AnnouncementApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "删除公告: id=$id")
-        
+
         return deleteWithToken(
             endpoint = "$ANNOUNCEMENTS_ENDPOINT/$id",
             token = token
         )
     }
-    
+
     /**
      * 批量删除公告
      * @param ids 公告ID列表
@@ -156,14 +160,14 @@ class AnnouncementApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "批量删除公告: ids=$ids")
-        
+
         return deleteWithToken(
             endpoint = ANNOUNCEMENTS_BATCH_ENDPOINT,
             token = token,
             parameters = mapOf("ids" to ids)
         )
     }
-    
+
     /**
      * 发布公告
      * @param id 公告ID
@@ -175,13 +179,13 @@ class AnnouncementApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "发布公告: id=$id")
-        
+
         return putWithToken(
             endpoint = "$ANNOUNCEMENTS_ENDPOINT/$id/publish",
             token = token
         )
     }
-    
+
     /**
      * 下线公告
      * @param id 公告ID
@@ -193,13 +197,13 @@ class AnnouncementApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "下线公告: id=$id")
-        
+
         return putWithToken(
             endpoint = "$ANNOUNCEMENTS_ENDPOINT/$id/offline",
             token = token
         )
     }
-    
+
     /**
      * 获取已发布的公告列表（无需认证）
      * @param current 当前页码
@@ -214,7 +218,7 @@ class AnnouncementApiService : BaseApiService() {
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "获取已发布公告列表:")
 
-        
+
         return getWithToken(
             endpoint = "/announcements/published",
             token = token

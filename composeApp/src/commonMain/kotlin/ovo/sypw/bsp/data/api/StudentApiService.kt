@@ -1,6 +1,7 @@
 package ovo.sypw.bsp.data.api
 
-import ovo.sypw.bsp.data.dto.*
+import ovo.sypw.bsp.data.dto.StudentCreateDto
+import ovo.sypw.bsp.data.dto.StudentUpdateDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.SaResult
 import ovo.sypw.bsp.utils.Logger
@@ -10,10 +11,10 @@ import ovo.sypw.bsp.utils.Logger
  * 提供学生相关的所有API调用方法
  */
 class StudentApiService : BaseApiService() {
-    
+
     companion object {
         private const val TAG = "StudentApiService"
-        
+
         // API端点常量
         private const val STUDENTS_ENDPOINT = "/students"
         private const val STUDENTS_PAGE_ENDPOINT = "/students/page"
@@ -21,7 +22,7 @@ class StudentApiService : BaseApiService() {
         private const val STUDENTS_IMPORT_ENDPOINT = "/students/import"
         private const val STUDENTS_EXPORT_ENDPOINT = "/students/export"
     }
-    
+
     /**
      * 获取学生分页列表
      * @param current 当前页码
@@ -51,12 +52,12 @@ class StudentApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
 //        Logger.d(TAG, "获取学生分页列表: current=$current, size=$size")
-        
+
         val parameters = mutableMapOf<String, Any>(
             "current" to current,
             "size" to size
         )
-        
+
         // 添加可选的搜索和筛选参数
         name?.let { parameters["name"] = it }
         gender?.let { parameters["gender"] = it }
@@ -66,14 +67,14 @@ class StudentApiService : BaseApiService() {
         birthDateEnd?.let { parameters["birthDateEnd"] = it }
         joinDateStart?.let { parameters["joinDateStart"] = it }
         joinDateEnd?.let { parameters["joinDateEnd"] = it }
-        
+
         return getWithToken(
             endpoint = STUDENTS_PAGE_ENDPOINT,
             token = token,
             parameters = parameters
         )
     }
-    
+
     /**
      * 获取学生详情
      * @param id 学生ID
@@ -85,13 +86,13 @@ class StudentApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "获取学生详情: id=$id")
-        
+
         return getWithToken(
             endpoint = "$STUDENTS_ENDPOINT/$id",
             token = token
         )
     }
-    
+
     /**
      * 创建学生
      * @param studentCreateDto 创建学生请求数据
@@ -103,14 +104,14 @@ class StudentApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "创建学生: name=${studentCreateDto.name}")
-        
+
         return postWithToken(
             endpoint = STUDENTS_ENDPOINT,
             token = token,
             body = studentCreateDto
         )
     }
-    
+
     /**
      * 更新学生
      * @param studentUpdateDto 更新学生请求数据
@@ -122,14 +123,14 @@ class StudentApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "更新学生: id=${studentUpdateDto.id}, name=${studentUpdateDto.name}")
-        
+
         return putWithToken(
             endpoint = STUDENTS_ENDPOINT,
             token = token,
             body = studentUpdateDto
         )
     }
-    
+
     /**
      * 删除学生
      * @param id 学生ID
@@ -141,13 +142,13 @@ class StudentApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "删除学生: id=$id")
-        
+
         return deleteWithToken(
             endpoint = "$STUDENTS_ENDPOINT/$id",
             token = token
         )
     }
-    
+
     /**
      * 批量删除学生
      * @param ids 学生ID列表
@@ -159,14 +160,14 @@ class StudentApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "批量删除学生: ids=$ids")
-        
+
         return deleteWithToken(
             endpoint = STUDENTS_BATCH_ENDPOINT,
             token = token,
             parameters = mapOf("ids" to ids)
         )
     }
-    
+
     /**
      * 批量导入学生
      * @param file 导入文件数据
@@ -178,7 +179,7 @@ class StudentApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "批量导入学生: 文件大小=${file.size}字节")
-        
+
         // 注意：这里需要实现文件上传的逻辑
         // 由于BaseApiService可能不支持文件上传，这里先返回一个占位实现
         return postWithToken(
@@ -187,7 +188,7 @@ class StudentApiService : BaseApiService() {
             body = mapOf("file" to file)
         )
     }
-    
+
     /**
      * 批量导出学生
      * @param name 学生姓名（可选，用于搜索）
@@ -213,9 +214,9 @@ class StudentApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "批量导出学生")
-        
+
         val parameters = mutableMapOf<String, Any>()
-        
+
         // 添加可选的搜索和筛选参数
         name?.let { parameters["name"] = it }
         gender?.let { parameters["gender"] = it }
@@ -225,7 +226,7 @@ class StudentApiService : BaseApiService() {
         birthDateEnd?.let { parameters["birthDateEnd"] = it }
         joinDateStart?.let { parameters["joinDateStart"] = it }
         joinDateEnd?.let { parameters["joinDateEnd"] = it }
-        
+
         return getWithToken(
             endpoint = STUDENTS_EXPORT_ENDPOINT,
             token = token,

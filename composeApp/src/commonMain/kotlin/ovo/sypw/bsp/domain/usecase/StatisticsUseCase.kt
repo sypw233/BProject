@@ -10,14 +10,14 @@ import ovo.sypw.bsp.utils.Logger
 class StatisticsUseCase(
     private val repository: StatisticsRepository
 ) {
-    
+
     /**
      * 获取仪表板统计数据
      * @return 统计数据
      */
     suspend fun getDashboardStatistics(): StatisticsData {
         Logger.d("StatisticsUseCase", "获取仪表板统计数据")
-        
+
         return try {
             val data = repository.getDashboardStatistics()
             Logger.d("StatisticsUseCase", "获取统计数据成功")

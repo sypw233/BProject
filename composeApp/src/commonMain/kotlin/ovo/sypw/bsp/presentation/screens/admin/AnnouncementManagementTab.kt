@@ -1,26 +1,48 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import ovo.sypw.bsp.data.dto.AnnouncementDto
-import ovo.sypw.bsp.data.dto.PageResultDto
-import ovo.sypw.bsp.presentation.components.*
-import ovo.sypw.bsp.presentation.components.ManagementPageTemplate
-import ovo.sypw.bsp.presentation.components.ManagementPageState
-import ovo.sypw.bsp.presentation.components.ManagementPageActions
-import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementViewModel
-import ovo.sypw.bsp.data.dto.AnnouncementStatus
 import org.koin.compose.koinInject
+import ovo.sypw.bsp.data.dto.AnnouncementDto
+import ovo.sypw.bsp.data.dto.AnnouncementStatus
+import ovo.sypw.bsp.data.dto.PageResultDto
+import ovo.sypw.bsp.presentation.components.dialog.AnnouncementDialog
+import ovo.sypw.bsp.presentation.components.search.AnnouncementSearchAndFilter
+import ovo.sypw.bsp.presentation.components.template.ManagementPageActions
+import ovo.sypw.bsp.presentation.components.template.ManagementPageState
+import ovo.sypw.bsp.presentation.components.template.ManagementPageTemplate
+import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 
 /**
@@ -36,13 +58,13 @@ fun AnnouncementManagementTab(
     val announcementState by viewModel.announcementState.collectAsState()
     val searchQuery by viewModel.announcementSearchQuery.collectAsState()
     val filterState by viewModel.announcementFilterState.collectAsState()
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        
+
         // 公告列表
         Box(modifier = Modifier.weight(1f)) {
             // 创建状态适配器
@@ -52,7 +74,7 @@ fun AnnouncementManagementTab(
                 override val pageInfo: PageResultDto<AnnouncementDto>? = announcementState.pageInfo
                 override val errorMessage: String? = announcementState.errorMessage
             }
-            
+
             // 创建操作适配器
             val pageActions = object : ManagementPageActions {
                 override fun refresh() = viewModel.refreshAnnouncements()
@@ -61,9 +83,10 @@ fun AnnouncementManagementTab(
                     val currentQuery = searchQuery.takeIf { it.isNotBlank() }
                     viewModel.loadAnnouncements(current, size, currentQuery)
                 }
+
                 override fun showAddDialog() = viewModel.showAddAnnouncementDialog()
             }
-            
+
             // 使用管理页面模板
             ManagementPageTemplate(
                 state = pageState,
@@ -147,18 +170,18 @@ private fun AnnouncementCard(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 // 状态标签
                 AnnouncementStatusChip(
                     status = announcement.status,
                     priority = announcement.priority
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             // 公告内容预览
             Text(
                 text = announcement.content,
@@ -168,9 +191,9 @@ private fun AnnouncementCard(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f)
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             // 时间信息和操作按钮
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -194,7 +217,7 @@ private fun AnnouncementCard(
                         )
                     }
                 }
-                
+
                 // 操作按钮
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -211,7 +234,7 @@ private fun AnnouncementCard(
                             modifier = Modifier.size(18.dp)
                         )
                     }
-                    
+
                     // 发布/下线按钮
                     if (announcement.status == AnnouncementStatus.PUBLISHED.value) {
                         // 已发布状态，显示下线按钮
@@ -240,7 +263,7 @@ private fun AnnouncementCard(
                             )
                         }
                     }
-                    
+
                     // 删除按钮
                     IconButton(
                         onClick = onDelete,
@@ -273,14 +296,14 @@ private fun AnnouncementStatusChip(
         2 -> "已下线" to MaterialTheme.colorScheme.secondary
         else -> "未知" to MaterialTheme.colorScheme.outline
     }
-    
+
     val priorityText = when (priority) {
         1 -> "普通"
         2 -> "重要"
         3 -> "紧急"
         else -> "普通"
     }
-    
+
     Column(
         horizontalAlignment = Alignment.End
     ) {
@@ -297,9 +320,9 @@ private fun AnnouncementStatusChip(
                 color = statusColor
             )
         }
-        
+
         Spacer(modifier = Modifier.height(4.dp))
-        
+
         // 优先级标签
         if (priority > 1) {
             val priorityColor = when (priority) {
@@ -307,7 +330,7 @@ private fun AnnouncementStatusChip(
                 3 -> MaterialTheme.colorScheme.error
                 else -> MaterialTheme.colorScheme.outline
             }
-            
+
             Surface(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp)),

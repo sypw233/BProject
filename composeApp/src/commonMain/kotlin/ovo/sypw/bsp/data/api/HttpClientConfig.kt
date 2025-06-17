@@ -1,11 +1,16 @@
 package ovo.sypw.bsp.data.api
 
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpRedirect
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 /**
@@ -13,7 +18,7 @@ import kotlinx.serialization.json.Json
  * 提供统一的Ktor客户端配置
  */
 object HttpClientConfig {
-    
+
     /**
      * 创建配置好的HTTP客户端
      * @return 配置完成的HttpClient实例
@@ -33,7 +38,7 @@ object HttpClientConfig {
                     useAlternativeNames = false
                 })
             }
-            
+
             // 安装日志插件
             install(Logging) {
                 logger = Logger.DEFAULT
@@ -42,24 +47,24 @@ object HttpClientConfig {
                     request.url.host.contains("api")
                 }
             }
-            
+
             // 安装超时插件
             install(HttpTimeout) {
                 requestTimeoutMillis = NetworkConfig.REQUEST_TIMEOUT
                 connectTimeoutMillis = NetworkConfig.CONNECT_TIMEOUT
                 socketTimeoutMillis = NetworkConfig.SOCKET_TIMEOUT
             }
-            
+
             // 安装默认请求插件
             install(DefaultRequest) {
                 // 设置默认请求头
                 header("Content-Type", NetworkConfig.CONTENT_TYPE)
                 header("User-Agent", NetworkConfig.USER_AGENT)
-                
+
                 // 设置基础URL
                 url(NetworkConfig.BASE_URL)
             }
-            
+
             // 安装HTTP重定向插件
             install(HttpRedirect) {
                 checkHttpMethod = false
@@ -67,7 +72,7 @@ object HttpClientConfig {
             }
         }
     }
-    
+
     /**
      * 创建用于调试的HTTP客户端（包含详细日志）
      * @return 配置完成的HttpClient实例
@@ -83,20 +88,20 @@ object HttpClientConfig {
                     useAlternativeNames = false
                 })
             }
-            
+
             // 安装详细日志插件
             install(Logging) {
                 logger = Logger.DEFAULT
                 level = LogLevel.ALL
             }
-            
+
             // 安装超时插件
             install(HttpTimeout) {
                 requestTimeoutMillis = NetworkConfig.REQUEST_TIMEOUT
                 connectTimeoutMillis = NetworkConfig.CONNECT_TIMEOUT
                 socketTimeoutMillis = NetworkConfig.SOCKET_TIMEOUT
             }
-            
+
             // 安装默认请求插件
             install(DefaultRequest) {
                 header("Content-Type", NetworkConfig.CONTENT_TYPE)

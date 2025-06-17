@@ -454,7 +454,7 @@ fun PublicAnnouncementList(
         ResponsiveUtils.ScreenSize.MEDIUM -> 2  // 平板：双列
         ResponsiveUtils.ScreenSize.EXPANDED -> 3 // 桌面：三列
     }
-    
+
     Column {
         // 刷新指示器
         if (isRefreshing) {
@@ -477,7 +477,7 @@ fun PublicAnnouncementList(
                 }
             }
         }
-        
+
         // 网格布局的公告列表
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
@@ -497,7 +497,7 @@ fun PublicAnnouncementList(
                 )
             }
         }
-        
+
         // 底部刷新按钮
         Box(
             modifier = Modifier

@@ -11,7 +11,7 @@ data class DepartmentDto(
      * 部门ID
      */
     val id: Int? = null,
-    
+
     /**
      * 部门名称
      */
@@ -38,7 +38,7 @@ data class DepartmentUpdateDto(
      * 部门ID
      */
     val id: Int,
-    
+
     /**
      * 部门名称
      */
@@ -55,22 +55,22 @@ data class PageResultDto<T>(
      * 当前页码
      */
     val current: Int,
-    
+
     /**
      * 每页大小
      */
     val size: Int,
-    
+
     /**
      * 总记录数
      */
     val total: Long,
-    
+
     /**
      * 总页数
      */
     val pages: Int,
-    
+
     /**
      * 数据列表
      */

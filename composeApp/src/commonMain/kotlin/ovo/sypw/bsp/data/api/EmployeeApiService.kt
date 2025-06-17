@@ -1,6 +1,7 @@
 package ovo.sypw.bsp.data.api
 
-import ovo.sypw.bsp.data.dto.*
+import ovo.sypw.bsp.data.dto.EmployeeCreateDto
+import ovo.sypw.bsp.data.dto.EmployeeUpdateDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.SaResult
 import ovo.sypw.bsp.utils.Logger
@@ -10,10 +11,10 @@ import ovo.sypw.bsp.utils.Logger
  * 提供员工相关的所有API调用方法
  */
 class EmployeeApiService : BaseApiService() {
-    
+
     companion object {
         private const val TAG = "EmployeeApiService"
-        
+
         // API端点常量
         private const val EMPLOYEES_ENDPOINT = "/employees"
         private const val EMPLOYEES_PAGE_ENDPOINT = "/employees/page"
@@ -21,7 +22,7 @@ class EmployeeApiService : BaseApiService() {
         private const val EMPLOYEES_IMPORT_ENDPOINT = "/employees/import"
         private const val EMPLOYEES_EXPORT_ENDPOINT = "/employees/export"
     }
-    
+
     /**
      * 获取员工分页列表
      * @param current 当前页码
@@ -49,12 +50,12 @@ class EmployeeApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
 //        Logger.d(TAG, "获取员工分页列表: current=$current, size=$size")
-        
+
         val parameters = mutableMapOf<String, Any>(
             "current" to current,
             "size" to size
         )
-        
+
         // 添加可选的搜索和筛选参数
         username?.let { parameters["username"] = it }
         realName?.let { parameters["realName"] = it }
@@ -63,14 +64,14 @@ class EmployeeApiService : BaseApiService() {
         departmentId?.let { parameters["departmentId"] = it }
         entryDateStart?.let { parameters["entryDateStart"] = it }
         entryDateEnd?.let { parameters["entryDateEnd"] = it }
-        
+
         return getWithToken(
             endpoint = EMPLOYEES_PAGE_ENDPOINT,
             token = token,
             parameters = parameters
         )
     }
-    
+
     /**
      * 获取员工详情
      * @param id 员工ID
@@ -82,13 +83,13 @@ class EmployeeApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "获取员工详情: id=$id")
-        
+
         return getWithToken(
             endpoint = "$EMPLOYEES_ENDPOINT/$id",
             token = token
         )
     }
-    
+
     /**
      * 创建员工
      * @param employeeCreateDto 创建员工请求数据
@@ -99,15 +100,18 @@ class EmployeeApiService : BaseApiService() {
         employeeCreateDto: EmployeeCreateDto,
         token: String
     ): NetworkResult<SaResult> {
-        Logger.d(TAG, "创建员工: username=${employeeCreateDto.username}, realName=${employeeCreateDto.realName}")
-        
+        Logger.d(
+            TAG,
+            "创建员工: username=${employeeCreateDto.username}, realName=${employeeCreateDto.realName}"
+        )
+
         return postWithToken(
             endpoint = EMPLOYEES_ENDPOINT,
             token = token,
             body = employeeCreateDto
         )
     }
-    
+
     /**
      * 更新员工
      * @param employeeUpdateDto 更新员工请求数据
@@ -118,15 +122,18 @@ class EmployeeApiService : BaseApiService() {
         employeeUpdateDto: EmployeeUpdateDto,
         token: String
     ): NetworkResult<SaResult> {
-        Logger.d(TAG, "更新员工: id=${employeeUpdateDto.id}, username=${employeeUpdateDto.username}")
-        
+        Logger.d(
+            TAG,
+            "更新员工: id=${employeeUpdateDto.id}, username=${employeeUpdateDto.username}"
+        )
+
         return putWithToken(
             endpoint = EMPLOYEES_ENDPOINT,
             token = token,
             body = employeeUpdateDto
         )
     }
-    
+
     /**
      * 删除员工
      * @param id 员工ID
@@ -138,13 +145,13 @@ class EmployeeApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "删除员工: id=$id")
-        
+
         return deleteWithToken(
             endpoint = "$EMPLOYEES_ENDPOINT/$id",
             token = token
         )
     }
-    
+
     /**
      * 批量删除员工
      * @param ids 员工ID列表
@@ -156,14 +163,14 @@ class EmployeeApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "批量删除员工: ids=$ids")
-        
+
         return deleteWithToken(
             endpoint = EMPLOYEES_BATCH_ENDPOINT,
             token = token,
             parameters = mapOf("ids" to ids)
         )
     }
-    
+
     /**
      * 批量导入员工
      * @param file 导入文件数据
@@ -175,7 +182,7 @@ class EmployeeApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "批量导入员工: 文件大小=${file.size}字节")
-        
+
         // 注意：这里需要实现文件上传的逻辑
         // 由于BaseApiService可能不支持文件上传，这里先返回一个占位实现
         return postWithToken(
@@ -184,7 +191,7 @@ class EmployeeApiService : BaseApiService() {
             body = mapOf("file" to file)
         )
     }
-    
+
     /**
      * 批量导出员工
      * @param username 用户名（可选）
@@ -208,9 +215,9 @@ class EmployeeApiService : BaseApiService() {
         token: String
     ): NetworkResult<ByteArray> {
         Logger.d(TAG, "批量导出员工")
-        
+
         val parameters = mutableMapOf<String, Any>()
-        
+
         // 添加可选的搜索和筛选参数
         username?.let { parameters["username"] = it }
         realName?.let { parameters["realName"] = it }
@@ -219,7 +226,7 @@ class EmployeeApiService : BaseApiService() {
         departmentId?.let { parameters["departmentId"] = it }
         entryDateStart?.let { parameters["entryDateStart"] = it }
         entryDateEnd?.let { parameters["entryDateEnd"] = it }
-        
+
         return getFileWithToken(
             endpoint = EMPLOYEES_EXPORT_ENDPOINT,
             token = token,

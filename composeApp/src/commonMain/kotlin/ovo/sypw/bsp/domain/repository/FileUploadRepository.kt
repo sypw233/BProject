@@ -9,7 +9,7 @@ import ovo.sypw.bsp.data.dto.result.NetworkResult
  * 定义文件上传相关的数据访问方法
  */
 interface FileUploadRepository : BaseRepository {
-    
+
     /**
      * 上传文件
      * @param fileBytes 文件字节数组
@@ -22,7 +22,7 @@ interface FileUploadRepository : BaseRepository {
         fileName: String,
         mimeType: String = "application/octet-stream"
     ): Flow<NetworkResult<FileUploadResponse>>
-    
+
     /**
      * 上传图片文件
      * @param imageBytes 图片字节数组
@@ -35,7 +35,7 @@ interface FileUploadRepository : BaseRepository {
         fileName: String,
         quality: Int = 85
     ): Flow<NetworkResult<FileUploadResponse>>
-    
+
     /**
      * 批量上传文件
      * @param files 文件列表，每个元素包含文件字节数组、文件名和MIME类型
@@ -44,7 +44,7 @@ interface FileUploadRepository : BaseRepository {
     fun uploadMultipleFiles(
         files: List<Triple<ByteArray, String, String>>
     ): Flow<List<NetworkResult<FileUploadResponse>>>
-    
+
     /**
      * 检查文件大小是否符合要求
      * @param fileSize 文件大小（字节）
@@ -52,7 +52,7 @@ interface FileUploadRepository : BaseRepository {
      * @return 是否符合要求
      */
     fun validateFileSize(fileSize: Long, maxSize: Long = 10 * 1024 * 1024): Boolean
-    
+
     /**
      * 检查文件类型是否支持
      * @param fileName 文件名

@@ -55,10 +55,10 @@ fun AnnouncementDetailScreen(
 ) {
     val viewModel: PublicAnnouncementViewModel = koinInject()
     val announcementState by viewModel.announcementState.collectAsState()
-    
+
     // 根据ID查找公告
     val announcement = announcementState.announcements.find { it.id as Long == announcementId }
-    
+
     if (announcement == null) {
         // 如果找不到公告，显示错误信息
         Box(
@@ -83,7 +83,7 @@ fun AnnouncementDetailScreen(
     }
     // 创建富文本状态并设置HTML内容
     val richTextState = rememberRichTextState()
-    
+
     LaunchedEffect(announcement.content) {
         // 如果内容包含HTML标签，使用setHtml，否则直接设置文本
         if (announcement.content.contains("<") && announcement.content.contains(">")) {
@@ -92,7 +92,7 @@ fun AnnouncementDetailScreen(
             richTextState.setMarkdown(announcement.content)
         }
     }
-    
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -118,7 +118,7 @@ fun AnnouncementDetailScreen(
                 titleContentColor = MaterialTheme.colorScheme.onSurface
             )
         )
-        
+
         // 内容区域
         Column(
             modifier = Modifier
@@ -144,7 +144,7 @@ fun AnnouncementDetailScreen(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    
+
                     // 标签行
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -154,13 +154,13 @@ fun AnnouncementDetailScreen(
                         AnnouncementPriority.fromValue(announcement.priority)?.let { priority ->
                             PublicAnnouncementPriorityChip(priority = priority)
                         }
-                        
+
                         // 类型标签
                         AnnouncementType.fromValue(announcement.type)?.let { type ->
                             PublicAnnouncementTypeChip(type = type)
                         }
                     }
-                    
+
                     // 发布时间
                     announcement.publishTime?.let { publishTime ->
                         Row(
@@ -182,7 +182,7 @@ fun AnnouncementDetailScreen(
                     }
                 }
             }
-            
+
             // 内容卡片 - 富文本显示
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -199,7 +199,7 @@ fun AnnouncementDetailScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
-                    
+
                     // 富文本内容展示
                     RichText(
                         state = richTextState,

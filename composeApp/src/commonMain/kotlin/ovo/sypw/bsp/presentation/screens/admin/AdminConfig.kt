@@ -1,16 +1,12 @@
 package ovo.sypw.bsp.presentation.screens.admin
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
-import androidx.compose.material.icons.filled.Upload
-import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -18,7 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * 统一管理Admin页面的所有配置信息，包括Tab选项、侧边栏选项等
  */
 object AdminConfig {
-    
+
     /**
      * Admin Tab页面定义
      */
@@ -28,7 +24,7 @@ object AdminConfig {
         val icon: ImageVector,
         val route: String
     )
-    
+
     /**
      * Admin页面的所有Tab选项
      */
@@ -82,7 +78,7 @@ object AdminConfig {
 //            route = "admin/fileupload"
 //        )
     )
-    
+
     /**
      * 获取Tab标题
      * @param index Tab索引
@@ -91,7 +87,7 @@ object AdminConfig {
     fun getTabTitle(index: Int): String {
         return adminTabs.getOrNull(index)?.title ?: "未知页面"
     }
-    
+
     /**
      * 获取Tab图标
      * @param index Tab索引
@@ -100,7 +96,7 @@ object AdminConfig {
     fun getTabIcon(index: Int): ImageVector {
         return adminTabs.getOrNull(index)?.icon ?: Icons.Default.Business
     }
-    
+
     /**
      * 获取Tab路由
      * @param index Tab索引
@@ -109,7 +105,7 @@ object AdminConfig {
     fun getTabRoute(index: Int): String {
         return adminTabs.getOrNull(index)?.route ?: "admin"
     }
-    
+
     /**
      * 获取所有Tab标题列表
      * @return Tab标题列表
@@ -117,7 +113,7 @@ object AdminConfig {
     fun getAllTabTitles(): List<String> {
         return adminTabs.map { it.title }
     }
-    
+
     /**
      * 获取Tab总数
      * @return Tab总数
@@ -125,7 +121,7 @@ object AdminConfig {
     fun getTabCount(): Int {
         return adminTabs.size
     }
-    
+
     /**
      * 验证Tab索引是否有效
      * @param index Tab索引

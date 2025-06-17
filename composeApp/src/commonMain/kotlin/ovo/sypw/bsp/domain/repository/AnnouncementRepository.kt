@@ -1,6 +1,7 @@
 package ovo.sypw.bsp.domain.repository
 
-import ovo.sypw.bsp.data.dto.*
+import ovo.sypw.bsp.data.dto.AnnouncementDto
+import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 
 /**
@@ -8,7 +9,7 @@ import ovo.sypw.bsp.data.dto.result.NetworkResult
  * 定义公告管理相关的业务操作
  */
 interface AnnouncementRepository : BaseRepository {
-    
+
     /**
      * 获取公告分页列表
      * @param current 当前页码
@@ -33,14 +34,14 @@ interface AnnouncementRepository : BaseRepository {
         publishTimeEnd: String? = null,
         creatorId: Int? = null
     ): NetworkResult<PageResultDto<AnnouncementDto>>
-    
+
     /**
      * 获取公告详情
      * @param id 公告ID
      * @return 公告详情数据结果
      */
     suspend fun getAnnouncementById(id: Int): NetworkResult<AnnouncementDto>
-    
+
     /**
      * 创建公告
      * @param title 公告标题
@@ -63,7 +64,7 @@ interface AnnouncementRepository : BaseRepository {
         expireTime: String? = null,
         creatorId: Int
     ): NetworkResult<Unit>
-    
+
     /**
      * 更新公告
      * @param id 公告ID
@@ -86,35 +87,35 @@ interface AnnouncementRepository : BaseRepository {
         publishTime: String? = null,
         expireTime: String? = null
     ): NetworkResult<Unit>
-    
+
     /**
      * 删除公告
      * @param id 公告ID
      * @return 删除结果
      */
     suspend fun deleteAnnouncement(id: Int): NetworkResult<Unit>
-    
+
     /**
      * 批量删除公告
      * @param ids 公告ID列表
      * @return 批量删除结果
      */
     suspend fun batchDeleteAnnouncements(ids: List<Int>): NetworkResult<Unit>
-    
+
     /**
      * 发布公告
      * @param id 公告ID
      * @return 发布结果
      */
     suspend fun publishAnnouncement(id: Int): NetworkResult<Unit>
-    
+
     /**
      * 下线公告
      * @param id 公告ID
      * @return 下线结果
      */
     suspend fun offlineAnnouncement(id: Int): NetworkResult<Unit>
-    
+
     /**
      * 获取已发布的公告列表（无需认证）
      * @param current 当前页码

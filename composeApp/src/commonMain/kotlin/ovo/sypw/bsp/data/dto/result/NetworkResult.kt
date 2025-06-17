@@ -17,7 +17,10 @@ sealed class NetworkResult<out T> {
      * @param exception 异常信息
      * @param message 错误消息
      */
-    data class Error(val exception: Throwable, val message: String = exception.message ?: "Unknown error") : NetworkResult<Nothing>()
+    data class Error(
+        val exception: Throwable,
+        val message: String = exception.message ?: "Unknown error"
+    ) : NetworkResult<Nothing>()
 
     /**
      * 加载中

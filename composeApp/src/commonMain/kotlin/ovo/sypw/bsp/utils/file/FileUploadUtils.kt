@@ -3,50 +3,51 @@ package ovo.sypw.bsp.utils.file
 import kotlinx.datetime.Clock
 import kotlin.math.log10
 import kotlin.math.pow
+
 /**
  * 文件上传工具类
  * 提供文件上传相关的通用工具方法
  */
 object FileUploadUtils {
-    
+
     /**
      * 支持的图片文件扩展名
      */
     val SUPPORTED_IMAGE_EXTENSIONS = listOf(
         "jpg", "jpeg", "png", "gif", "webp", "bmp"
     )
-    
+
     /**
      * 支持的文档文件扩展名
      */
     val SUPPORTED_DOCUMENT_EXTENSIONS = listOf(
         "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt"
     )
-    
+
     /**
      * 支持的压缩文件扩展名
      */
     val SUPPORTED_ARCHIVE_EXTENSIONS = listOf(
         "zip", "rar", "7z", "tar", "gz"
     )
-    
+
     /**
      * 所有支持的文件扩展名
      */
-    val ALL_SUPPORTED_EXTENSIONS = SUPPORTED_IMAGE_EXTENSIONS + 
-            SUPPORTED_DOCUMENT_EXTENSIONS + 
+    val ALL_SUPPORTED_EXTENSIONS = SUPPORTED_IMAGE_EXTENSIONS +
+            SUPPORTED_DOCUMENT_EXTENSIONS +
             SUPPORTED_ARCHIVE_EXTENSIONS
-    
+
     /**
      * 默认最大文件大小 (10MB)
      */
     const val DEFAULT_MAX_FILE_SIZE = 10 * 1024 * 1024L
-    
+
     /**
      * 默认最大图片大小 (5MB)
      */
     const val DEFAULT_MAX_IMAGE_SIZE = 5 * 1024 * 1024L
-    
+
     /**
      * 获取文件扩展名
      * @param fileName 文件名
@@ -55,7 +56,7 @@ object FileUploadUtils {
     fun getFileExtension(fileName: String): String {
         return fileName.substringAfterLast('.', "").lowercase()
     }
-    
+
     /**
      * 检查是否为图片文件
      * @param fileName 文件名
@@ -65,7 +66,7 @@ object FileUploadUtils {
         val extension = getFileExtension(fileName)
         return SUPPORTED_IMAGE_EXTENSIONS.contains(extension)
     }
-    
+
     /**
      * 检查是否为文档文件
      * @param fileName 文件名
@@ -75,7 +76,7 @@ object FileUploadUtils {
         val extension = getFileExtension(fileName)
         return SUPPORTED_DOCUMENT_EXTENSIONS.contains(extension)
     }
-    
+
     /**
      * 检查是否为压缩文件
      * @param fileName 文件名
@@ -85,7 +86,7 @@ object FileUploadUtils {
         val extension = getFileExtension(fileName)
         return SUPPORTED_ARCHIVE_EXTENSIONS.contains(extension)
     }
-    
+
     /**
      * 检查文件类型是否支持
      * @param fileName 文件名
@@ -99,7 +100,7 @@ object FileUploadUtils {
         val extension = getFileExtension(fileName)
         return extension.isNotEmpty() && allowedExtensions.contains(extension)
     }
-    
+
     /**
      * 检查文件大小是否符合要求
      * @param fileSize 文件大小（字节）
@@ -109,7 +110,7 @@ object FileUploadUtils {
     fun isValidFileSize(fileSize: Long, maxSize: Long = DEFAULT_MAX_FILE_SIZE): Boolean {
         return fileSize > 0 && fileSize <= maxSize
     }
-    
+
     /**
      * 格式化文件大小显示
      * @param sizeInBytes 文件大小（字节）
@@ -117,15 +118,15 @@ object FileUploadUtils {
      */
     fun formatFileSize(sizeInBytes: Long): String {
         if (sizeInBytes <= 0) return "0 B"
-        
-        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+
+        arrayOf("B", "KB", "MB", "GB", "TB")
         val digitGroups = (log10(sizeInBytes.toDouble()) / log10(1024.0)).toInt()
-        
+
         val size = sizeInBytes / 1024.0.pow(digitGroups.toDouble())
         return size.toString()
     }
 
-    
+
     /**
      * 清理文件名（移除非法字符）
      * @param fileName 原始文件名
@@ -135,25 +136,25 @@ object FileUploadUtils {
         // 移除或替换非法字符
         val illegalChars = Regex("[<>:\"/\\|?*]")
         var cleanName = fileName.replace(illegalChars, "_")
-        
+
         // 移除开头和结尾的点和空格
         cleanName = cleanName.trim().trim('.')
-        
+
         // 确保文件名不为空
         if (cleanName.isEmpty()) {
             cleanName = "file_${Clock.System.now().toEpochMilliseconds()}"
         }
-        
+
         // 限制文件名长度
         if (cleanName.length > 255) {
             val extension = getFileExtension(fileName)
             val maxNameLength = 255 - extension.length - 1 // -1 for the dot
             cleanName = cleanName.substring(0, maxNameLength) + "." + extension
         }
-        
+
         return cleanName
     }
-    
+
     /**
      * 获取文件MIME类型
      * @param fileName 文件名
@@ -183,7 +184,7 @@ object FileUploadUtils {
             else -> "application/octet-stream"
         }
     }
-    
+
     /**
      * 验证文件名是否合法
      * @param fileName 文件名
@@ -201,7 +202,7 @@ object FileUploadUtils {
             else -> null
         }
     }
-    
+
     /**
      * 获取文件类型描述
      * @param fileName 文件名

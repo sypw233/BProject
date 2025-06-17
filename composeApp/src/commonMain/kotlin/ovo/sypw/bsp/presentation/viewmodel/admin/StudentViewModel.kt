@@ -6,16 +6,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ovo.sypw.bsp.data.dto.StudentDto
-import ovo.sypw.bsp.data.dto.StudentCreateDto
-import ovo.sypw.bsp.data.dto.StudentUpdateDto
-import ovo.sypw.bsp.data.dto.StudentImportDto
-import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.dto.ClassDto
-import ovo.sypw.bsp.data.paging.PagingData
+import ovo.sypw.bsp.data.dto.PageResultDto
+import ovo.sypw.bsp.data.dto.StudentCreateDto
+import ovo.sypw.bsp.data.dto.StudentDto
+import ovo.sypw.bsp.data.dto.StudentImportDto
+import ovo.sypw.bsp.data.dto.StudentUpdateDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
-import ovo.sypw.bsp.domain.usecase.StudentUseCase
+import ovo.sypw.bsp.data.paging.PagingData
 import ovo.sypw.bsp.domain.usecase.ClassUseCase
+import ovo.sypw.bsp.domain.usecase.StudentUseCase
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager
 import ovo.sypw.bsp.utils.PagingUtils
@@ -31,36 +31,36 @@ class StudentViewModel(
     private val classUseCase: ClassUseCase,
     private val fileUtils: FileUtils
 ) : ViewModel() {
-    
+
     companion object {
         private const val TAG = "StudentViewModel"
     }
-    
+
     // 学生管理状态
     private val _studentState = MutableStateFlow(StudentState())
     val studentState: StateFlow<StudentState> = _studentState.asStateFlow()
-    
+
     // 学生Dialog状态
     private val _studentDialogState = MutableStateFlow(StudentDialogState())
     val studentDialogState: StateFlow<StudentDialogState> = _studentDialogState.asStateFlow()
-    
+
     // 学生搜索关键词
     private val _studentSearchQuery = MutableStateFlow("")
     val studentSearchQuery: StateFlow<String> = _studentSearchQuery.asStateFlow()
-    
+
     // 学生筛选状态
     private val _studentFilterState = MutableStateFlow(StudentFilterState())
     val studentFilterState: StateFlow<StudentFilterState> = _studentFilterState.asStateFlow()
-    
+
     // 班级列表状态
     private val _classes = MutableStateFlow<List<ClassDto>>(emptyList())
     val classes: StateFlow<List<ClassDto>> = _classes.asStateFlow()
-    
+
     // 学生分页数据流
     private var _studentPagingManager: PagingManager<StudentDto>? = null
     val studentPagingData: StateFlow<PagingData<StudentDto>>
         get() = getStudentPagingManager().pagingData
-    
+
     /**
      * 获取学生分页管理器
      */
@@ -86,7 +86,7 @@ class StudentViewModel(
         }
         return _studentPagingManager!!
     }
-    
+
     /**
      * 更新搜索关键词并刷新分页数据
      * @param query 搜索关键词
@@ -98,14 +98,14 @@ class StudentViewModel(
         // 立即加载数据
         loadStudents()
     }
-    
+
     /**
      * 清空搜索条件
      */
     fun clearStudentSearch() {
         updateStudentSearchQuery("")
     }
-    
+
     /**
      * 更新筛选条件
      */
@@ -116,7 +116,7 @@ class StudentViewModel(
         // 立即加载数据
         loadStudents()
     }
-    
+
     /**
      * 切换筛选面板展开状态
      */
@@ -125,7 +125,7 @@ class StudentViewModel(
             isFilterExpanded = !_studentFilterState.value.isFilterExpanded
         )
     }
-    
+
     /**
      * 清空所有筛选条件
      */
@@ -137,7 +137,7 @@ class StudentViewModel(
         // 立即加载数据
         loadStudents()
     }
-    
+
     /**
      * 设置性别筛选
      */
@@ -147,7 +147,7 @@ class StudentViewModel(
         // 立即加载数据
         loadStudents()
     }
-    
+
     /**
      * 设置班级筛选
      */
@@ -157,7 +157,7 @@ class StudentViewModel(
         // 立即加载数据
         loadStudents()
     }
-    
+
     /**
      * 设置状态筛选
      */
@@ -167,7 +167,7 @@ class StudentViewModel(
         // 立即加载数据
         loadStudents()
     }
-    
+
     /**
      * 设置出生日期范围筛选
      */
@@ -180,7 +180,7 @@ class StudentViewModel(
         // 立即加载数据
         loadStudents()
     }
-    
+
     /**
      * 设置入学日期范围筛选
      */
@@ -193,7 +193,7 @@ class StudentViewModel(
         // 立即加载数据
         loadStudents()
     }
-    
+
     /**
      * 刷新学生数据
      */
@@ -203,7 +203,7 @@ class StudentViewModel(
         // 同时保持原有的加载方法以兼容现有代码
         loadStudents()
     }
-    
+
     /**
      * 加载学生分页数据
      * @param current 当前页码
@@ -220,10 +220,10 @@ class StudentViewModel(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             val filterState = _studentFilterState.value
             val searchQuery = name ?: _studentSearchQuery.value.takeIf { it.isNotBlank() }
-            
+
             studentUseCase.getStudentPage(
                 current = current,
                 size = size,
@@ -245,6 +245,7 @@ class StudentViewModel(
                             errorMessage = null
                         )
                     }
+
                     is NetworkResult.Error -> {
                         Logger.e(TAG, "学生数据加载失败: ${result.message}")
                         _studentState.value = _studentState.value.copy(
@@ -252,11 +253,13 @@ class StudentViewModel(
                             errorMessage = result.message
                         )
                     }
+
                     is NetworkResult.Loading -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = true
                         )
                     }
+
                     is NetworkResult.Idle -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = false
@@ -266,20 +269,20 @@ class StudentViewModel(
             }
         }
     }
-    
+
     /**
      * 创建学生
      * @param studentCreateDto 学生创建数据
      */
     fun createStudent(studentCreateDto: StudentCreateDto) {
         Logger.d(TAG, "创建学生: name=${studentCreateDto.name}")
-        
+
         viewModelScope.launch {
             _studentState.value = _studentState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             studentUseCase.createStudent(studentCreateDto).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
@@ -291,6 +294,7 @@ class StudentViewModel(
                         // 重新加载学生列表
                         loadStudents()
                     }
+
                     is NetworkResult.Error -> {
                         Logger.e(TAG, "学生创建失败: ${result.message}")
                         _studentState.value = _studentState.value.copy(
@@ -298,11 +302,13 @@ class StudentViewModel(
                             errorMessage = result.message
                         )
                     }
+
                     is NetworkResult.Loading -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = true
                         )
                     }
+
                     is NetworkResult.Idle -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = false
@@ -312,20 +318,20 @@ class StudentViewModel(
             }
         }
     }
-    
+
     /**
      * 更新学生
      * @param studentUpdateDto 学生更新数据
      */
     fun updateStudent(studentUpdateDto: StudentUpdateDto) {
         Logger.d(TAG, "更新学生: id=${studentUpdateDto.id}, name=${studentUpdateDto.name}")
-        
+
         viewModelScope.launch {
             _studentState.value = _studentState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             studentUseCase.updateStudent(studentUpdateDto).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
@@ -337,6 +343,7 @@ class StudentViewModel(
                         // 重新加载学生列表
                         loadStudents()
                     }
+
                     is NetworkResult.Error -> {
                         Logger.e(TAG, "学生更新失败: ${result.message}")
                         _studentState.value = _studentState.value.copy(
@@ -344,11 +351,13 @@ class StudentViewModel(
                             errorMessage = result.message
                         )
                     }
+
                     is NetworkResult.Loading -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = true
                         )
                     }
+
                     is NetworkResult.Idle -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = false
@@ -358,20 +367,20 @@ class StudentViewModel(
             }
         }
     }
-    
+
     /**
      * 删除学生
      * @param id 学生ID
      */
     fun deleteStudent(id: Int?) {
         Logger.d(TAG, "删除学生: id=$id")
-        
+
         viewModelScope.launch {
             _studentState.value = _studentState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             studentUseCase.deleteStudent(id ?: 0).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
@@ -383,6 +392,7 @@ class StudentViewModel(
                         // 重新加载学生列表
                         loadStudents()
                     }
+
                     is NetworkResult.Error -> {
                         Logger.e(TAG, "学生删除失败: ${result.message}")
                         _studentState.value = _studentState.value.copy(
@@ -390,11 +400,13 @@ class StudentViewModel(
                             errorMessage = result.message
                         )
                     }
+
                     is NetworkResult.Loading -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = true
                         )
                     }
+
                     is NetworkResult.Idle -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = false
@@ -404,20 +416,20 @@ class StudentViewModel(
             }
         }
     }
-    
+
     /**
      * 批量删除学生
      * @param ids 学生ID列表
      */
     fun batchDeleteStudents(ids: List<Int>) {
         Logger.d(TAG, "批量删除学生: ids=$ids")
-        
+
         viewModelScope.launch {
             _studentState.value = _studentState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
-            
+
             studentUseCase.batchDeleteStudents(ids).collect { result ->
                 when (result) {
                     is NetworkResult.Success -> {
@@ -429,6 +441,7 @@ class StudentViewModel(
                         // 重新加载学生列表
                         loadStudents()
                     }
+
                     is NetworkResult.Error -> {
                         Logger.e(TAG, "学生批量删除失败: ${result.message}")
                         _studentState.value = _studentState.value.copy(
@@ -436,11 +449,13 @@ class StudentViewModel(
                             errorMessage = result.message
                         )
                     }
+
                     is NetworkResult.Loading -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = true
                         )
                     }
+
                     is NetworkResult.Idle -> {
                         _studentState.value = _studentState.value.copy(
                             isLoading = false
@@ -451,7 +466,7 @@ class StudentViewModel(
         }
     }
 
-    
+
     /**
      * 清除错误消息
      */
@@ -460,7 +475,7 @@ class StudentViewModel(
             errorMessage = null
         )
     }
-    
+
     /**
      * 清除导入结果
      */
@@ -469,7 +484,7 @@ class StudentViewModel(
             importResult = null
         )
     }
-    
+
     /**
      * 清除导出数据
      */
@@ -478,7 +493,7 @@ class StudentViewModel(
             exportData = null
         )
     }
-    
+
     /**
      * 加载班级列表数据
      * 按照用户要求直接查询1000条数据
@@ -491,16 +506,18 @@ class StudentViewModel(
                     _classes.value = result.data.records
                     Logger.d(TAG, "班级数据加载成功，共${result.data.records.size}条")
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "班级数据加载失败: ${result.message}")
                 }
+
                 else -> {
                     // 其他状态不处理
                 }
             }
         }
     }
-    
+
     /**
      * 显示添加学生Dialog
      */
@@ -521,7 +538,7 @@ class StudentViewModel(
         )
         Logger.d(TAG, "Dialog状态已更新: ${_studentDialogState.value}")
     }
-    
+
     /**
      * 显示编辑学生Dialog
      * @param student 要编辑的学生
@@ -541,14 +558,14 @@ class StudentViewModel(
             editingStudentId = student.id
         )
     }
-    
+
     /**
      * 隐藏学生Dialog
      */
     fun hideStudentDialog() {
         _studentDialogState.value = StudentDialogState()
     }
-    
+
     /**
      * 更新学生姓名输入
      * @param name 学生姓名
@@ -558,7 +575,7 @@ class StudentViewModel(
             name = name
         )
     }
-    
+
     /**
      * 更新学生性别
      * @param gender 性别
@@ -568,7 +585,7 @@ class StudentViewModel(
             gender = gender
         )
     }
-    
+
     /**
      * 更新学生出生日期
      * @param birthDate 出生日期
@@ -578,7 +595,7 @@ class StudentViewModel(
             birthDate = birthDate
         )
     }
-    
+
     /**
      * 更新学生入学日期
      * @param joinDate 入学日期
@@ -588,7 +605,7 @@ class StudentViewModel(
             joinDate = joinDate
         )
     }
-    
+
     /**
      * 更新学生班级ID
      * @param classId 班级ID
@@ -598,7 +615,7 @@ class StudentViewModel(
             classId = classId
         )
     }
-    
+
     /**
      * 更新学生状态
      * @param status 学生状态
@@ -608,13 +625,13 @@ class StudentViewModel(
             status = status
         )
     }
-    
+
     /**
      * 提交学生表单
      */
     fun submitStudentForm() {
         val dialogState = _studentDialogState.value
-        
+
         if (dialogState.isEditMode) {
             // 编辑模式
             val studentUpdateDto = StudentUpdateDto(
@@ -639,7 +656,7 @@ class StudentViewModel(
             )
             createStudent(studentCreateDto)
         }
-        
+
         // 隐藏Dialog
         hideStudentDialog()
     }
@@ -659,9 +676,9 @@ data class StudentState(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
-        
+
         other as StudentState
-        
+
         if (isLoading != other.isLoading) return false
         if (students != other.students) return false
         if (pageInfo != other.pageInfo) return false
@@ -671,10 +688,10 @@ data class StudentState(
             if (other.exportData == null) return false
             if (!exportData.contentEquals(other.exportData)) return false
         } else if (other.exportData != null) return false
-        
+
         return true
     }
-    
+
     override fun hashCode(): Int {
         var result = isLoading.hashCode()
         result = 31 * result + students.hashCode()
@@ -737,7 +754,7 @@ data class StudentFilterState(
                 !joinDateStart.isNullOrBlank() ||
                 !joinDateEnd.isNullOrBlank()
     }
-    
+
     /**
      * 获取性别显示名称
      */
@@ -748,7 +765,7 @@ data class StudentFilterState(
             else -> "未知"
         }
     }
-    
+
     /**
      * 获取状态显示名称
      */

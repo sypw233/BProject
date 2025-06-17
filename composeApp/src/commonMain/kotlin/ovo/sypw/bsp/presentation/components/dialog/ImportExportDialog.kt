@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.components
+package ovo.sypw.bsp.presentation.components.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -74,7 +73,7 @@ fun EmployeeImportResultDialog(
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -85,7 +84,7 @@ fun EmployeeImportResultDialog(
                                     fontWeight = FontWeight.Medium
                                 )
                             }
-                            
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -97,7 +96,7 @@ fun EmployeeImportResultDialog(
                                     fontWeight = FontWeight.Medium
                                 )
                             }
-                            
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -111,11 +110,11 @@ fun EmployeeImportResultDialog(
                             }
                         }
                     }
-                    
+
                     // 失败详情（如果有的话）
                     if (importResult.failureCount > 0 && !importResult.failureDetails.isNullOrEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(
@@ -141,9 +140,9 @@ fun EmployeeImportResultDialog(
                                         color = MaterialTheme.colorScheme.onErrorContainer
                                     )
                                 }
-                                
+
                                 Spacer(modifier = Modifier.height(8.dp))
-                                
+
                                 importResult.failureDetails.take(5).forEach { detail ->
                                     Text(
                                         text = "• $detail",
@@ -151,7 +150,7 @@ fun EmployeeImportResultDialog(
                                         color = MaterialTheme.colorScheme.onErrorContainer
                                     )
                                 }
-                                
+
                                 if (importResult.failureDetails.size > 5) {
                                     Text(
                                         text = "... 还有 ${importResult.failureDetails.size - 5} 条错误",

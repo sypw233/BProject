@@ -11,12 +11,12 @@ data class ClassDto(
      * 班级ID
      */
     val id: Int? = null,
-    
+
     /**
      * 班级名称
      */
     val name: String,
-    
+
     /**
      * 年级
      */
@@ -32,7 +32,7 @@ data class ClassCreateDto(
      * 班级名称
      */
     val name: String,
-    
+
     /**
      * 年级
      */
@@ -48,12 +48,12 @@ data class ClassUpdateDto(
      * 班级ID
      */
     val id: Int,
-    
+
     /**
      * 班级名称
      */
     val name: String,
-    
+
     /**
      * 年级
      */

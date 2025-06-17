@@ -1,10 +1,21 @@
-package ovo.sypw.bsp.presentation.screens.admin
+package ovo.sypw.bsp.presentation.components.dialog
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,9 +24,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoCamera
-import coil3.compose.AsyncImage
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +58,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil3.compose.AsyncImage
 import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeDialogState
 import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
 import ovo.sypw.bsp.utils.file.createFileUtils
@@ -75,7 +106,7 @@ fun EmployeeDialog(
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold
                         )
-                        
+
                         IconButton(
                             onClick = onDismiss
                         ) {
@@ -85,9 +116,9 @@ fun EmployeeDialog(
                             )
                         }
                     }
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     // 错误消息显示
                     if (dialogState.errorMessage != null) {
                         Card(
@@ -105,7 +136,7 @@ fun EmployeeDialog(
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-                    
+
                     // 表单内容
                     Column(
                         modifier = Modifier
@@ -122,9 +153,9 @@ fun EmployeeDialog(
                             singleLine = true,
                             placeholder = { Text("请输入用户名") }
                         )
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 真实姓名输入
                         OutlinedTextField(
                             value = dialogState.realName,
@@ -134,9 +165,9 @@ fun EmployeeDialog(
                             singleLine = true,
                             placeholder = { Text("请输入真实姓名") }
                         )
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 头像选择区域
                         Column {
                             Text(
@@ -145,7 +176,7 @@ fun EmployeeDialog(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            
+
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -172,7 +203,8 @@ fun EmployeeDialog(
                                     // 显示选中的头像或默认图标
                                     if (dialogState.selectedAvatarBytes != null) {
                                         val fileUtils = createFileUtils()
-                                        val imageBitmap = fileUtils.bytesToImageBitmap(dialogState.selectedAvatarBytes)
+                                        val imageBitmap =
+                                            fileUtils.bytesToImageBitmap(dialogState.selectedAvatarBytes)
                                         if (imageBitmap != null) {
                                             Image(
                                                 bitmap = imageBitmap,
@@ -203,7 +235,7 @@ fun EmployeeDialog(
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
-                                    
+
                                     // 上传状态指示器
                                     if (dialogState.isUploadingAvatar) {
                                         Box(
@@ -223,7 +255,7 @@ fun EmployeeDialog(
                                         }
                                     }
                                 }
-                                
+
                                 // 头像操作按钮
                                 Column {
                                     Button(
@@ -239,7 +271,7 @@ fun EmployeeDialog(
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text("选择头像")
                                     }
-                                    
+
                                     if (dialogState.selectedAvatarBytes != null || !dialogState.avatarUrl.isNullOrEmpty()) {
                                         Spacer(modifier = Modifier.height(8.dp))
                                         OutlinedButton(
@@ -252,7 +284,7 @@ fun EmployeeDialog(
                                     }
                                 }
                             }
-                            
+
                             // 头像提示信息
                             if (!dialogState.avatarUrl.isNullOrEmpty() && dialogState.selectedAvatarBytes == null) {
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -262,7 +294,7 @@ fun EmployeeDialog(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
-                            
+
                             if (dialogState.selectedAvatarBytes != null) {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
@@ -272,13 +304,13 @@ fun EmployeeDialog(
                                 )
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 密码输入（仅在添加模式下显示）
                         if (!dialogState.isEditMode) {
                             var passwordVisible by remember { mutableStateOf(false) }
-                            
+
                             OutlinedTextField(
                                 value = dialogState.password,
                                 onValueChange = employeeViewModel::updateEmployeePassword,
@@ -302,11 +334,11 @@ fun EmployeeDialog(
                                     }
                                 }
                             )
-                            
+
                             Spacer(modifier = Modifier.height(16.dp))
                         }
 
-                        
+
                         // 性别选择
                         Text(
                             text = "性别",
@@ -336,9 +368,9 @@ fun EmployeeDialog(
                                 Text("女")
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 职位选择
                         var jobExpanded by remember { mutableStateOf(false) }
                         val jobOptions = mapOf(
@@ -348,7 +380,7 @@ fun EmployeeDialog(
                             4 to "教研主管",
                             5 to "咨询师",
                         )
-                        
+
                         ExposedDropdownMenuBox(
                             expanded = jobExpanded,
                             onExpandedChange = { jobExpanded = !jobExpanded }
@@ -382,13 +414,14 @@ fun EmployeeDialog(
                                 }
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 部门选择（使用真实的部门数据）
                         var departmentExpanded by remember { mutableStateOf(false) }
-                        val selectedDepartment = departments.find { it.id == dialogState.departmentId }
-                        
+                        val selectedDepartment =
+                            departments.find { it.id == dialogState.departmentId }
+
                         ExposedDropdownMenuBox(
                             expanded = departmentExpanded,
                             onExpandedChange = { departmentExpanded = !departmentExpanded }
@@ -415,16 +448,18 @@ fun EmployeeDialog(
                                     DropdownMenuItem(
                                         text = { Text(department.name) },
                                         onClick = {
-                                            employeeViewModel.updateEmployeeDepartmentId(department.id ?: 1)
+                                            employeeViewModel.updateEmployeeDepartmentId(
+                                                department.id ?: 1
+                                            )
                                             departmentExpanded = false
                                         }
                                     )
                                 }
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 入职日期输入
                         OutlinedTextField(
                             value = dialogState.entryDate,
@@ -435,9 +470,9 @@ fun EmployeeDialog(
                             placeholder = { Text("请输入入职日期（可选，格式：YYYY-MM-DD）") }
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.height(24.dp))
-                    
+
                     // 操作按钮
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -449,7 +484,7 @@ fun EmployeeDialog(
                         ) {
                             Text("取消")
                         }
-                        
+
                         Button(
                             onClick = employeeViewModel::saveEmployee,
                             enabled = !dialogState.isLoading

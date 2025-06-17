@@ -13,21 +13,25 @@
 ## 平台实现
 
 ### Android
+
 - 使用 `SharedPreferences` 进行数据存储
 - 数据存储在应用私有目录，安全可靠
 - 支持多进程访问
 
 ### iOS
+
 - 使用 `NSUserDefaults` 进行数据存储
 - 遵循iOS数据存储最佳实践
 - 自动同步到iCloud（如果启用）
 
 ### Desktop
+
 - 使用 `Properties` 文件进行数据存储
 - 存储在用户主目录的 `.bsp` 文件夹中
 - 跨操作系统兼容（Windows、macOS、Linux）
 
 ### Web
+
 - 使用浏览器的 `localStorage` API
 - 数据持久化存储在浏览器中
 - 支持所有现代浏览器

@@ -12,12 +12,12 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.StatisticsViewModel
  * 统计模块依赖注入配置
  */
 val statisticsModule = module {
-    
+
     // API服务
     single<StatisticsApiService> {
         StatisticsApiService()
     }
-    
+
     // 仓库
     single<StatisticsRepository> {
         StatisticsRepositoryImpl(
@@ -25,12 +25,12 @@ val statisticsModule = module {
             tokenStorage = get()
         )
     }
-    
+
     // 用例
     single<StatisticsUseCase> {
         StatisticsUseCase(repository = get())
     }
-    
+
     // ViewModel
     viewModel<StatisticsViewModel> {
         StatisticsViewModel(statisticsUseCase = get())

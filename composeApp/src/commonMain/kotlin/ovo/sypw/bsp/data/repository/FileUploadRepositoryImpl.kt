@@ -4,10 +4,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ovo.sypw.bsp.data.api.FileUploadApiService
 import ovo.sypw.bsp.data.dto.FileUploadResponse
+import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.isSuccess
 import ovo.sypw.bsp.data.dto.result.parseData
 import ovo.sypw.bsp.data.storage.TokenStorage
-import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.FileUploadRepository
 import ovo.sypw.bsp.utils.Logger
 
@@ -19,7 +19,7 @@ class FileUploadRepositoryImpl(
     private val fileUploadApiService: FileUploadApiService,
     private val tokenStorage: TokenStorage
 ) : FileUploadRepository {
-    
+
     /**
      * 上传文件
      */
@@ -36,7 +36,7 @@ class FileUploadRepositoryImpl(
                 message = "请先登录后再上传文件"
             )
         }
-        
+
         // 验证文件大小
         if (!validateFileSize(fileBytes.size.toLong())) {
             Logger.w("FileUploadRepository", "文件大小超出限制: ${fileBytes.size} bytes")
@@ -45,7 +45,7 @@ class FileUploadRepositoryImpl(
                 message = "文件大小不能超过10MB"
             )
         }
-        
+
         // 验证文件类型
         if (!validateFileType(fileName)) {
             Logger.w("FileUploadRepository", "不支持的文件类型: $fileName")
@@ -54,8 +54,9 @@ class FileUploadRepositoryImpl(
                 message = "不支持的文件类型"
             )
         }
-        
-        return@performNetworkCall when (val result = fileUploadApiService.uploadFile(token, fileBytes, fileName)) {
+
+        return@performNetworkCall when (val result =
+            fileUploadApiService.uploadFile(token, fileBytes, fileName)) {
             is NetworkResult.Success -> {
                 Logger.i("FileUploadRepository", "文件上传请求成功")
                 val saResult = result.data
@@ -79,14 +80,17 @@ class FileUploadRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e("FileUploadRepository", "文件上传网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> {
                 Logger.d("FileUploadRepository", "文件上传中...")
                 result
             }
+
             else -> {
                 NetworkResult.Error(
                     exception = Exception("未知错误"),
@@ -95,7 +99,7 @@ class FileUploadRepositoryImpl(
             }
         }
     }
-    
+
     /**
      * 上传图片文件
      */
@@ -112,7 +116,7 @@ class FileUploadRepositoryImpl(
                 message = "请先登录后再上传图片"
             )
         }
-        
+
         // 验证图片文件类型
         val imageExtensions = listOf("jpg", "jpeg", "png", "gif", "webp")
         if (!validateFileType(fileName, imageExtensions)) {
@@ -122,7 +126,7 @@ class FileUploadRepositoryImpl(
                 message = "仅支持 JPG、PNG、GIF、WebP 格式的图片"
             )
         }
-        
+
         // 验证图片大小
         if (!validateFileSize(imageBytes.size.toLong(), 5 * 1024 * 1024)) { // 图片限制5MB
             Logger.w("FileUploadRepository", "图片大小超出限制: ${imageBytes.size} bytes")
@@ -131,8 +135,9 @@ class FileUploadRepositoryImpl(
                 message = "图片大小不能超过5MB"
             )
         }
-        
-        return@performNetworkCall when (val result = fileUploadApiService.uploadImage(token, imageBytes, fileName)) {
+
+        return@performNetworkCall when (val result =
+            fileUploadApiService.uploadImage(token, imageBytes, fileName)) {
             is NetworkResult.Success -> {
                 Logger.i("FileUploadRepository", "图片上传请求成功")
                 val saResult = result.data
@@ -156,14 +161,17 @@ class FileUploadRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e("FileUploadRepository", "图片上传网络请求失败: ${result.message}")
                 result
             }
+
             is NetworkResult.Loading -> {
                 Logger.d("FileUploadRepository", "图片上传中...")
                 result
             }
+
             else -> {
                 NetworkResult.Error(
                     exception = Exception("未知错误"),
@@ -172,7 +180,7 @@ class FileUploadRepositoryImpl(
             }
         }
     }
-    
+
     /**
      * 批量上传文件
      */
@@ -180,7 +188,7 @@ class FileUploadRepositoryImpl(
         files: List<Triple<ByteArray, String, String>>
     ): Flow<List<NetworkResult<FileUploadResponse>>> = flow {
         val results = mutableListOf<NetworkResult<FileUploadResponse>>()
-        
+
         files.forEach { (fileBytes, fileName, mimeType) ->
             uploadFile(fileBytes, fileName, mimeType).collect { result ->
                 if (result !is NetworkResult.Loading) {
@@ -188,17 +196,17 @@ class FileUploadRepositoryImpl(
                 }
             }
         }
-        
+
         emit(results)
     }
-    
+
     /**
      * 检查文件大小是否符合要求
      */
     override fun validateFileSize(fileSize: Long, maxSize: Long): Boolean {
         return fileSize <= maxSize && fileSize > 0
     }
-    
+
     /**
      * 检查文件类型是否支持
      */

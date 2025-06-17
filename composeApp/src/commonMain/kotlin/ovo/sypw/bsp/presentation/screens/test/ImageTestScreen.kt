@@ -48,12 +48,12 @@ fun ImageTestScreen(
 ) {
     val fileUtils = rememberFileUtils()
     val scope = rememberCoroutineScope()
-    
+
     var selectedImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var selectedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -68,7 +68,7 @@ fun ImageTestScreen(
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
-        
+
         // 平台支持信息
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -88,7 +88,7 @@ fun ImageTestScreen(
                 )
             }
         }
-        
+
         // 选择图片按钮
         Button(
             onClick = {
@@ -128,7 +128,7 @@ fun ImageTestScreen(
                 Text("选择图片")
             }
         }
-        
+
         // 错误信息显示
         errorMessage?.let { error ->
             Card(
@@ -144,7 +144,7 @@ fun ImageTestScreen(
                 )
             }
         }
-        
+
         // 图片信息显示
         selectedImageBytes?.let { bytes ->
             Card(
@@ -176,7 +176,7 @@ fun ImageTestScreen(
                 }
             }
         }
-        
+
         // 图片预览
         selectedImageBitmap?.let { bitmap ->
             Card(
@@ -191,7 +191,7 @@ fun ImageTestScreen(
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     Image(
                         bitmap = bitmap,
                         contentDescription = "选择的图片",
@@ -203,7 +203,7 @@ fun ImageTestScreen(
                 }
             }
         }
-        
+
         // 清除按钮
         if (selectedImageBitmap != null || selectedImageBytes != null) {
             OutlinedButton(

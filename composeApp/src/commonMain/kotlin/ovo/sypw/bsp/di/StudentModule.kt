@@ -11,7 +11,7 @@ import ovo.sypw.bsp.domain.usecase.StudentUseCase
  * 配置学生相关的API服务、仓库和用例的依赖注入
  */
 val studentModule = module {
-    
+
     /**
      * 学生API服务
      * 单例模式，提供学生相关的网络API调用
@@ -19,7 +19,7 @@ val studentModule = module {
     single<StudentApiService> {
         StudentApiService()
     }
-    
+
     /**
      * 学生仓库接口实现
      * 单例模式，整合API服务和本地存储
@@ -30,7 +30,7 @@ val studentModule = module {
             tokenStorage = get() // 从Koin容器中获取TokenStorage实例
         )
     }
-    
+
     /**
      * 学生业务用例
      * 工厂模式，每次注入时创建新实例

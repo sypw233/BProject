@@ -10,7 +10,7 @@ import ovo.sypw.bsp.domain.repository.AuthRepository
 class ChangePasswordUseCase(
     private val authRepository: AuthRepository
 ) {
-    
+
     /**
      * 执行修改密码操作
      * @param oldPassword 旧密码
@@ -35,14 +35,14 @@ class ChangePasswordUseCase(
                 message = validationResult
             )
         }
-        
+
         // 执行修改密码
         return authRepository.changePassword(
             oldPassword = oldPassword.trim(),
             newPassword = newPassword.trim()
         )
     }
-    
+
     /**
      * 验证输入参数
      * @param oldPassword 旧密码
@@ -67,6 +67,6 @@ class ChangePasswordUseCase(
             else -> null
         }
     }
-    
+
 
 }

@@ -11,7 +11,7 @@ data class LoginRequest(
      * 用户名
      */
     val username: String,
-    
+
     /**
      * 密码
      */
@@ -39,13 +39,13 @@ data class UserInfo(
      * 用户ID
      */
     val id: String,
-    
+
     /**
      * 用户名
      */
     val username: String,
 
-)
+    )
 
 /**
  * 注册请求数据传输对象 - 对应后端UserRegisterDTO
@@ -56,7 +56,7 @@ data class RegisterRequest(
      * 用户名
      */
     val username: String,
-    
+
     /**
      * 密码
      */
@@ -73,7 +73,7 @@ data class ChangePasswordRequest(
      * 旧密码
      */
     val oldPassword: String,
-    
+
     /**
      * 新密码
      */

@@ -1,6 +1,10 @@
 package ovo.sypw.bsp.domain.repository
 
-import ovo.sypw.bsp.data.dto.*
+import ovo.sypw.bsp.data.dto.PageResultDto
+import ovo.sypw.bsp.data.dto.StudentCreateDto
+import ovo.sypw.bsp.data.dto.StudentDto
+import ovo.sypw.bsp.data.dto.StudentImportDto
+import ovo.sypw.bsp.data.dto.StudentUpdateDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 
 /**
@@ -8,7 +12,7 @@ import ovo.sypw.bsp.data.dto.result.NetworkResult
  * 定义学生管理相关的业务操作
  */
 interface StudentRepository : BaseRepository {
-    
+
     /**
      * 获取学生分页列表
      * @param current 当前页码
@@ -35,49 +39,49 @@ interface StudentRepository : BaseRepository {
         joinDateStart: String? = null,
         joinDateEnd: String? = null
     ): NetworkResult<PageResultDto<StudentDto>>
-    
+
     /**
      * 获取学生详情
      * @param id 学生ID
      * @return 学生详情数据结果
      */
     suspend fun getStudentById(id: Int): NetworkResult<StudentDto>
-    
+
     /**
      * 创建学生
      * @param studentCreateDto 创建学生请求数据
      * @return 创建结果
      */
     suspend fun createStudent(studentCreateDto: StudentCreateDto): NetworkResult<Unit>
-    
+
     /**
      * 更新学生
      * @param studentUpdateDto 更新学生请求数据
      * @return 更新结果
      */
     suspend fun updateStudent(studentUpdateDto: StudentUpdateDto): NetworkResult<Unit>
-    
+
     /**
      * 删除学生
      * @param id 学生ID
      * @return 删除结果
      */
     suspend fun deleteStudent(id: Int): NetworkResult<Unit>
-    
+
     /**
      * 批量删除学生
      * @param ids 学生ID列表
      * @return 批量删除结果
      */
     suspend fun batchDeleteStudents(ids: List<Int>): NetworkResult<Unit>
-    
+
     /**
      * 批量导入学生
      * @param file 导入文件数据
      * @return 导入结果
      */
     suspend fun importStudents(file: ByteArray): NetworkResult<StudentImportDto>
-    
+
     /**
      * 批量导出学生
      * @param name 学生姓名（可选，用于搜索）

@@ -1,12 +1,31 @@
-package ovo.sypw.bsp.presentation.screens.admin
+package ovo.sypw.bsp.presentation.components.dialog
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -16,11 +35,11 @@ import androidx.compose.ui.window.DialogProperties
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
+import ovo.sypw.bsp.data.dto.AnnouncementPriority
+import ovo.sypw.bsp.data.dto.AnnouncementStatus
+import ovo.sypw.bsp.data.dto.AnnouncementType
 import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementDialogState
 import ovo.sypw.bsp.presentation.viewmodel.admin.AnnouncementViewModel
-import ovo.sypw.bsp.data.dto.AnnouncementPriority
-import ovo.sypw.bsp.data.dto.AnnouncementType
-import ovo.sypw.bsp.data.dto.AnnouncementStatus
 
 /**
  * 公告添加/编辑Dialog组件
@@ -64,7 +83,7 @@ fun AnnouncementDialog(
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold
                         )
-                        
+
                         IconButton(
                             onClick = onDismiss
                         ) {
@@ -74,9 +93,9 @@ fun AnnouncementDialog(
                             )
                         }
                     }
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     // 错误消息显示
                     if (dialogState.errorMessage != null) {
                         Card(
@@ -94,7 +113,7 @@ fun AnnouncementDialog(
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-                    
+
                     // 表单内容
                     Column(
                         modifier = Modifier
@@ -110,33 +129,33 @@ fun AnnouncementDialog(
                             singleLine = true,
                             placeholder = { Text("请输入公告标题") }
                         )
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 公告内容富文本编辑器
                         val richTextState = rememberRichTextState()
-                        
+
                         // 同步富文本状态与对话框状态
                         LaunchedEffect(dialogState.content) {
                             if (richTextState.annotatedString.text != dialogState.content) {
                                 richTextState.setHtml(dialogState.content)
                             }
                         }
-                        
+
                         LaunchedEffect(richTextState.annotatedString) {
                             val htmlContent = richTextState.toHtml()
                             if (htmlContent != dialogState.content) {
                                 announcementViewModel.updateAnnouncementContent(htmlContent)
                             }
                         }
-                        
+
                         Text(
                             text = "公告内容",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        
+
                         RichTextEditor(
                             state = richTextState,
                             modifier = Modifier
@@ -149,9 +168,9 @@ fun AnnouncementDialog(
                                 unfocusedIndicatorColor = MaterialTheme.colorScheme.outline
                             )
                         )
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 公告类型选择
                         Text(
                             text = "公告类型",
@@ -159,7 +178,7 @@ fun AnnouncementDialog(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        
+
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
@@ -168,7 +187,11 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.type == AnnouncementType.NOTIFICATION.value,
-                                    onClick = { announcementViewModel.updateAnnouncementType(AnnouncementType.NOTIFICATION.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementType(
+                                            AnnouncementType.NOTIFICATION.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementType.NOTIFICATION.displayName)
                             }
@@ -177,7 +200,11 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.type == AnnouncementType.ACTIVITY.value,
-                                    onClick = { announcementViewModel.updateAnnouncementType(AnnouncementType.ACTIVITY.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementType(
+                                            AnnouncementType.ACTIVITY.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementType.ACTIVITY.displayName)
                             }
@@ -186,14 +213,18 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.type == AnnouncementType.SYSTEM.value,
-                                    onClick = { announcementViewModel.updateAnnouncementType(AnnouncementType.SYSTEM.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementType(
+                                            AnnouncementType.SYSTEM.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementType.SYSTEM.displayName)
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 公告状态选择
                         Text(
                             text = "公告状态",
@@ -201,7 +232,7 @@ fun AnnouncementDialog(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        
+
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
@@ -210,7 +241,11 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.status == AnnouncementStatus.DRAFT.value,
-                                    onClick = { announcementViewModel.updateAnnouncementStatus(AnnouncementStatus.DRAFT.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementStatus(
+                                            AnnouncementStatus.DRAFT.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementStatus.DRAFT.displayName)
                             }
@@ -219,7 +254,11 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.status == AnnouncementStatus.PUBLISHED.value,
-                                    onClick = { announcementViewModel.updateAnnouncementStatus(AnnouncementStatus.PUBLISHED.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementStatus(
+                                            AnnouncementStatus.PUBLISHED.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementStatus.PUBLISHED.displayName)
                             }
@@ -228,14 +267,18 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.status == AnnouncementStatus.OFFLINE.value,
-                                    onClick = { announcementViewModel.updateAnnouncementStatus(AnnouncementStatus.OFFLINE.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementStatus(
+                                            AnnouncementStatus.OFFLINE.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementStatus.OFFLINE.displayName)
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 优先级选择
                         Text(
                             text = "优先级",
@@ -243,7 +286,7 @@ fun AnnouncementDialog(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        
+
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
@@ -252,7 +295,11 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.priority == AnnouncementPriority.NORMAL.value,
-                                    onClick = { announcementViewModel.updateAnnouncementPriority(AnnouncementPriority.NORMAL.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementPriority(
+                                            AnnouncementPriority.NORMAL.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementPriority.NORMAL.displayName)
                             }
@@ -261,7 +308,11 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.priority == AnnouncementPriority.IMPORTANT.value,
-                                    onClick = { announcementViewModel.updateAnnouncementPriority(AnnouncementPriority.IMPORTANT.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementPriority(
+                                            AnnouncementPriority.IMPORTANT.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementPriority.IMPORTANT.displayName)
                             }
@@ -270,14 +321,18 @@ fun AnnouncementDialog(
                             ) {
                                 RadioButton(
                                     selected = dialogState.priority == AnnouncementPriority.URGENT.value,
-                                    onClick = { announcementViewModel.updateAnnouncementPriority(AnnouncementPriority.URGENT.value) }
+                                    onClick = {
+                                        announcementViewModel.updateAnnouncementPriority(
+                                            AnnouncementPriority.URGENT.value
+                                        )
+                                    }
                                 )
                                 Text(AnnouncementPriority.URGENT.displayName)
                             }
                         }
-                        
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        
+
                         // 提示信息
                         Card(
                             modifier = Modifier.fillMaxWidth(),
@@ -303,9 +358,9 @@ fun AnnouncementDialog(
                             }
                         }
                     }
-                    
+
                     Spacer(modifier = Modifier.height(24.dp))
-                    
+
                     // 操作按钮
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -316,7 +371,7 @@ fun AnnouncementDialog(
                         ) {
                             Text("取消")
                         }
-                        
+
                         Button(
                             onClick = announcementViewModel::saveAnnouncement,
                             enabled = dialogState.title.isNotBlank() && dialogState.content.isNotBlank()

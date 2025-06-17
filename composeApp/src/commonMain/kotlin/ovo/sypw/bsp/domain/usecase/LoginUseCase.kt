@@ -11,7 +11,7 @@ import ovo.sypw.bsp.domain.repository.AuthRepository
 class LoginUseCase(
     private val authRepository: AuthRepository
 ) {
-    
+
     /**
      * 执行登录操作
      * @param username 用户名或邮箱
@@ -32,14 +32,14 @@ class LoginUseCase(
                 message = validationResult
             )
         }
-        
+
         // 执行登录
         return authRepository.login(
             username = username.trim(),
             password = password,
         )
     }
-    
+
     /**
      * 验证输入参数
      * @param username 用户名

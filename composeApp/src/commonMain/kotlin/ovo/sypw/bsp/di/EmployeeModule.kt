@@ -11,12 +11,12 @@ import ovo.sypw.bsp.domain.usecase.EmployeeUseCase
  * 配置员工相关的API服务、Repository和UseCase的依赖关系
  */
 val employeeModule = module {
-    
+
     // API服务层
     single<EmployeeApiService> {
         EmployeeApiService()
     }
-    
+
     // Repository层
     single<EmployeeRepository> {
         EmployeeRepositoryImpl(
@@ -24,7 +24,7 @@ val employeeModule = module {
             tokenStorage = get()
         )
     }
-    
+
     // UseCase层
     single<EmployeeUseCase> {
         EmployeeUseCase(
