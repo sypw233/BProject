@@ -33,6 +33,7 @@ import ovo.sypw.bsp.navigation.NavigationManager
 import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.getNavigationItems
 import ovo.sypw.bsp.navigation.rememberNavigationManager
+import ovo.sypw.bsp.presentation.screens.AIChatScreen
 import ovo.sypw.bsp.presentation.screens.HomeScreen
 import ovo.sypw.bsp.presentation.screens.ProfileScreen
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
@@ -404,6 +405,13 @@ private fun MainContent(
                     navigationManager.navigateTo(AppScreen.ANNOUNCEMENTS.route)
                 }
             }
+        }
+
+        AppScreen.AI_CHAT.route -> {
+            AIChatScreen(
+                modifier = modifier,
+                layoutConfig=layoutConfig
+            )
         }
 
 //        AppScreen.API_TEST.route ->

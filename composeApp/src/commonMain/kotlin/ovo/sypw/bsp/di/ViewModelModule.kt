@@ -10,6 +10,7 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.ClassViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
+import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
 
 /**
  * ViewModel模块依赖注入配置
@@ -46,6 +47,16 @@ val viewModelModule = module {
      */
     factory {
         AdminViewModel()
+    }
+
+    /**
+     * 提供AI对话ViewModel
+     * 依赖AIChatUseCase
+     */
+    factory {
+        AIChatViewModel(
+            aiChatUseCase = get()
+        )
     }
 
     /**

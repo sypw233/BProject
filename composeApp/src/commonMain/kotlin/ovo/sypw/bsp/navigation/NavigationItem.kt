@@ -3,6 +3,7 @@ package ovo.sypw.bsp.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Announcement
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,6 +27,7 @@ enum class AppScreen(val route: String) {
     HOME("home"),
     ANNOUNCEMENTS("announcements"),
     ANNOUNCEMENT_DETAIL("announcement_detail"),
+    AI_CHAT("ai_chat"),
     PROFILE("profile"),
     API_TEST("api_test"),
     ADMIN("admin"),
@@ -49,6 +51,11 @@ fun getNavigationItems(): List<NavigationItem> {
             route = AppScreen.ANNOUNCEMENTS.route,
             title = "公告",
             icon = Icons.Default.Announcement
+        ),
+        NavigationItem(
+            route = AppScreen.AI_CHAT.route,
+            title = "AI对话",
+            icon = Icons.Default.Chat
         ),
 //        NavigationItem(
 //            route = AppScreen.API_TEST.route,

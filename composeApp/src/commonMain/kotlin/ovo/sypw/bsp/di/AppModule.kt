@@ -29,6 +29,8 @@ val appModule = module {
     includes(statisticsModule)
     // 包含公告管理模块
     includes(announcementModule)
+    // 包含AI对话模块
+    includes(aiChatModule)
 }
 
 /**
@@ -46,5 +48,6 @@ fun getAllModules() = listOf(
     studentModule,
     fileUploadModule,
     statisticsModule,
-    announcementModule
+    announcementModule,
+    aiChatModule
 )
