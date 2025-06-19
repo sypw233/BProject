@@ -27,6 +27,7 @@ androidx-paging = "3.3.0-alpha02"
 androidx-paging-compose = "3.3.0-alpha02"
 coil = "3.0.4"
 richeditor-compose = "1.0.0-rc12"
+markdown-renderer = "0.26.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -57,6 +58,8 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 richeditor-compose = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richeditor-compose" }
+markdown-renderer = { module = "com.mikepenz:multiplatform-markdown-renderer", version.ref = "markdown-renderer" }
+markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "markdown-renderer" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

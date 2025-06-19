@@ -40,6 +40,8 @@ import kotlinx.coroutines.delay
 import ovo.sypw.bsp.data.dto.ChatMessage
 import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownTypography
 
 
 /**
@@ -167,12 +169,33 @@ private fun MessageItem(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = message.message,
-                        color = textColor,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.weight(1f)
-                    )
+                    // 根据消息角色选择渲染方式
+                    if (isUser) {
+                        // 用户消息使用普通Text显示
+                        Text(
+                            text = message.message,
+                            color = textColor,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                    } else {
+                        // AI消息使用Markdown渲染
+                         Markdown(
+                             content = message.message,
+                             modifier = Modifier.weight(1f),
+                             typography = markdownTypography(
+                                 h1 = MaterialTheme.typography.titleLarge,
+                                 h2 = MaterialTheme.typography.titleMedium,
+                                 h3 = MaterialTheme.typography.titleSmall,
+                                 h4 = MaterialTheme.typography.bodyLarge,
+                                 h5 = MaterialTheme.typography.bodyMedium,
+                                 h6 = MaterialTheme.typography.bodySmall,
+                                 text = MaterialTheme.typography.bodySmall,
+                                 code = MaterialTheme.typography.labelSmall,
+                                 quote = MaterialTheme.typography.bodySmall
+                             )
+                         )
+                    }
                     
                     // 流式传输时显示动画光标
                     if (isStreaming) {

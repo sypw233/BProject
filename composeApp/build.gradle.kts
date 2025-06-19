@@ -73,6 +73,9 @@ kotlin {
             implementation(libs.coil.network.ktor)
             // 富文本编辑器
             implementation(libs.richeditor.compose)
+            // Markdown渲染器
+            implementation(libs.markdown.renderer)
+            implementation(libs.markdown.renderer.m3)
 
             implementation("io.github.thechance101:chart:1.1.0")
 
