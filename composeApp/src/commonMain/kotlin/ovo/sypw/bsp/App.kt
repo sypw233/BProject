@@ -35,6 +35,7 @@ import ovo.sypw.bsp.navigation.getNavigationItems
 import ovo.sypw.bsp.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.screens.AIChatScreen
 import ovo.sypw.bsp.presentation.screens.HomeScreen
+import ovo.sypw.bsp.presentation.screens.NetdiskScreen
 import ovo.sypw.bsp.presentation.screens.ProfileScreen
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
 import ovo.sypw.bsp.presentation.screens.admin.GetAdminTab
@@ -411,6 +412,12 @@ private fun MainContent(
             AIChatScreen(
                 modifier = modifier,
                 layoutConfig=layoutConfig
+            )
+        }
+
+        AppScreen.NETDISK.route -> {
+            NetdiskScreen(
+                modifier = modifier
             )
         }
 

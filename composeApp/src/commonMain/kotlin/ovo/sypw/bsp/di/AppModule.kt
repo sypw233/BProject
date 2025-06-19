@@ -1,6 +1,7 @@
 package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
+import ovo.sypw.bsp.data.storage.TokenStorage
 
 /**
  * 应用主模块
@@ -33,6 +34,8 @@ val appModule = module {
     includes(aiChatModule)
     // 包含请求日志模块
     includes(requestLogModule)
+    // 包含网盘模块
+    includes(netdiskModule)
 }
 
 /**
@@ -52,5 +55,6 @@ fun getAllModules() = listOf(
     statisticsModule,
     announcementModule,
     aiChatModule,
-    requestLogModule
+    requestLogModule,
+    netdiskModule
 )

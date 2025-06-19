@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Announcement
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.CloudQueue
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -28,6 +29,7 @@ enum class AppScreen(val route: String) {
     ANNOUNCEMENTS("announcements"),
     ANNOUNCEMENT_DETAIL("announcement_detail"),
     AI_CHAT("ai_chat"),
+    NETDISK("netdisk"),
     PROFILE("profile"),
     API_TEST("api_test"),
     ADMIN("admin"),
@@ -56,6 +58,11 @@ fun getNavigationItems(): List<NavigationItem> {
             route = AppScreen.AI_CHAT.route,
             title = "AI对话",
             icon = Icons.Default.Chat
+        ),
+        NavigationItem(
+            route = AppScreen.NETDISK.route,
+            title = "网盘管理",
+            icon = Icons.Default.CloudQueue
         ),
 //        NavigationItem(
 //            route = AppScreen.API_TEST.route,

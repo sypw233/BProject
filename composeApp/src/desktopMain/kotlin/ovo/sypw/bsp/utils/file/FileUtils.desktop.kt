@@ -79,6 +79,7 @@ class DesktopFileUtils : FileUtils {
     
     /**
      * 选择文件
+     * 支持选择所有类型的文件
      * @return 选择的文件字节数组，取消选择时返回null
      */
     override suspend fun selectFile(): ByteArray? {
@@ -92,13 +93,8 @@ class DesktopFileUtils : FileUtils {
                         val fileChooser = JFileChooser()
                         fileChooser.dialogTitle = "选择文件"
                         
-                        // 设置文件过滤器
-                        val filter = FileNameExtensionFilter(
-                            "Excel文件 (*.xlsx, *.xls)",
-                            "xlsx", "xls"
-                        )
-                        fileChooser.fileFilter = filter
-                        fileChooser.isAcceptAllFileFilterUsed = false
+                        // 允许选择所有类型的文件
+                        fileChooser.isAcceptAllFileFilterUsed = true
                         
                         val result = fileChooser.showOpenDialog(null)
                         
