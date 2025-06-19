@@ -218,19 +218,6 @@ jobs:
         tag_name: ${{ github.ref_name != 'main' && github.ref_name || format('v{0}', github.run_number) }}
         name: ${{ github.ref_name != 'main' && github.ref_name || format('Release v{0}', github.run_number) }}
         body: |
-          ## 🚀 多平台应用发布
-          
-          ### 支持平台
-          - ✅ Windows (可执行文件压缩包)
-          - ✅ Android (APK安装包)
-          - ✅ macOS (DMG安装包)
-          - ✅ Linux (DEB安装包)
-          
-          ### 技术栈
-          - Kotlin Multiplatform
-          - Compose Multiplatform
-          - JDK 21
-          
           ### 安装说明
           1. **Windows**: 下载 `windows-app.zip` 文件，解压后运行exe文件
           2. **Android**: 下载 `.apk` 文件并安装
