@@ -89,14 +89,6 @@ fun PublicAnnouncementScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 页面标题
-        Text(
-            text = "公告中心",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold
-        )
-
         // 搜索和筛选区域
         PublicAnnouncementSearchAndFilter(
             searchQuery = searchQuery,

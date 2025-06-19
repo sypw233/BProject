@@ -48,14 +48,15 @@ import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 
 /**
- * 聊天会话侧边栏组件
+ * 聊天会话侧边栏
  */
 @Composable
 fun ChatSessionSidebar(
     modifier: Modifier = Modifier,
     viewModel: AIChatViewModel,
     layoutConfig: ResponsiveLayoutConfig,
-    isExpanded: Boolean = true
+    isExpanded: Boolean = true,
+    onCloseDrawer: (() -> Unit)? = null
 ) {
     val sessions by viewModel.sessions.collectAsState()
     val currentSessionId by viewModel.currentSessionId.collectAsState()
@@ -63,7 +64,9 @@ fun ChatSessionSidebar(
     var showClearAllDialog by remember { mutableStateOf(false) }
 
     Card(
-        modifier = modifier,
+        modifier = modifier
+            .width(250.dp) // 限制最大宽度为320dp
+            .fillMaxSize(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
@@ -91,7 +94,10 @@ fun ChatSessionSidebar(
                 Row {
                     // 新建对话按钮
                     IconButton(
-                        onClick = { viewModel.createNewSession() }
+                        onClick = { 
+                            viewModel.createNewSession()
+                            onCloseDrawer?.invoke()
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -140,7 +146,10 @@ fun ChatSessionSidebar(
                             session = session,
                             isSelected = session.sessionId == currentSessionId,
                             isExpanded = isExpanded,
-                            onSessionClick = { viewModel.loadSession(session.sessionId) },
+                            onSessionClick = { 
+                                viewModel.loadSession(session.sessionId)
+                                onCloseDrawer?.invoke()
+                            },
                             onDeleteClick = { viewModel.deleteSession(session.sessionId) },
                         )
                     }

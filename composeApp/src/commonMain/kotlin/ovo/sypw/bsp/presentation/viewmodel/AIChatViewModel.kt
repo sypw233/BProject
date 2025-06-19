@@ -73,8 +73,21 @@ class AIChatViewModel(
     private val _streamingMessage = MutableStateFlow("")
     val streamingMessage: StateFlow<String> = _streamingMessage.asStateFlow()
 
+    // 可用模型列表
+    private val _availableModels = MutableStateFlow<List<String>>(emptyList())
+    val availableModels: StateFlow<List<String>> = _availableModels.asStateFlow()
+
+    // 当前选中的模型
+    private val _selectedModel = MutableStateFlow("qwq-plus")
+    val selectedModel: StateFlow<String> = _selectedModel.asStateFlow()
+
+    // 模型加载状态
+    private val _isLoadingModels = MutableStateFlow(false)
+    val isLoadingModels: StateFlow<Boolean> = _isLoadingModels.asStateFlow()
+
     init {
         loadSessions()
+        loadAvailableModels()
     }
 
     /**
@@ -82,6 +95,51 @@ class AIChatViewModel(
      */
     fun updateInputMessage(message: String) {
         _inputMessage.value = message
+    }
+
+    /**
+     * 更新选中的模型
+     */
+    fun updateSelectedModel(model: String) {
+        _selectedModel.value = model
+        Logger.i("AIChatViewModel", "切换AI模型: $model")
+    }
+
+    /**
+     * 加载可用模型列表
+     */
+    fun loadAvailableModels() {
+        viewModelScope.launch {
+            _isLoadingModels.value = true
+            try {
+                when (val result = aiChatUseCase.getAvailableModels()) {
+                    is NetworkResult.Success -> {
+                        _availableModels.value = result.data
+                        Logger.i("AIChatViewModel", "加载模型列表成功: ${result.data.size}个模型")
+                        
+                        // 如果当前选中的模型不在可用列表中，选择第一个可用模型
+                        if (_selectedModel.value !in result.data && result.data.isNotEmpty()) {
+                            _selectedModel.value = result.data.first()
+                        }
+                    }
+                    is NetworkResult.Error -> {
+                        Logger.e("AIChatViewModel", "加载模型列表失败: ${result.message}")
+                        _errorMessage.value = "加载模型列表失败: ${result.message}"
+                    }
+                    is NetworkResult.Loading -> {
+                        // 保持加载状态
+                    }
+                    NetworkResult.Idle -> {
+                        // 空闲状态
+                    }
+                }
+            } catch (e: Exception) {
+                Logger.e("AIChatViewModel", "加载模型列表异常: ${e.message}")
+                _errorMessage.value = "加载模型列表失败: ${e.message}"
+            } finally {
+                _isLoadingModels.value = false
+            }
+        }
     }
 
     /**
@@ -239,9 +297,9 @@ class AIChatViewModel(
     }
 
     /**
-     * 清除错误消息
+     * 清除错误信息
      */
-    fun clearError() {
+    fun clearErrorMessage() {
         _errorMessage.value = null
     }
 
@@ -312,7 +370,7 @@ class AIChatViewModel(
                 val request = AIChatRequest(
                     message = message,
                     sessionId = _currentSessionId.value,
-                    model = "qwq-plus"
+                    model = _selectedModel.value
                 )
 
                 // 获取认证令牌
