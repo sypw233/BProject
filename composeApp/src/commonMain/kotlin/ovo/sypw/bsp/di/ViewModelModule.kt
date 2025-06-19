@@ -10,6 +10,7 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.ClassViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.RequestLogViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
 
 /**
@@ -123,6 +124,16 @@ val viewModelModule = module {
     factory {
         PublicAnnouncementViewModel(
             announcementUseCase = get()
+        )
+    }
+
+    /**
+     * 提供请求日志管理ViewModel
+     * 专门负责请求日志相关的状态管理和业务逻辑
+     */
+    factory {
+        RequestLogViewModel(
+            requestLogUseCase = get()
         )
     }
 }

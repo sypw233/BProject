@@ -81,7 +81,7 @@ fun <T> ManagementPageTemplate(
     title: String,
     emptyMessage: String,
     refreshText: String = "刷新数据",
-    addText: String = "添加",
+    addText: String? = "添加",
     layoutConfig: ResponsiveLayoutConfig,
     itemContent: @Composable (T) -> Unit,
     dialogContent: @Composable () -> Unit = {},
@@ -114,11 +114,12 @@ fun <T> ManagementPageTemplate(
                         ) {
                             Text(refreshText)
                         }
-
-                        OutlinedButton(
-                            onClick = actions::showAddDialog
-                        ) {
-                            Text(addText)
+                        if (addText != null) {
+                            OutlinedButton(
+                                onClick = actions::showAddDialog
+                            ) {
+                                Text(addText)
+                            }
                         }
                     }
 

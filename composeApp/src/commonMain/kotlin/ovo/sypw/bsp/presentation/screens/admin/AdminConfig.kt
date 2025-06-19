@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.History
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -64,6 +65,12 @@ object AdminConfig {
             title = "公告管理",
             icon = Icons.Default.Campaign,
             route = "admin/announcement"
+        ),
+        AdminTab(
+            index = 6,
+            title = "请求日志",
+            icon = Icons.Default.History,
+            route = "admin/requestlog"
         ),
 //        AdminTab(
 //            index = 6,
