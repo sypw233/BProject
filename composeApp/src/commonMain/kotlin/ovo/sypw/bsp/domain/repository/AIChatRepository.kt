@@ -15,25 +15,6 @@ import ovo.sypw.bsp.data.dto.result.NetworkResult
  * 定义AI对话相关的业务操作
  */
 interface AIChatRepository {
-
-    /**
-     * 发送AI对话消息（非流式）
-     * @param request 对话请求
-     * @return 对话响应结果
-     */
-    suspend fun sendMessage(
-        request: AIChatRequest
-    ): NetworkResult<AIChatResponse>
-
-    /**
-     * 发送AI对话消息（流式传输）
-     * @param request 对话请求
-     * @return 流式响应结果
-     */
-    suspend fun sendMessageStream(
-        request: AIChatRequest
-    ): Flow<NetworkResult<String>>
-
     /**
      * 获取会话列表
      * @return 会话列表结果

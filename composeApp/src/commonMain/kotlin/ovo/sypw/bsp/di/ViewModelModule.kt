@@ -51,11 +51,13 @@ val viewModelModule = module {
 
     /**
      * 提供AI对话ViewModel
-     * 依赖AIChatUseCase
+     * 依赖AIChatUseCase, AIChatApiService, TokenStorage
      */
     factory {
         AIChatViewModel(
-            aiChatUseCase = get()
+            aiChatUseCase = get(),
+            aiChatApiService = get(),
+            tokenStorage = get()
         )
     }
 

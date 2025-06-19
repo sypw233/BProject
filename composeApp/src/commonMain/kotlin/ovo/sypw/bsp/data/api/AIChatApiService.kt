@@ -1,21 +1,21 @@
 package ovo.sypw.bsp.data.api
 
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.get
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.HttpTimeoutConfig
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ovo.sypw.bsp.data.dto.AIChatRequest
-import ovo.sypw.bsp.data.dto.AIChatResponse
-import ovo.sypw.bsp.data.dto.AIChatStreamResponse
-import ovo.sypw.bsp.data.dto.SessionsResponse
-import ovo.sypw.bsp.data.dto.SessionDetailResponse
-import ovo.sypw.bsp.data.dto.DeleteSessionResponse
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.SaResult
 import ovo.sypw.bsp.utils.Logger
@@ -45,8 +45,10 @@ class AIChatApiService : BaseApiService() {
         )
     }
 
+
+
     /**
-     * 发送AI对话请求（流式传输）
+     * 发送AI对话消息（流式响应）
      * @param chatRequest 对话请求参数
      * @param token 认证令牌
      * @return 流式响应结果
@@ -54,30 +56,42 @@ class AIChatApiService : BaseApiService() {
     suspend fun sendMessageStream(
         chatRequest: AIChatRequest,
         token: String
-    ): Flow<NetworkResult<String>> = flow {
+    ): Flow<String> = flow {
         try {
             Logger.d("AIChatApiService", "发送AI流式对话请求: ${chatRequest.message}")
-            
-            val response: HttpResponse = httpClient.post(NetworkConfig.getApiUrl("/messages")) {
-                contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer $token")
-                setBody(chatRequest)
+            postWithTokenStreaming(
+                endpoint = "/messages",
+                body = chatRequest,
+                token = token
+            ).collect { text ->
+//                Logger.d("AI响应返回内容: $text")
+                emit(text)
             }
 
-            if (response.status.value in 200..299) {
-                // 处理流式响应，直接返回文本内容
-                val responseBody = response.body<String>()
-                emit(NetworkResult.Success(responseBody))
-            } else {
-                Logger.e("AIChatApiService", "流式请求失败: ${response.status}")
-                emit(NetworkResult.Error(
-                    Exception("HTTP ${response.status.value}"),
-                    "请求失败: ${response.status.description}"
-                ))
-            }
+//            Logger.d("AIChatApiService", "收到响应状态: ${response.status}")
+//
+
+//
+//            // 使用流式读取响应内容（纯文本流）
+//            val channel = response.bodyAsChannel()
+//            val buffer = ByteArray(1024) // 使用较小的缓冲区以提高响应速度
+//
+//            while (!channel.isClosedForRead) {
+//                val bytesRead = channel.readAvailable(buffer, 0, buffer.size)
+//                if (bytesRead > 0) {
+//                    val chunk = buffer.decodeToString(0, bytesRead)
+//                    // 直接发送每个字符块，实现真正的流式效果
+//                    if (chunk.isNotEmpty()) {
+//                        emit(chunk)
+//                    }
+//                }
+//            }
+//
+//            Logger.d("AIChatApiService", "流式传输完成")
+
         } catch (e: Exception) {
             Logger.e("AIChatApiService", "流式请求异常: ${e.message}")
-            emit(NetworkResult.Error(e, e.message ?: "网络请求失败"))
+            emit("发送消息失败: ${e.message}")
         }
     }
 

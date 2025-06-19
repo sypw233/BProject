@@ -12,10 +12,7 @@ import ovo.sypw.bsp.data.dto.SessionDetailResponse
 import ovo.sypw.bsp.data.dto.DeleteSessionResponse
 import ovo.sypw.bsp.data.dto.ModelsResponse
 import ovo.sypw.bsp.data.dto.result.NetworkResult
-import ovo.sypw.bsp.data.dto.result.NetworkResult.Error
-import ovo.sypw.bsp.data.dto.result.NetworkResult.Idle
-import ovo.sypw.bsp.data.dto.result.NetworkResult.Loading
-import ovo.sypw.bsp.data.dto.result.NetworkResult.Success
+import ovo.sypw.bsp.data.dto.result.NetworkResult.*
 import ovo.sypw.bsp.data.dto.result.isSuccess
 import ovo.sypw.bsp.data.dto.result.parseData
 import ovo.sypw.bsp.data.storage.TokenStorage
@@ -35,80 +32,7 @@ class AIChatRepositoryImpl(
         private const val TAG = "AIChatRepository"
     }
 
-    /**
-     * 发送AI对话消息（非流式）
-     */
-    override suspend fun sendMessage(
-        request: AIChatRequest
-    ): NetworkResult<AIChatResponse> {
-        val token = getAccessToken()
-            ?: return Error(
-                Exception("用户未登录"),
-                "用户未登录，请先登录"
-            )
 
-        return when (val result = aiChatApiService.sendMessage(request, token)) {
-            is Success -> {
-                Logger.i(TAG, "AI对话请求成功")
-                val saResult = result.data
-                if (saResult.isSuccess()) {
-                    // 对于新的API，直接返回流式文本内容
-                    val responseText = saResult.data?.toString() ?: ""
-                    Logger.i(TAG, "AI对话响应成功")
-                    Success(AIChatResponse(content = responseText))
-                } else {
-                    Logger.e(TAG, "AI对话请求失败: ${saResult.msg}")
-                    Error(
-                        Exception(saResult.msg),
-                        saResult.msg
-                    )
-                }
-            }
-
-            is Error -> {
-                Logger.e(TAG, "AI对话网络请求失败: ${result.message}")
-                result
-            }
-
-            is Loading -> result
-            Idle -> TODO()
-        }
-    }
-
-    /**
-     * 发送AI对话消息（流式传输）
-     */
-    override suspend fun sendMessageStream(
-        request: AIChatRequest
-    ): Flow<NetworkResult<String>> {
-        val token = getAccessToken()
-        if (token == null) {
-            return kotlinx.coroutines.flow.flowOf(
-                Error(
-                    Exception("用户未登录"),
-                    "用户未登录，请先登录"
-                )
-            )
-        }
-
-        return aiChatApiService.sendMessageStream(request, token)
-            .map { result ->
-                when (result) {
-                    is Success -> {
-                        Logger.d(TAG, "收到流式响应: ${result.data}")
-                        result
-                    }
-
-                    is Error -> {
-                        Logger.e(TAG, "流式响应错误: ${result.message}")
-                        result
-                    }
-
-                    is Loading -> result
-                    Idle -> TODO()
-                }
-            }
-    }
 
     /**
      * 获取会话列表
@@ -169,7 +93,7 @@ class AIChatRepositoryImpl(
             )
 
         return when (val result = aiChatApiService.getSession(sessionId, token)) {
-            is Success -> {
+            is NetworkResult.Success -> {
                 Logger.i(TAG, "获取会话详情成功: $sessionId")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
@@ -199,8 +123,10 @@ class AIChatRepositoryImpl(
                 result
             }
 
-            is Loading -> result
-            Idle -> TODO()
+            is NetworkResult.Loading -> result
+            is NetworkResult.Error -> TODO()
+            NetworkResult.Idle -> TODO()
+            is NetworkResult.Success<*> -> TODO()
         }
     }
 

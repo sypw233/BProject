@@ -32,6 +32,7 @@ import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 
 /**
  * 聊天输入区域组件
+ * 支持流式传输的实时输入体验
  */
 @Composable
 fun ChatInputArea(
@@ -40,8 +41,8 @@ fun ChatInputArea(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     val inputMessage by viewModel.inputMessage.collectAsState()
-    val isSending by viewModel.isSending.collectAsState()
-    var isStreamMode by remember { mutableStateOf(true) }
+    val isStreaming by viewModel.isStreaming.collectAsState()
+
 
     Card(
         modifier = modifier,
@@ -53,25 +54,6 @@ fun ChatInputArea(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // 模式选择
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (isStreamMode) "流式模式" else "普通模式",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                
-                Switch(
-                    checked = isStreamMode,
-                    onCheckedChange = { isStreamMode = it },
-                    enabled = !isSending
-                )
-            }
-
             // 输入框和发送按钮
             Row(
                 modifier = Modifier
@@ -83,13 +65,6 @@ fun ChatInputArea(
                     value = inputMessage,
                     onValueChange = viewModel::updateInputMessage,
                     modifier = Modifier.weight(1f),
-                    placeholder = {
-                        Text(
-                            text = "输入您的问题...",
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                        )
-                    },
-                    enabled = !isSending,
                     maxLines = 4,
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -97,20 +72,16 @@ fun ChatInputArea(
                 // 发送按钮
                 IconButton(
                     onClick = {
-                        if (inputMessage.isNotBlank()) {
-                            if (isStreamMode) {
-                                viewModel.sendMessageStream(inputMessage)
-                            } else {
-                                viewModel.sendMessage(inputMessage)
-                            }
+                        if (inputMessage.isNotBlank() && !isStreaming) {
+                            viewModel.sendMessage()
                         }
                     },
-                    enabled = !isSending && inputMessage.isNotBlank(),
+                    enabled = inputMessage.isNotBlank() && !isStreaming,
                     modifier = Modifier.padding(start = 8.dp)
                 ) {
-                    if (isSending) {
+                    if (isStreaming) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(20.dp),
                             strokeWidth = 2.dp
                         )
                     } else {
@@ -127,22 +98,6 @@ fun ChatInputArea(
                 }
             }
 
-            // 提示文本
-            if (isStreamMode) {
-                Text(
-                    text = "流式模式：实时显示AI回复过程",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            } else {
-                Text(
-                    text = "普通模式：等待完整回复后显示",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
         }
     }
 }

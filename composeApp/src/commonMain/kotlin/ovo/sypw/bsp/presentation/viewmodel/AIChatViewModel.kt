@@ -2,6 +2,19 @@ package ovo.sypw.bsp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.HttpTimeoutConfig
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +26,8 @@ import ovo.sypw.bsp.data.dto.ChatMessage
 import ovo.sypw.bsp.data.dto.ChatSession
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.usecase.AIChatUseCase
+import ovo.sypw.bsp.data.api.AIChatApiService
+import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.utils.Logger
 
 /**
@@ -20,7 +35,9 @@ import ovo.sypw.bsp.utils.Logger
  * 管理AI对话的状态和业务逻辑
  */
 class AIChatViewModel(
-    private val aiChatUseCase: AIChatUseCase
+    private val aiChatUseCase: AIChatUseCase,
+    private val aiChatApiService: AIChatApiService,
+    private val tokenStorage: TokenStorage
 ) : ViewModel() {
 
     // 当前会话ID
@@ -39,9 +56,6 @@ class AIChatViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // 发送消息状态
-    private val _isSending = MutableStateFlow(false)
-    val isSending: StateFlow<Boolean> = _isSending.asStateFlow()
 
     // 错误消息
     private val _errorMessage = MutableStateFlow<String?>(null)
@@ -51,9 +65,13 @@ class AIChatViewModel(
     private val _inputMessage = MutableStateFlow("")
     val inputMessage: StateFlow<String> = _inputMessage.asStateFlow()
 
-    // 流式响应状态
+    // 流式传输状态
     private val _isStreaming = MutableStateFlow(false)
     val isStreaming: StateFlow<Boolean> = _isStreaming.asStateFlow()
+
+    // 当前流式传输的消息内容
+    private val _streamingMessage = MutableStateFlow("")
+    val streamingMessage: StateFlow<String> = _streamingMessage.asStateFlow()
 
     init {
         loadSessions()
@@ -64,153 +82,6 @@ class AIChatViewModel(
      */
     fun updateInputMessage(message: String) {
         _inputMessage.value = message
-    }
-
-    /**
-     * 发送消息（非流式）
-     */
-    fun sendMessage(message: String, sessionId: String? = null) {
-        if (message.isBlank()) return
-
-        viewModelScope.launch {
-            _isSending.value = true
-            _errorMessage.value = null
-
-            try {
-                val request = AIChatRequest(
-                    message = message,
-                    sessionId = sessionId ?: _currentSessionId.value
-                )
-
-                when (val result = aiChatUseCase.sendMessage(request)) {
-                    is NetworkResult.Success -> {
-                        val response = result.data
-
-
-                        // 添加用户消息和AI回复到消息列表
-                        val userMessage = ChatMessage(
-                            sessionId = null,
-                            role = "user",
-                            message = message,
-                            timestamp = "1",
-                        )
-                        
-                        val aiMessage = ChatMessage(
-                            sessionId = null,
-                            role = "assistant",
-                            message = response.content,
-                            timestamp = "2",
-                        )
-
-                        _messages.value = _messages.value + listOf(userMessage, aiMessage)
-                        _inputMessage.value = ""
-                        
-                        // 刷新会话列表
-                        loadSessions()
-                    }
-                    is NetworkResult.Error -> {
-                        _errorMessage.value = result.message
-                        Logger.e("发送消息失败: ${result.message}")
-                    }
-
-                    else -> {}
-                }
-            } catch (e: Exception) {
-                _errorMessage.value = "发送消息时发生错误: ${e.message}"
-                Logger.e("发送消息异常", e.toString())
-            } finally {
-                _isSending.value = false
-            }
-        }
-    }
-
-    /**
-     * 发送消息（流式）
-     */
-    fun sendMessageStream(message: String, sessionId: String? = null) {
-        if (message.isBlank()) return
-
-        viewModelScope.launch {
-            _isSending.value = true
-            _isStreaming.value = true
-            _errorMessage.value = null
-
-            try {
-                val request = AIChatRequest(
-                    message = message,
-                    sessionId = sessionId ?: _currentSessionId.value
-                )
-
-                // 添加用户消息
-                val userMessage = ChatMessage(
-                    sessionId = null,
-                    role = "user",
-                    message = message,
-                    timestamp = "1"
-                )
-                _messages.value = _messages.value + userMessage
-                _inputMessage.value = ""
-
-                // 创建AI消息占位符
-                val aiMessagePlaceholder = ChatMessage(
-                    sessionId = null,
-                    role = "assistant",
-                    message = "",
-                    timestamp = "2"
-                )
-                _messages.value = _messages.value + aiMessagePlaceholder
-                val aiMessageIndex = _messages.value.size - 1
-
-                // 获取流式响应
-                aiChatUseCase.sendMessageStream(request)
-                    .catch { e ->
-                        _errorMessage.value = "流式响应错误: ${e.message}"
-                        Logger.e("流式响应异常", e.toString())
-                    }
-                    .collect { result ->
-                        when (result) {
-                            is NetworkResult.Success -> {
-                                handleStreamResponse(result.data, aiMessageIndex)
-                            }
-                            is NetworkResult.Error -> {
-                                _errorMessage.value = result.message
-                                Logger.e("流式响应错误", result.message)
-                            }
-                            else -> {}
-                        }
-                    }
-            } catch (e: Exception) {
-                _errorMessage.value = "发送流式消息时发生错误: ${e.message}"
-                Logger.e("发送流式消息异常", e.toString())
-                // 移除占位符消息
-                _messages.value = _messages.value.dropLast(1)
-            } finally {
-                _isSending.value = false
-                _isStreaming.value = false
-                // 刷新会话列表并获取最新的sessionId
-                if (_currentSessionId.value == null) {
-                    updateCurrentSessionId()
-                }
-                loadSessions()
-            }
-        }
-    }
-
-    /**
-     * 处理流式响应
-     */
-    private fun handleStreamResponse(responseText: String, messageIndex: Int) {
-        val currentMessages = _messages.value.toMutableList()
-        if (messageIndex < currentMessages.size) {
-            val currentMessage = currentMessages[messageIndex]
-            
-            // 更新消息内容
-            val updatedMessage = currentMessage.copy(
-                message = currentMessage.message + responseText
-            )
-            currentMessages[messageIndex] = updatedMessage
-            _messages.value = currentMessages
-        }
     }
 
     /**
@@ -398,6 +269,97 @@ class AIChatViewModel(
             } catch (e: Exception) {
                 _errorMessage.value = "清空所有会话时发生错误: ${e.message}"
                 Logger.e("清空所有会话异常", e.toString())
+            }
+        }
+    }
+    /**
+     * 发送消息（流式传输）
+     */
+    fun sendMessage() {
+        val message = _inputMessage.value.trim()
+        if (message.isBlank()) return
+
+        viewModelScope.launch {
+            _isStreaming.value = true
+            _errorMessage.value = null
+            _streamingMessage.value = ""
+
+            // 记录是否为新对话
+                val isNewSession = _currentSessionId.value.isNullOrBlank()
+
+            // 添加用户消息到列表
+            val userMessage = ChatMessage(
+                role = "user",
+                message = message,
+                timestamp = "1",
+                sessionId = _currentSessionId.value
+            )
+            _messages.value = _messages.value + userMessage
+
+            // 清空输入框
+            _inputMessage.value = ""
+
+            // 添加AI消息占位符
+            val aiMessagePlaceholder = ChatMessage(
+                sessionId = _currentSessionId.value,
+                role = "assistant",
+                message = "",
+                timestamp = "2"
+            )
+            _messages.value = _messages.value + aiMessagePlaceholder
+
+            try {
+                val request = AIChatRequest(
+                    message = message,
+                    sessionId = _currentSessionId.value,
+                    model = "qwq-plus"
+                )
+
+                // 获取认证令牌
+                val token = tokenStorage.getAccessToken()
+                if (token.isNullOrBlank()) {
+                    _errorMessage.value = "请先登录"
+                    _isStreaming.value = false
+                    return@launch
+                }
+
+                // 收集流式响应
+                aiChatApiService.sendMessageStream(request, token)
+                    .catch { exception ->
+                        Logger.e("AIChatViewModel", "流式传输异常: ${exception.message}")
+                        _errorMessage.value = "发送消息失败: ${exception.message}"
+                        _isStreaming.value = false
+                    }
+                    .collect { content ->
+                        _streamingMessage.value += content
+                        Logger.d("目前消息$content")
+                        // 更新消息列表中的最后一条AI消息
+                        val currentMessages = _messages.value.toMutableList()
+                        if (currentMessages.isNotEmpty() && currentMessages.last().role == "assistant") {
+                            currentMessages[currentMessages.size - 1] = currentMessages.last().copy(
+                                message = _streamingMessage.value
+                            )
+                            _messages.value = currentMessages
+                        }
+                    }
+
+                // 流式传输完成后，如果是新对话，需要获取最新的sessionId
+                if (isNewSession) {
+                    loadSessions()
+                    // 获取最新的session作为当前对话的sessionId
+                    val latestSession = _sessions.value.firstOrNull()
+                    if (latestSession != null) {
+                        _currentSessionId.value = latestSession.sessionId
+                        Logger.d("AIChatViewModel", "新对话创建成功，sessionId: ${latestSession.sessionId}")
+                    }
+                }
+
+            } catch (e: Exception) {
+                Logger.e("AIChatViewModel", "发送消息异常: ${e.message}")
+                _errorMessage.value = "发送消息失败: ${e.message}"
+            } finally {
+                _isStreaming.value = false
+                _streamingMessage.value = ""
             }
         }
     }

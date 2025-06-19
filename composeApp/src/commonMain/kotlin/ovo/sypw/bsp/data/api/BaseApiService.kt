@@ -7,13 +7,28 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.preparePost
+import io.ktor.client.request.prepareRequest
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsChannel
+import io.ktor.client.statement.content
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.InternalAPI
+import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.readUTF8Line
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.io.IOException
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.SaResult
 import ovo.sypw.bsp.utils.Logger
@@ -29,6 +44,9 @@ abstract class BaseApiService {
      */
     protected val httpClient: HttpClient by lazy {
         HttpClientConfig.createHttpClient()
+    }
+    protected val aiHttpClient: HttpClient by lazy {
+        HttpClientConfig.createAIHttpClient()
     }
 
     /**
@@ -120,6 +138,67 @@ abstract class BaseApiService {
             }
         }
     }
+    /**
+     * 发送POST请求并流式接收AI返回的纯文本
+     * 参考TypeScript fetch API的流式响应处理方式
+     * @param endpoint API端点
+     * @param token 认证令牌
+     * @param body 请求体（如AI提示词）
+     * @param parameters 请求参数
+     * @return Flow<String> 每次emit一个文本片段（类似TypeScript的decoder.decode）
+     */
+    @OptIn(InternalAPI::class)
+    protected fun postWithTokenStreaming(
+        endpoint: String,
+        token: String,
+        body: Any? = null,
+        parameters: Map<String, Any> = emptyMap()
+    ): Flow<String> = flow {
+        Logger.d("BaseApiService", "开始流式请求: ${NetworkConfig.getApiUrl(endpoint)}")
+
+        aiHttpClient.prepareRequest {
+            url(NetworkConfig.getApiUrl(endpoint))
+            method = HttpMethod.Post
+            header(HttpHeaders.Authorization, "Bearer $token")
+            header(HttpHeaders.Accept, "text/plain, text/event-stream, */*")
+            header(HttpHeaders.AcceptEncoding, "identity") // 禁用压缩
+            header(HttpHeaders.CacheControl, "no-cache")
+            header(HttpHeaders.Connection, "keep-alive")
+            contentType(ContentType.Application.Json)
+
+            parameters.forEach { (key, value) -> parameter(key, value) }
+            body?.let { setBody(it) }
+        }.execute { response ->
+            Logger.d("BaseApiService", "响应状态: ${response.status}")
+
+            if (response.status != HttpStatusCode.OK) {
+                throw IOException("HTTP错误: ${response.status}")
+            }
+
+            val channel = response.bodyAsChannel()
+            val buffer = ByteArray(1024)
+
+            Logger.d("BaseApiService", "开始读取流数据")
+
+            while (!channel.isClosedForRead) {
+                val bytesRead = channel.readAvailable(buffer, 0, buffer.size)
+                if (bytesRead > 0) {
+                    val chunk = buffer.decodeToString(0, bytesRead)
+                    if (chunk.isNotEmpty()) {
+                        Logger.d("BaseApiService", "接收到数据块: ${chunk.length} 字符")
+                        emit(chunk)
+                    }
+                } else if (bytesRead == -1) {
+                    Logger.d("BaseApiService", "流数据读取完成")
+                    break
+                }
+            }
+        }
+    }.catch { e ->
+        Logger.e("BaseApiService", "流式响应异常: ${e.message}")
+        throw IOException("AI流中断: ${e.message}")
+    }
+
 
     /**
      * 执行带Token的POST请求

@@ -26,12 +26,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import ovo.sypw.bsp.data.dto.ChatMessage
 import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
@@ -51,8 +56,8 @@ fun ChatMessageList(
     val isStreaming by viewModel.isStreaming.collectAsState()
     val listState = rememberLazyListState()
 
-    // 自动滚动到最新消息
-    LaunchedEffect(messages.size) {
+    // 自动滚动到底部
+    LaunchedEffect(messages.size, isStreaming) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
         }
@@ -72,17 +77,14 @@ fun ChatMessageList(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 16.dp)
             ) {
                 items(messages) { message ->
+                    val isLastMessage = message == messages.lastOrNull()
+                    val showStreamingCursor = isLastMessage && message.role == "assistant" && isStreaming
+                    
                     MessageItem(
                         message = message,
-                        layoutConfig = layoutConfig
+                        layoutConfig = layoutConfig,
+                        isStreaming = showStreamingCursor
                     )
-                }
-
-                // 流式响应加载指示器
-                if (isStreaming) {
-                    item {
-                        StreamingIndicator()
-                    }
                 }
             }
         }
@@ -101,11 +103,13 @@ fun ChatMessageList(
 
 /**
  * 单个消息项
+ * 支持流式传输的实时显示效果
  */
 @Composable
 private fun MessageItem(
     message: ChatMessage,
-    layoutConfig: ResponsiveLayoutConfig
+    layoutConfig: ResponsiveLayoutConfig,
+    isStreaming: Boolean = false
 ) {
     val isUser = message.role == "user"
     val backgroundColor = if (isUser) {
@@ -160,13 +164,35 @@ private fun MessageItem(
             Column(
                 modifier = Modifier.padding(12.dp)
             ) {
-                Text(
-                    text = message.message,
-                    color = textColor,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = message.message,
+                        color = textColor,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    
+                    // 流式传输时显示动画光标
+                    if (isStreaming) {
+                        var cursorVisible by remember { mutableStateOf(true) }
+                        
+                        LaunchedEffect(Unit) {
+                            while (true) {
+                                delay(500)
+                                cursorVisible = !cursorVisible
+                            }
+                        }
+                        
+                        Text(
+                            text = "|",
+                            color = textColor.copy(alpha = if (cursorVisible) 0.8f else 0.2f),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(start = 2.dp)
+                        )
+                    }
+                }
             }
         }
 
@@ -222,61 +248,5 @@ private fun EmptyMessageState(
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
             modifier = Modifier.padding(top = 8.dp)
         )
-    }
-}
-
-/**
- * 流式响应指示器
- */
-@Composable
-private fun StreamingIndicator() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        // AI头像
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.secondary),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.SmartToy,
-                contentDescription = "AI",
-                tint = MaterialTheme.colorScheme.onSecondary,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-
-        Card(
-            modifier = Modifier.padding(start = 8.dp, end = 48.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
-            shape = RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomStart = 4.dp,
-                bottomEnd = 16.dp
-            )
-        ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(16.dp),
-                    strokeWidth = 2.dp
-                )
-                Text(
-                    text = "AI正在思考...",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-        }
     }
 }
