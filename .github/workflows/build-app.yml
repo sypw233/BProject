@@ -1,4 +1,4 @@
-name: Build Desktop Apps (All Platforms)
+name: Build Multi-Platform Apps
 
 # 触发条件：推送到main分支或创建tag时
 on:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch: # 允许手动触发
 
 jobs:
-  # Windows构建任务
+  # Windows构建任务（仅可执行文件）
   build-windows:
     runs-on: windows-latest
     
@@ -38,12 +38,7 @@ jobs:
       run: chmod +x gradlew
       shell: bash
       
-    # 构建Windows MSI安装包
-    - name: Build Windows MSI
-      run: ./gradlew :composeApp:packageMsi
-      shell: bash
-      
-    # 构建Windows可执行文件
+    # 构建Windows可执行文件（不包含MSI）
     - name: Build Windows Executable
       run: ./gradlew :composeApp:createDistributable
       shell: bash
@@ -52,9 +47,46 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: windows-desktop-app
+        path: composeApp/build/compose/binaries/main/app/
+        retention-days: 30
+
+  # Android构建任务
+  build-android:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
         path: |
-          composeApp/build/compose/binaries/main/msi/*.msi
-          composeApp/build/compose/binaries/main/app/
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+          
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    # 构建Android APK
+    - name: Build Android APK
+      run: ./gradlew :composeApp:assembleRelease
+      
+    - name: Upload Android Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-app
+        path: |
+          composeApp/build/outputs/apk/release/*.apk
         retention-days: 30
 
   # macOS构建任务
@@ -137,10 +169,9 @@ jobs:
           composeApp/build/compose/binaries/main/app/
         retention-days: 30
 
-  # 创建Release（仅在tag推送时）
+  # 创建Release（编译完成后自动发布）
   create-release:
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [build-windows, build-macos, build-linux]
+    needs: [build-windows, build-android, build-macos, build-linux]
     runs-on: ubuntu-latest
     
     steps:
@@ -149,6 +180,12 @@ jobs:
       with:
         name: windows-desktop-app
         path: ./artifacts/windows/
+        
+    - name: Download Android Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: android-app
+        path: ./artifacts/android/
         
     - name: Download macOS Artifacts
       uses: actions/download-artifact@v4
@@ -162,20 +199,30 @@ jobs:
         name: linux-desktop-app
         path: ./artifacts/linux/
         
+    # 打包Windows可执行文件
+    - name: Package Windows App
+      run: |
+        cd ./artifacts/windows/
+        zip -r ../../windows-app.zip .
+        
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ./artifacts/windows/**/*.msi
+          ./windows-app.zip
+          ./artifacts/android/*.apk
           ./artifacts/macos/**/*.dmg
           ./artifacts/linux/**/*.deb
         draft: false
         prerelease: false
+        tag_name: ${{ github.ref_name != 'main' && github.ref_name || format('v{0}', github.run_number) }}
+        name: ${{ github.ref_name != 'main' && github.ref_name || format('Release v{0}', github.run_number) }}
         body: |
-          ## 🚀 桌面应用发布
+          ## 🚀 多平台应用发布
           
           ### 支持平台
-          - ✅ Windows (MSI安装包)
+          - ✅ Windows (可执行文件压缩包)
+          - ✅ Android (APK安装包)
           - ✅ macOS (DMG安装包)
           - ✅ Linux (DEB安装包)
           
@@ -185,8 +232,13 @@ jobs:
           - JDK 21
           
           ### 安装说明
-          1. **Windows**: 下载 `.msi` 文件并运行安装
-          2. **macOS**: 下载 `.dmg` 文件，拖拽到应用程序文件夹
-          3. **Linux**: 下载 `.deb` 文件，使用 `sudo dpkg -i filename.deb` 安装
+          1. **Windows**: 下载 `windows-app.zip` 文件，解压后运行exe文件
+          2. **Android**: 下载 `.apk` 文件并安装
+          3. **macOS**: 下载 `.dmg` 文件，拖拽到应用程序文件夹
+          4. **Linux**: 下载 `.deb` 文件，使用 `sudo dpkg -i filename.deb` 安装
+          
+          ### 更新内容
+          - 最新的功能更新和bug修复
+          - 性能优化和稳定性提升
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
