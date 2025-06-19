@@ -17,9 +17,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -56,7 +58,8 @@ fun ChatSessionSidebar(
     viewModel: AIChatViewModel,
     layoutConfig: ResponsiveLayoutConfig,
     isExpanded: Boolean = true,
-    onCloseDrawer: (() -> Unit)? = null
+    onCloseDrawer: (() -> Unit)? = null,
+    onExpandToggle: (() -> Unit)? = null
 ) {
     val sessions by viewModel.sessions.collectAsState()
     val currentSessionId by viewModel.currentSessionId.collectAsState()
@@ -92,6 +95,19 @@ fun ChatSessionSidebar(
                 }
 
                 Row {
+                    // 折叠/展开按钮（如果提供了回调）
+                    onExpandToggle?.let { toggle ->
+                        IconButton(
+                            onClick = toggle
+                        ) {
+                            Icon(
+                                imageVector = if (isExpanded) Icons.AutoMirrored.Filled.MenuOpen else Icons.Default.Menu,
+                                contentDescription = if (isExpanded) "收起侧边栏" else "展开侧边栏",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    
                     // 新建对话按钮
                     IconButton(
                         onClick = { 

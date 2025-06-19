@@ -3,6 +3,7 @@ package ovo.sypw.bsp.presentation.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,55 +49,47 @@ fun HomeScreen(
     ) {
         // 页面标题
         Text(
-            text = "欢迎使用应用",
-            style = MaterialTheme.typography.headlineMedium,
+            text = "欢迎使用",
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
         )
 
-        // 交互按钮
-        Button(
-            onClick = { showContent = !showContent },
-            modifier = Modifier.fillMaxWidth(0.6f)
-        ) {
-            Text(if (showContent) "隐藏内容" else "显示内容")
+        LaunchedEffect(Unit){
+            showContent = true
         }
 
         // 动画显示内容
         AnimatedVisibility(showContent) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Image(
-                        painter = painterResource(Res.drawable.compose_multiplatform),
-                        contentDescription = "Compose Multiplatform Logo",
-                        modifier = Modifier.size(120.dp)
-                    )
-                    Text(
-                        text = "Compose: $greeting",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text = "这是一个跨平台应用示例",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                Box(
+                    modifier= Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+
+                    ) {
+                        Image(
+                            painter = painterResource(Res.drawable.compose_multiplatform),
+                            contentDescription = "Compose Multiplatform Logo",
+                            modifier = Modifier.size(120.dp)
+                        )
+                        Text(
+                            text = "Compose Multiplatform: $greeting",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
-            }
+                }
+
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // 底部信息
-        Text(
-            text = "Kotlin Multiplatform 强力驱动",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }

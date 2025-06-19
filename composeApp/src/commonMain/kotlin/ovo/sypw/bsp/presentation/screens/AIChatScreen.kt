@@ -1,10 +1,14 @@
 package ovo.sypw.bsp.presentation.screens
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
@@ -23,8 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -272,22 +278,34 @@ private fun ExpandedChatLayout(
     viewModel: AIChatViewModel,
     layoutConfig: ResponsiveLayoutConfig
 ) {
+    // 侧边栏折叠状态管理
+    var isSidebarExpanded by remember { mutableStateOf(true) }
+    
     Row(
         modifier = modifier.padding(layoutConfig.screenPadding)
     ) {
-        // 左侧会话列表
+        // 左侧会话列表 - 添加动画和折叠功能
         ChatSessionSidebar(
-            modifier = Modifier.fillMaxWidth(0.25f),
+            modifier = Modifier
+                .width(if (isSidebarExpanded) 320.dp else 80.dp)
+                .animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ),
             viewModel = viewModel,
             layoutConfig = layoutConfig,
-            isExpanded = true
+            isExpanded = isSidebarExpanded,
+            onExpandToggle = { isSidebarExpanded = !isSidebarExpanded }
         )
 
         // 右侧对话区域
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 24.dp)
+                .padding(start = if (isSidebarExpanded) 24.dp else 16.dp)
+                .animateContentSize()
         ) {
             // 标题栏
             Text(
