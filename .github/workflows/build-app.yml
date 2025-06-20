@@ -15,171 +15,163 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        shell: bash
       
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      shell: bash
-      
-    # 构建Windows可执行文件（不包含MSI）
-    - name: Build Windows Executable
-      run: ./gradlew :composeApp:createDistributable
-      shell: bash
-      
-    - name: Upload Windows Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows-desktop-app
-        path: composeApp/build/compose/binaries/main/app/
-        retention-days: 30
+      # 构建Windows可执行文件（不包含MSI）
+      - name: Build Windows Executable
+        run: ./gradlew :composeApp:createDistributable
+        shell: bash
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-desktop-app
+          path: composeApp/build/compose/binaries/main/app/
+          retention-days: 30
   # macOS构建任务
   build-macos:
     runs-on: macos-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      
-    # 构建macOS DMG安装包
-    - name: Build macOS DMG
-      run: ./gradlew :composeApp:packageDmg
-      
-    - name: Upload macOS Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: macos-desktop-app
-        path: |
-          composeApp/build/compose/binaries/main/dmg/*.dmg
-          composeApp/build/compose/binaries/main/app/
-        retention-days: 30
+      # 构建macOS DMG安装包
+      - name: Build macOS DMG
+        run: ./gradlew :composeApp:packageDmg
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-desktop-app
+          path: |
+            composeApp/build/compose/binaries/main/dmg/*.dmg
+            composeApp/build/compose/binaries/main/app/
+          retention-days: 30
 
   # Linux构建任务
   build-linux:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      
-    # 构建Linux DEB安装包
-    - name: Build Linux DEB
-      run: ./gradlew :composeApp:packageDeb
-      
-    - name: Upload Linux Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: linux-desktop-app
-        path: |
-          composeApp/build/compose/binaries/main/deb/*.deb
-          composeApp/build/compose/binaries/main/app/
-        retention-days: 30
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  # 创建Release（编译完成后自动发布）
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      # 构建Linux DEB安装包
+      - name: Build Linux DEB
+        run: ./gradlew :composeApp:packageDeb
+
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-desktop-app
+          path: |
+            composeApp/build/compose/binaries/main/deb/*.deb
+            composeApp/build/compose/binaries/main/app/
+          retention-days: 30
+
   create-release:
-    needs: [build-windows, build-macos, build-linux]
+    needs: [ build-windows, build-macos, build-linux ]
     runs-on: ubuntu-latest
-    
-    steps:
-    - name: Download Windows Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: windows-desktop-app
-        path: ./artifacts/windows/
 
-        
-    - name: Download macOS Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: macos-desktop-app
-        path: ./artifacts/macos/
-        
-    - name: Download Linux Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: linux-desktop-app
-        path: ./artifacts/linux/
-        
-    # 打包Windows可执行文件
-    - name: Package Windows App
-      run: |
-        cd ./artifacts/windows/
-        zip -r ../../windows-app.zip .
-        
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ./windows-app.zip
-          ./artifacts/macos/**/*.dmg
-          ./artifacts/linux/**/*.deb
-        draft: false
-        prerelease: false
-        tag_name: ${{ github.ref_name != 'main' && github.ref_name || format('v{0}', github.run_number) }}
-        name: ${{ github.ref_name != 'main' && github.ref_name || format('Release v{0}', github.run_number) }}
-        body: |
-          ### 安装说明
-          1. **Windows**: 下载 `windows-app.zip` 文件，解压后运行exe文件
-          2. **Android**: 下载 `.apk` 文件并安装
-          3. **macOS**: 下载 `.dmg` 文件，拖拽到应用程序文件夹
-          4. **Linux**: 下载 `.deb` 文件，使用 `sudo dpkg -i filename.deb` 安装
-          
-          ### 更新内容
-          - 最新的功能更新和bug修复
-          - 性能优化和稳定性提升
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Set short SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-desktop-app
+          path: ./artifacts/windows/
+
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-desktop-app
+          path: ./artifacts/macos/
+
+      - name: Download Linux Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-desktop-app
+          path: ./artifacts/linux/
+
+      - name: Package Windows App
+        run: |
+          cd ./artifacts/windows/
+          zip -r ../../windows-app.zip .
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./windows-app.zip
+            ./artifacts/macos/**/*.dmg
+            ./artifacts/linux/**/*.deb
+          draft: false
+          prerelease: false
+          tag_name: Commit-${{ env.SHORT_SHA }}
+          name: Commit ${{ env.SHORT_SHA }}
+          body: |
+            哪有这么多有的没的
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
