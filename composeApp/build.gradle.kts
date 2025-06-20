@@ -44,8 +44,7 @@ kotlin {
             implementation(libs.ktor.client.android)
             // Koin Android支持
             implementation(libs.koin.android)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
+
 
         }
         commonMain.dependencies {
@@ -55,7 +54,8 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.material.icons.extended)
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.0-beta01")
             // Ktor网络请求核心库
