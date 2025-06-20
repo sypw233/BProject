@@ -96,7 +96,7 @@ fun ImageTestScreen(
                     isLoading = true
                     errorMessage = null
                     try {
-                        val bytes = fileUtils.selectImage()
+                        val bytes = fileUtils.selectImageBytes()
                         if (bytes != null) {
                             selectedImageBytes = bytes
                             val bitmap = fileUtils.bytesToImageBitmap(bytes)

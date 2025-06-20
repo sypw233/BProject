@@ -1,5 +1,7 @@
 package ovo.sypw.bsp.presentation.components
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,10 +24,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aay.compose.barChart.BarChart
-import com.aay.compose.barChart.model.BarParameters
-import com.aay.compose.donutChart.PieChart
-import com.aay.compose.donutChart.model.PieChartData
+import ir.ehsannarmani.compose_charts.PieChart
+import ir.ehsannarmani.compose_charts.RowChart
+import ir.ehsannarmani.compose_charts.models.BarProperties
+import ir.ehsannarmani.compose_charts.models.Bars
+import ir.ehsannarmani.compose_charts.models.Pie
+
 import ovo.sypw.bsp.data.model.BarChartData
 import ovo.sypw.bsp.data.model.PieChartItem
 
@@ -56,25 +61,82 @@ fun CustomPieChart(
             )
 
             if (data.isNotEmpty()) {
-                val pieChartData = data.mapIndexed { index, item ->
-                    PieChartData(
-                        partName = item.name,
+                // 计算总值用于百分比计算
+                val totalValue = data.sumOf { it.value }
+                
+                val pieData = data.mapIndexed { index, item ->
+                    Pie(
+                        label = item.name,
                         data = item.value.toDouble(),
-                        color = getChartColor(index)
+                        color = getChartColor(index),
+                        selectedColor = getChartColor(index).copy(alpha = 0.8f)
                     )
                 }
 
-                PieChart(
+                // 饼图容器
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
-                    pieChartData = pieChartData,
-                    ratioLineColor = Color.LightGray,
-                    textRatioStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 12.sp
+                        .height(320.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    PieChart(
+                        modifier = Modifier
+                            .size(220.dp)
+                            .padding(12.dp),
+                        data = pieData,
+                        onPieClick = { pie ->
+                            // 可以在这里处理点击事件
+                        },
+                        selectedScale = 1.1f,
                     )
-                )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // 数据详情图例
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "数据详情",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(bottom = 12.dp)
+                        )
+                        
+                        data.forEachIndexed { index, item ->
+                            val percentage = if (totalValue > 0) (item.value.toFloat() / totalValue * 100) else 0f
+                            
+                            StatisticItem(
+                                label = item.name,
+                                value = "${item.value} (${ percentage}%)",
+                                color = getChartColor(index)
+                            )
+                            
+                            if (index < data.size - 1) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
+                    }
+                }
             } else {
                 Box(
                     modifier = Modifier
@@ -138,14 +200,6 @@ fun CustomBarChart(
                     else -> 420.dp
                 }
 
-                // 计算合适的柱子宽度 - 优化对齐
-                val barWidth = when {
-                    data.categories.size <= 3 -> 40.dp
-                    data.categories.size <= 6 -> 32.dp
-                    data.categories.size <= 10 -> 24.dp
-                    else -> 20.dp
-                }
-
                 // 使用棕色系配色方案
                 val barColors = listOf(
                     Color(0xFF8B4513), // 深棕色
@@ -156,41 +210,37 @@ fun CustomBarChart(
                     Color(0xFF8B7355)  // 灰棕色
                 )
 
-                val barParameters = listOf(
-                    BarParameters(
-                        dataName = title,
-                        data = data.values.map { it.toDouble() },
-                        barColor = barColors[0] // 使用棕色
+                // 创建柱状图数据
+                val barsData = data.categories.mapIndexed { index, category ->
+                    Bars(
+                        label = category,
+                        values = listOf(
+                            Bars.Data(
+                                label = category,
+                                value = data.values.getOrNull(index)?.toDouble() ?: 0.0,
+                                color = androidx.compose.ui.graphics.SolidColor(barColors[index % barColors.size])
+                            )
+                        )
                     )
-                )
+                }
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(chartHeight)
                 ) {
-                    BarChart(
-
-                        chartParameters = barParameters,
-                        gridColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
-                        xAxisData = data.categories,
-                        isShowGrid = true,
-                        animateChart = true,
-                        showGridWithSpacer = false, // 关闭间距，使用默认对齐
-                        yAxisStyle = TextStyle(
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.Medium
+                    RowChart(
+                        modifier = Modifier.fillMaxWidth(),
+                        data = barsData,
+                        barProperties = BarProperties(
+                            spacing = 3.dp,
                         ),
-                        xAxisStyle = TextStyle(
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            fontWeight = FontWeight.W500
-                        ),
-                        yAxisRange = (data.values.maxOrNull() ?: 10) + 5,
-                        barWidth = barWidth
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
                     )
                 }
-                // 使用与官方示例相同的布局方式
 
 
             } else {
@@ -231,6 +281,8 @@ fun CustomBarChart(
     }
 }
 
+
+
 /**
  * 统计项组件
  * @param label 标签
@@ -265,22 +317,24 @@ private fun StatisticItem(
 }
 
 /**
- * 获取图表颜色 - 优化对比度
+ * 获取图表颜色 - 现代化配色方案
  * @param index 索引
  * @return 颜色
  */
 private fun getChartColor(index: Int): Color {
     val colors = listOf(
-        Color(0xFF1E40AF), // 深蓝色
-        Color(0xFFDC2626), // 深红色
-        Color(0xFF059669), // 深绿色
-        Color(0xFFD97706), // 深橙色
-        Color(0xFF7C3AED), // 深紫色
-        Color(0xFF0891B2), // 深青色
-        Color(0xFFBE185D), // 深粉色
-        Color(0xFF65A30D), // 深黄绿色
-        Color(0xFF374151), // 深灰色
-        Color(0xFF0F766E)  // 深蓝绿色
+        Color(0xFF6366F1), // 现代紫色
+        Color(0xFF10B981), // 翠绿色
+        Color(0xFFF59E0B), // 琥珀色
+        Color(0xFFEF4444), // 珊瑚红
+        Color(0xFF8B5CF6), // 薰衣草紫
+        Color(0xFF06B6D4), // 天蓝色
+        Color(0xFFEC4899), // 玫瑰粉
+        Color(0xFF84CC16), // 青柠绿
+        Color(0xFF6B7280), // 石墨灰
+        Color(0xFF14B8A6), // 青绿色
+        Color(0xFFF97316), // 橙色
+        Color(0xFF3B82F6)  // 蓝色
     )
     return colors[index % colors.size]
 }

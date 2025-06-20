@@ -124,7 +124,6 @@ class AIChatRepositoryImpl(
             }
 
             is NetworkResult.Loading -> result
-            is NetworkResult.Error -> TODO()
             NetworkResult.Idle -> TODO()
             is NetworkResult.Success<*> -> TODO()
         }

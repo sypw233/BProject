@@ -100,7 +100,7 @@ fun FileUploadTestScreen(
                             if (fileUtils.isFileSelectionSupported()) {
                                 scope.launch {
                                     try {
-                                        val imageBytes = fileUtils.selectImage()
+                                        val imageBytes = fileUtils.selectImageBytes()
                                         if (imageBytes != null) {
                                             val fileName = "image_${
                                                 Clock.System.now().toEpochMilliseconds()

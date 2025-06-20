@@ -8,6 +8,8 @@ import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -73,13 +75,13 @@ object AdminConfig {
             route = "admin/requestlog"
         ),
 //        AdminTab(
-//            index = 6,
-//            title = "图片测试",
+//            index = 7,
+//            title = "文件测试",
 //            icon = Icons.Default.Image,
 //            route = "admin/imagetest"
 //        ),
 //        AdminTab(
-//            index = 7,
+//            index = 8,
 //            title = "文件上传",
 //            icon = Icons.Default.Upload,
 //            route = "admin/fileupload"

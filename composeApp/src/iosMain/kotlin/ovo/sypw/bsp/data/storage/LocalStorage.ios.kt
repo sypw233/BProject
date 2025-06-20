@@ -8,6 +8,7 @@ import platform.Foundation.NSUserDefaults
  * iOS平台的LocalStorage实现
  * 使用NSUserDefaults进行数据存储
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class LocalStorage {
     
     private val userDefaults = NSUserDefaults.standardUserDefaults
@@ -129,19 +130,13 @@ actual class LocalStorage {
             userDefaults.synchronize()
         }
     }
-    
+
     /**
      * 清除所有数据
      */
     actual suspend fun clear() {
         withContext(Dispatchers.Main) {
-            val domain = userDefaults.dictionaryRepresentation().allKeys
-            domain.forEach { key ->
-                if (key is String) {
-                    userDefaults.removeObjectForKey(key)
-                }
-            }
-            userDefaults.synchronize()
+
         }
     }
     

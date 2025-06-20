@@ -310,7 +310,7 @@ private fun EmptySessionState(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.Default.Chat,
+            imageVector = Icons.AutoMirrored.Filled.Chat,
             contentDescription = "无对话",
             modifier = Modifier.size(48.dp),
             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)

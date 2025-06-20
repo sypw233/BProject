@@ -1,6 +1,8 @@
 package ovo.sypw.bsp.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Announcement
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Announcement
 import androidx.compose.material.icons.filled.Chat
@@ -52,12 +54,12 @@ fun getNavigationItems(): List<NavigationItem> {
         NavigationItem(
             route = AppScreen.ANNOUNCEMENTS.route,
             title = "公告",
-            icon = Icons.Default.Announcement
+            icon = Icons.AutoMirrored.Filled.Announcement
         ),
         NavigationItem(
             route = AppScreen.AI_CHAT.route,
             title = "AI对话",
-            icon = Icons.Default.Chat
+            icon = Icons.AutoMirrored.Filled.Chat
         ),
         NavigationItem(
             route = AppScreen.NETDISK.route,

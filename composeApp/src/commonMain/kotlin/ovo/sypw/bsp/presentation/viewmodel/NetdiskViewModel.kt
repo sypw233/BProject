@@ -365,7 +365,7 @@ class NetdiskViewModel(
                 _uiState.value = _uiState.value.copy(isUploading = true, error = null)
                 
                 // 选择文件
-                val fileBytes = fileUtils.selectFile()
+                val fileBytes = fileUtils.selectFileBytes()
                 if (fileBytes != null) {
                     // 这里需要获取文件名，暂时使用默认名称
                     val fileName = "uploaded_file_${Clock.System.now().toEpochMilliseconds()}"

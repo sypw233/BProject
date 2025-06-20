@@ -593,7 +593,7 @@ class EmployeeViewModel(
     fun selectAndImportEmployeeFile() {
         viewModelScope.launch {
             try {
-                val fileBytes = fileUtils.selectFile()
+                val fileBytes = fileUtils.selectFileBytes()
                 if (fileBytes != null) {
                     importEmployees(fileBytes)
                 } else {
@@ -622,7 +622,7 @@ class EmployeeViewModel(
         viewModelScope.launch {
             try {
                 if (exportData == null) return@launch
-                val success = fileUtils.saveFile(
+                val success = fileUtils.saveFileCompat(
                     data = exportData,
                     fileName = "employees_export_${Clock.System.now().toEpochMilliseconds()}.xlsx",
                     mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -802,7 +802,7 @@ class EmployeeViewModel(
                     errorMessage = null
                 )
 
-                val imageBytes = fileUtils.selectImage()
+                val imageBytes = fileUtils.selectImageBytes()
                 if (imageBytes != null) {
                     _employeeDialogState.value = _employeeDialogState.value.copy(
                         selectedAvatarBytes = imageBytes,

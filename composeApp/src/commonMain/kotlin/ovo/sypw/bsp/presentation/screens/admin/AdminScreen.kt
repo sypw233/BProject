@@ -20,11 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
+import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
 import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.rememberNavigationManager
+import ovo.sypw.bsp.presentation.screens.test.FileUploadTestScreen
+import ovo.sypw.bsp.presentation.screens.test.ImageTestScreen
 import ovo.sypw.bsp.presentation.viewmodel.admin.AdminViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
+import ovo.sypw.bsp.utils.file.FileKitExample
 
 /**
  * 后台管理主界面
@@ -184,10 +188,9 @@ fun GetAdminTab(
             layoutConfig = layoutConfig
         )
 
-//        7 -> ImageTestScreen(
-//            modifier = Modifier.fillMaxSize()
-//        )
-//
+        7 -> FileKitExample(
+        )
+
 //        8 -> FileUploadTestScreen(
 //            fileUploadUseCase = koinInject<FileUploadUseCase>(),
 //            modifier = Modifier.fillMaxSize()

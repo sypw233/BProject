@@ -44,6 +44,8 @@ kotlin {
             implementation(libs.ktor.client.android)
             // Koin Android支持
             implementation(libs.koin.android)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
 
         }
         commonMain.dependencies {
@@ -53,8 +55,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
+
             implementation(libs.material.icons.extended)
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.0-beta01")
             // Ktor网络请求核心库
@@ -77,7 +78,11 @@ kotlin {
             implementation(libs.markdown.renderer)
             implementation(libs.markdown.renderer.m3)
 
-            implementation("io.github.thechance101:chart:1.1.0")
+            implementation(libs.chart)
+            
+            // FileKit - 跨平台文件操作库
+            implementation("io.github.vinceglb:filekit-core:0.8.7")
+            implementation("io.github.vinceglb:filekit-compose:0.8.7")
 
         }
         commonTest.dependencies {
@@ -127,6 +132,7 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    implementation(libs.chart)
 }
 
 compose.desktop {

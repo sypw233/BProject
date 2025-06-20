@@ -11,6 +11,7 @@ androidx-espresso = "3.6.1"
 androidx-lifecycle = "2.9.0"
 androidx-testExt = "1.2.1"
 
+chart = "0.1.7"
 composeHotReload = "1.0.0-alpha10"
 composeMultiplatform = "1.8.1"
 junit = "4.13.2"
@@ -30,6 +31,7 @@ richeditor-compose = "1.0.0-rc12"
 markdown-renderer = "0.26.0"
 
 [libraries]
+chart = { module = "io.github.ehsannarmani:compose-charts", version.ref = "chart" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }

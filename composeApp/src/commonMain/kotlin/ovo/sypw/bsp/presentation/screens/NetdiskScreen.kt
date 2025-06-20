@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -578,7 +579,7 @@ private fun getFileIcon(fileType: String?): androidx.compose.ui.graphics.vector.
         "pdf" -> Icons.Default.PictureAsPdf
         "doc", "docx", "txt", "rtf" -> Icons.Default.Description
         "zip", "rar", "7z", "tar", "gz" -> Icons.Default.Archive
-        else -> Icons.Default.InsertDriveFile
+        else -> Icons.AutoMirrored.Filled.InsertDriveFile
     }
 }
 
