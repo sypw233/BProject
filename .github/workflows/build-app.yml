@@ -169,17 +169,14 @@ jobs:
           ./artifacts/linux/**/*.deb
         draft: false
         prerelease: false
-        tag_name: ${{ github.ref_name != 'main' && github.ref_name || format('v{0}', github.run_number) }}
-        name: ${{ github.ref_name != 'main' && github.ref_name || format('Release v{0}', github.run_number) }}
+        tag_name: ${{ github.ref_name != 'main' && github.ref_name || format('{GITHUB_SHA::7}', github.run_number) }}
+        name: ${{ github.ref_name != 'main' && github.ref_name || format('Release {GITHUB_SHA::7}', github.run_number) }}
         body: |
           ### 安装说明
           1. **Windows**: 下载 `windows-app.zip` 文件，解压后运行exe文件
           2. **Android**: 下载 `.apk` 文件并安装
           3. **macOS**: 下载 `.dmg` 文件，拖拽到应用程序文件夹
           4. **Linux**: 下载 `.deb` 文件，使用 `sudo dpkg -i filename.deb` 安装
-          
-          ### 更新内容
-          - 最新的功能更新和bug修复
-          - 性能优化和稳定性提升
+
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
