@@ -1,12 +1,10 @@
 package ovo.sypw.bsp.di
 
-import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import ovo.sypw.bsp.data.api.StatisticsApiService
 import ovo.sypw.bsp.data.repository.StatisticsRepositoryImpl
 import ovo.sypw.bsp.domain.repository.StatisticsRepository
 import ovo.sypw.bsp.domain.usecase.StatisticsUseCase
-import ovo.sypw.bsp.presentation.viewmodel.admin.StatisticsViewModel
 
 /**
  * 统计模块依赖注入配置
@@ -31,8 +29,4 @@ val statisticsModule = module {
         StatisticsUseCase(repository = get())
     }
 
-    // ViewModel
-    viewModel<StatisticsViewModel> {
-        StatisticsViewModel(statisticsUseCase = get())
-    }
 }

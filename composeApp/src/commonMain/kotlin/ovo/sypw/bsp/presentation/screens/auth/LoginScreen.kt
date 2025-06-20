@@ -47,7 +47,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.koin.compose.viewmodel.koinViewModel
+import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
 
@@ -59,7 +59,7 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    authViewModel: AuthViewModel = koinViewModel(),
+    authViewModel: AuthViewModel = koinKmpViewModel(),
     onLoginSuccess: () -> Unit = {},
     onNavigateToRegister: () -> Unit = {}
 ) {
@@ -253,7 +253,7 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     MaterialTheme {
         Surface {
-            // 注意：预览时无法使用koinViewModel，需要提供mock数据
+            // 注意：预览时无法使用koinKmpViewModel，需要提供mock数据
             // LoginScreen()
         }
     }

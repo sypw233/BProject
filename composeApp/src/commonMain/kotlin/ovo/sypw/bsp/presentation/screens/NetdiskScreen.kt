@@ -18,11 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import ovo.sypw.bsp.data.dto.NetdiskFile
 import ovo.sypw.bsp.presentation.viewmodel.NetdiskViewModel
-import org.koin.compose.viewmodel.koinViewModel
+import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import ovo.sypw.bsp.utils.file.FileUploadUtils.formatFileSize
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
@@ -35,9 +34,9 @@ import com.mikepenz.markdown.m3.markdownTypography
 @Composable
 fun NetdiskScreen(
     modifier: Modifier = Modifier,
-    viewModel: NetdiskViewModel = koinViewModel()
+    viewModel: NetdiskViewModel = koinKmpViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     

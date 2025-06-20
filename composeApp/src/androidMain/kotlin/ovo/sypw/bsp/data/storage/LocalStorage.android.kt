@@ -9,6 +9,7 @@ import kotlinx.coroutines.withContext
  * Android平台的LocalStorage实现
  * 使用SharedPreferences进行数据存储
  */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class LocalStorage(private val context: Context) {
     
     companion object {

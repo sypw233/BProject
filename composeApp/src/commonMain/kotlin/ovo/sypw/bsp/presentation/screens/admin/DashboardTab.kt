@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.koin.compose.viewmodel.koinViewModel
+import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import ovo.sypw.bsp.presentation.components.CustomBarChart
 import ovo.sypw.bsp.presentation.components.CustomPieChart
 import ovo.sypw.bsp.presentation.viewmodel.admin.StatisticsViewModel
@@ -37,7 +37,7 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.StatisticsViewModel
 @Composable
 fun DashboardTab(
     modifier: Modifier = Modifier,
-    viewModel: StatisticsViewModel = koinViewModel()
+    viewModel: StatisticsViewModel = koinKmpViewModel()
 ) {
     val state by viewModel.statisticsState.collectAsState()
 

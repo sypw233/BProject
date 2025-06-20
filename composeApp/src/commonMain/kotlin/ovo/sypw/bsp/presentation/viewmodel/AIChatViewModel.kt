@@ -1,33 +1,18 @@
 package ovo.sypw.bsp.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.HttpTimeoutConfig
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.contentType
-import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.readUTF8Line
+import com.hoc081098.kmp.viewmodel.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import ovo.sypw.bsp.data.api.AIChatApiService
 import ovo.sypw.bsp.data.dto.AIChatRequest
-import ovo.sypw.bsp.data.dto.AIChatStreamResponse
 import ovo.sypw.bsp.data.dto.ChatMessage
 import ovo.sypw.bsp.data.dto.ChatSession
 import ovo.sypw.bsp.data.dto.result.NetworkResult
-import ovo.sypw.bsp.domain.usecase.AIChatUseCase
-import ovo.sypw.bsp.data.api.AIChatApiService
 import ovo.sypw.bsp.data.storage.TokenStorage
+import ovo.sypw.bsp.domain.usecase.AIChatUseCase
 import ovo.sypw.bsp.utils.Logger
 
 /**

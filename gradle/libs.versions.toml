@@ -9,6 +9,7 @@ androidx-constraintlayout = "2.2.1"
 androidx-core = "1.16.0"
 androidx-espresso = "3.6.1"
 androidx-lifecycle = "2.9.0"
+kmp-viewmodel = "0.8.0"
 androidx-testExt = "1.2.1"
 
 chart = "0.1.7"
@@ -34,8 +35,9 @@ markdown-renderer = "0.26.0"
 chart = { module = "io.github.ehsannarmani:compose-charts", version.ref = "chart" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+kmp-viewmodel = { module = "io.github.hoc081098:kmp-viewmodel", version.ref = "kmp-viewmodel" }
+kmp-viewmodel-compose = { module = "io.github.hoc081098:kmp-viewmodel-compose", version.ref = "kmp-viewmodel" }
+kmp-viewmodel-koin-compose = { module = "io.github.hoc081098:kmp-viewmodel-koin-compose", version.ref = "kmp-viewmodel" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
@@ -51,12 +53,6 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", ver
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 material-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
-paging-common = { module = "app.cash.paging:paging-common", version.ref = "paging" }
-paging-compose = { module = "app.cash.paging:paging-compose-common", version.ref = "paging" }
-paging-common-js = { group = "app.cash.paging", name = "paging-common-js", version.ref = "paging" }
-paging-compose-js = { group = "app.cash.paging", name = "paging-compose-common-js", version.ref = "paging" }
-androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
-androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging-compose" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 richeditor-compose = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richeditor-compose" }

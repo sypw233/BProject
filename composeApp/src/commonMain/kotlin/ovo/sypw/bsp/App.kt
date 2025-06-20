@@ -26,7 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
-import org.koin.compose.viewmodel.koinViewModel
+import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import ovo.sypw.bsp.navigation.AppScreen
 import ovo.sypw.bsp.navigation.BottomNavigationBar
 import ovo.sypw.bsp.navigation.NavigationManager
@@ -109,7 +109,7 @@ fun App() {
 
 @Composable
 private fun AppContent() {
-    val authViewModel: AuthViewModel = koinViewModel()
+    val authViewModel: AuthViewModel = koinKmpViewModel()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
     val isLoading by authViewModel.isLoading.collectAsState()
 

@@ -34,7 +34,7 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.koin.compose.viewmodel.koinViewModel
+import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import ovo.sypw.bsp.presentation.components.ResponsiveListLayout
 import ovo.sypw.bsp.presentation.screens.aichat.ChatInputArea
 import ovo.sypw.bsp.presentation.screens.aichat.ChatMessageList
@@ -51,7 +51,7 @@ import ovo.sypw.bsp.utils.ResponsiveUtils
 fun AIChatScreen(
     modifier: Modifier = Modifier,
     layoutConfig: ResponsiveLayoutConfig,
-    viewModel: AIChatViewModel = koinViewModel()
+    viewModel: AIChatViewModel = koinKmpViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val errorMessage by viewModel.errorMessage.collectAsState()

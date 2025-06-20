@@ -12,6 +12,7 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.RequestLogViewModel
 import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.StatisticsViewModel
 
 /**
  * ViewModel模块依赖注入配置
@@ -134,6 +135,12 @@ val viewModelModule = module {
     factory {
         RequestLogViewModel(
             requestLogUseCase = get()
+        )
+    }
+
+    factory {
+        StatisticsViewModel(
+            statisticsUseCase = get()
         )
     }
 }

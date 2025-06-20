@@ -1,12 +1,18 @@
 package ovo.sypw.bsp.utils.file
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toComposeImageBitmap
+
 import io.github.vinceglb.filekit.core.FileKit
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
 import io.github.vinceglb.filekit.core.PlatformFile
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 import org.jetbrains.skia.Image
+import platform.Foundation.NSData
+import platform.Foundation.dataWithBytes
+import platform.UIKit.UIImage
 
 /**
  * iOS平台的FileUtils实现
@@ -98,13 +104,11 @@ class IosFileUtils : FileUtils {
      * @return ImageBitmap对象，解码失败时返回null
      */
     override fun bytesToImageBitmap(bytes: ByteArray): ImageBitmap? {
-        return try {
-            val skiaImage = Image.makeFromEncoded(bytes)
-            skiaImage.toComposeImageBitmap()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
+        // FIXME: Per your request, the androidx.compose.ui.graphics.toComposeImageBitmap dependency has been removed.
+        // However, this function is essential for converting byte arrays into ImageBitmap for display in Compose.
+        // Without it, this function cannot be implemented correctly.
+        // The androidx.compose packages are a core part of Compose Multiplatform and are safe to use on iOS.
+        return null
     }
     
     /**

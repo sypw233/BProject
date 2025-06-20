@@ -44,6 +44,7 @@ kotlin {
             implementation(libs.ktor.client.android)
             // Koin Android支持
             implementation(libs.koin.android)
+//            implementation(libs.androidx.lifecycle.runtimeCompose)
 
 
         }
@@ -54,10 +55,11 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            implementation(libs.kmp.viewmodel)
+            implementation(libs.kmp.viewmodel.compose)
             implementation(libs.material.icons.extended)
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.0-beta01")
+//            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.0-beta01")
             // Ktor网络请求核心库
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
@@ -66,7 +68,7 @@ kotlin {
             // Koin依赖注入
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.kmp.viewmodel.koin.compose)
             // 跨平台日期时间库
             implementation(libs.kotlinx.datetime)
             // 图片加载库
