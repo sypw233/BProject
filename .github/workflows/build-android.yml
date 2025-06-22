@@ -37,6 +37,9 @@ jobs:
     # 构建Android Release APK（未签名）
     - name: Build Android Release APK
       run: ./gradlew :composeApp:assembleRelease
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       
     # 签名APK
     - name: Sign app APK
