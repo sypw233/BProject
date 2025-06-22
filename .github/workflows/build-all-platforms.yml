@@ -278,18 +278,26 @@ jobs:
           mv *.msi "bProject_${TAG_NAME}_windows.msi"
         fi
         zip -r "../../bProject_${TAG_NAME}_windows.zip" .
+        cd ../..
         
         # 重命名macOS文件
-        cd ../macos/
+        cd ./artifacts/macos/
         if [ -f *.dmg ]; then
           mv *.dmg "bProject_${TAG_NAME}_macos.dmg"
         fi
+        cd ../..
         
         # 重命名Linux文件
-        cd ../linux/
+        cd ./artifacts/linux/
         if [ -f *.deb ]; then
           mv *.deb "bProject_${TAG_NAME}_linux.deb"
         fi
+        cd ../..
+        
+        # 验证重命名后的文件
+        echo "重命名后的文件列表:"
+        find ./artifacts -name "bProject_${TAG_NAME}_*" -type f
+        ls -la ./bProject_${TAG_NAME}_windows.zip 2>/dev/null || echo "Windows zip文件未找到"
         
     - name: Create Release
       uses: softprops/action-gh-release@v1
