@@ -1,0 +1,114 @@
+name: Build Android APK Release
+
+# 触发条件：仅在创建tag时自动编译
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  # Android构建任务
+  build-android:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+          
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    # 构建Android Release APK
+    - name: Build Android Release APK
+      run: ./gradlew :composeApp:assembleRelease
+      
+    # 验证APK文件是否生成成功
+    - name: Verify APK exists
+      run: |
+        if [ ! -f composeApp/build/outputs/apk/release/composeApp-release.apk ]; then
+          echo "APK文件未找到，构建可能失败"
+          exit 1
+        fi
+        echo "APK文件构建成功"
+        ls -la composeApp/build/outputs/apk/release/
+      
+    - name: Upload Android Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-release-apk
+        path: |
+          composeApp/build/outputs/apk/release/*.apk
+        retention-days: 30
+
+  # 创建Release（编译完成后自动发布）
+  create-release:
+    needs: [build-android]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download Android Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: android-release-apk
+        path: ./artifacts/android/
+        
+    # 重命名APK文件为规范格式
+    - name: Rename Release Files
+      run: |
+        # 获取tag名称
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        
+        # 重命名Android APK文件
+        cd ./artifacts/android/
+        if [ -f *.apk ]; then
+          mv *.apk "bProject_${TAG_NAME}_android.apk"
+        fi
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ./artifacts/android/bProject_${{ github.ref_name }}_android.apk
+        draft: false
+        prerelease: false
+        tag_name: ${{ github.ref_name }}
+        name: bProject ${{ github.ref_name }} - Android Release
+        body: |
+          ### Android APK 安装说明
+          1. **Android**: 下载 `bProject_${{ github.ref_name }}_android.apk` 文件
+             - 在Android设备上启用"未知来源"安装权限
+             - 直接安装APK文件即可
+             - 支持Android API 24+ (Android 7.0+)
+          
+          ### 应用信息
+          - **包名**: ovo.sypw.bsp
+          - **版本**: ${{ github.ref_name }}
+          - **最低Android版本**: Android 7.0 (API 24)
+          - **目标Android版本**: 根据项目配置
+          
+          ### 更新内容
+          - 最新的功能更新和bug修复
+          - 性能优化和稳定性提升
+          - Android平台特定优化
+          
+          ### 注意事项
+          - 首次安装可能需要授予相关权限
+          - 建议在安装前卸载旧版本以避免冲突
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
