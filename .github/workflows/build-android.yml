@@ -37,14 +37,30 @@ jobs:
     # 设置Android签名密钥
     - name: Setup Android Keystore
       run: |
+        # 检查secrets是否存在
+        if [ -z "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+          echo "错误: ANDROID_KEYSTORE_BASE64 secret未设置"
+          exit 1
+        fi
+        
         # 解码base64编码的keystore文件
-        echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android-keystore.jks
+        echo "开始解码keystore文件..."
+        echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android-keystore.jks
+        
         # 验证keystore文件是否创建成功
         if [ ! -f android-keystore.jks ]; then
           echo "Keystore文件创建失败"
           exit 1
         fi
-        echo "Keystore文件创建成功"
+        
+        # 检查文件大小
+        file_size=$(stat -c%s android-keystore.jks 2>/dev/null || stat -f%z android-keystore.jks)
+        if [ "$file_size" -eq 0 ]; then
+          echo "Keystore文件为空，可能解码失败"
+          exit 1
+        fi
+        
+        echo "Keystore文件创建成功，大小: ${file_size} bytes"
       
     # 构建Android Release APK（带签名）
     - name: Build Android Release APK
