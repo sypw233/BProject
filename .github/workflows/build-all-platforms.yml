@@ -110,11 +110,15 @@ jobs:
     - name: Build Windows Executable
       run: ./gradlew :composeApp:createDistributable
       shell: bash
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
     # 构建Windows MSI安装包
     - name: Build Windows MSI
       run: ./gradlew :composeApp:packageMsi
       shell: bash
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Upload Windows Artifacts
       uses: actions/upload-artifact@v4
@@ -164,6 +168,8 @@ jobs:
           composeApp/build/compose/binaries/main/dmg/*.dmg
           composeApp/build/compose/binaries/main/app/
         retention-days: 30
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Linux构建任务
   build-linux:
@@ -204,6 +210,8 @@ jobs:
           composeApp/build/compose/binaries/main/deb/*.deb
           composeApp/build/compose/binaries/main/app/
         retention-days: 30
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # 创建Release（所有平台编译完成后自动发布）
   create-release:
