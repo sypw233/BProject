@@ -302,21 +302,21 @@ jobs:
         # 重命名macOS文件
         cd ./artifacts/macos/
         if [ -f *.dmg ]; then
-          mv *.dmg "bProject_${TAG_NAME}_macos.dmg"
+          mv *.dmg "../../bProject_${TAG_NAME}_macos.dmg"
         fi
         cd ../..
         
         # 重命名Linux文件
         cd ./artifacts/linux/
         if [ -f *.deb ]; then
-          mv *.deb "bProject_${TAG_NAME}_linux.deb"
+          mv *.deb "../../bProject_${TAG_NAME}_linux.deb"
         fi
         cd ../..
         
         # 验证重命名后的文件
         echo "重命名后的文件列表:"
-        find ./artifacts -name "bProject_${TAG_NAME}_*" -type f
-        ls -la ./bProject_${TAG_NAME}_windows.zip 2>/dev/null || echo "Windows zip文件未找到"
+        ls -la ./bProject_${TAG_NAME}_* 2>/dev/null || echo "未找到重命名的文件"
+        ls -la ./artifacts/android/*.apk 2>/dev/null || echo "Android APK文件未找到"
         
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -325,8 +325,8 @@ jobs:
           ./artifacts/android/*.apk
           ./bProject_${{ github.ref_name }}_windows.msi
           ./bProject_${{ github.ref_name }}_windows.zip
-          ./artifacts/macos/bProject_${{ github.ref_name }}_macos.dmg
-          ./artifacts/linux/bProject_${{ github.ref_name }}_linux.deb
+          ./bProject_${{ github.ref_name }}_macos.dmg
+          ./bProject_${{ github.ref_name }}_linux.deb
         draft: false
         prerelease: false
         tag_name: ${{ github.ref_name }}
