@@ -34,9 +34,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
-    # 构建Android Release APK
     - name: Build Android Release APK
-      run: ./gradlew :composeApp:assembleRelease
       
     # 验证APK文件是否生成成功
     - name: Verify APK exists
