@@ -3,7 +3,7 @@ name: Build All Platforms Release
 # 触发条件：仅在创建tag时自动编译
 on:
   push:
-    tags: [ 'v*' ]
+    tags: [ '*v*' ]
   workflow_dispatch: # 允许手动触发
 
 jobs:
