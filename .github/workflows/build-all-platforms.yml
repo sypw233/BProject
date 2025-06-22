@@ -120,13 +120,21 @@ jobs:
       env:
         MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-    - name: Upload Windows Artifacts
+    # 分别上传Windows MSI和可执行文件
+    - name: Upload Windows MSI
       uses: actions/upload-artifact@v4
       with:
-        name: windows-desktop-app
+        name: windows-msi
+        path: |
+          composeApp/build/compose/binaries/main/msi/*.msi
+        retention-days: 30
+        
+    - name: Upload Windows Executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-executable
         path: |
           composeApp/build/compose/binaries/main/app/
-          composeApp/build/compose/binaries/main/msi/*.msi
         retention-days: 30
 
   # macOS构建任务
@@ -227,11 +235,17 @@ jobs:
         name: android-release-apk
         path: ./artifacts/android/
         
-    - name: Download Windows Artifacts
+    - name: Download Windows MSI
       uses: actions/download-artifact@v4
       with:
-        name: windows-desktop-app
-        path: ./artifacts/windows/
+        name: windows-msi
+        path: ./artifacts/windows/msi/
+        
+    - name: Download Windows Executable
+      uses: actions/download-artifact@v4
+      with:
+        name: windows-executable
+        path: ./artifacts/windows/app/
         
     - name: Download macOS Artifacts
       uses: actions/download-artifact@v4
@@ -272,13 +286,18 @@ jobs:
         # 获取tag名称
         TAG_NAME=${GITHUB_REF#refs/tags/}
         
-        # 重命名Windows文件
-        cd ./artifacts/windows/
+        # 处理Windows文件
+        # 重命名MSI文件
+        cd ./artifacts/windows/msi/
         if [ -f *.msi ]; then
-          mv *.msi "bProject_${TAG_NAME}_windows.msi"
+          mv *.msi "../../../bProject_${TAG_NAME}_windows.msi"
         fi
-        zip -r "../../bProject_${TAG_NAME}_windows.zip" .
-        cd ../..
+        cd ../../../
+        
+        # 打包Windows可执行文件
+        cd ./artifacts/windows/app/
+        zip -r "../../../bProject_${TAG_NAME}_windows.zip" .
+        cd ../../../
         
         # 重命名macOS文件
         cd ./artifacts/macos/
@@ -304,7 +323,7 @@ jobs:
       with:
         files: |
           ./artifacts/android/*.apk
-          ./artifacts/windows/bProject_${{ github.ref_name }}_windows.msi
+          ./bProject_${{ github.ref_name }}_windows.msi
           ./bProject_${{ github.ref_name }}_windows.zip
           ./artifacts/macos/bProject_${{ github.ref_name }}_macos.dmg
           ./artifacts/linux/bProject_${{ github.ref_name }}_linux.deb
