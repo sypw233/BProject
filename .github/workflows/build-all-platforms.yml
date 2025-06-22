@@ -110,11 +110,15 @@ jobs:
     - name: Build Windows Executable
       run: ./gradlew :composeApp:createDistributable
       shell: bash
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
     # 构建Windows MSI安装包
     - name: Build Windows MSI
       run: ./gradlew :composeApp:packageMsi
       shell: bash
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Upload Windows Artifacts
       uses: actions/upload-artifact@v4
@@ -155,7 +159,8 @@ jobs:
     # 构建macOS DMG安装包
     - name: Build macOS DMG
       run: ./gradlew :composeApp:packageDmg
-      
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload macOS Artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -195,7 +200,8 @@ jobs:
     # 构建Linux DEB安装包
     - name: Build Linux DEB
       run: ./gradlew :composeApp:packageDeb
-      
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload Linux Artifacts
       uses: actions/upload-artifact@v4
       with:
