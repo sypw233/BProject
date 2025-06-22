@@ -34,7 +34,26 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
+    # 设置Android签名密钥
+    - name: Setup Android Keystore
+      run: |
+        # 解码base64编码的keystore文件
+        echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android-keystore.jks
+        # 验证keystore文件是否创建成功
+        if [ ! -f android-keystore.jks ]; then
+          echo "Keystore文件创建失败"
+          exit 1
+        fi
+        echo "Keystore文件创建成功"
+      
+    # 构建Android Release APK（带签名）
     - name: Build Android Release APK
+      run: |
+        ./gradlew :composeApp:assembleRelease \
+          -Pandroid.injected.signing.store.file=${{ github.workspace }}/android-keystore.jks \
+          -Pandroid.injected.signing.store.password="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+          -Pandroid.injected.signing.key.alias="${{ secrets.ANDROID_KEY_ALIAS }}" \
+          -Pandroid.injected.signing.key.password="${{ secrets.ANDROID_KEY_PASSWORD }}"
       
     # 验证APK文件是否生成成功
     - name: Verify APK exists
