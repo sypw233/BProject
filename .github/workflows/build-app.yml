@@ -1,16 +1,13 @@
 name: Build Multi-Platform Apps
 
-# 触发条件：推送到main分支或创建tag时
+# 触发条件：仅在创建tag时自动编译
 on:
   push:
-    branches: [ main ]
     tags: [ 'v*' ]
-#  pull_request:
-#    branches: [ main ]
   workflow_dispatch: # 允许手动触发
 
 jobs:
-  # Windows构建任务（仅可执行文件）
+  # Windows构建任务（包含MSI安装包和可执行文件）
   build-windows:
     runs-on: windows-latest
     
@@ -38,16 +35,23 @@ jobs:
       run: chmod +x gradlew
       shell: bash
       
-    # 构建Windows可执行文件（不包含MSI）
+    # 构建Windows可执行文件
     - name: Build Windows Executable
       run: ./gradlew :composeApp:createDistributable
+      shell: bash
+      
+    # 构建Windows MSI安装包
+    - name: Build Windows MSI
+      run: ./gradlew :composeApp:packageMsi
       shell: bash
       
     - name: Upload Windows Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: windows-desktop-app
-        path: composeApp/build/compose/binaries/main/app/
+        path: |
+          composeApp/build/compose/binaries/main/app/
+          composeApp/build/compose/binaries/main/msi/*.msi
         retention-days: 30
   # macOS构建任务
   build-macos:
@@ -154,29 +158,50 @@ jobs:
         name: linux-desktop-app
         path: ./artifacts/linux/
         
-    # 打包Windows可执行文件
-    - name: Package Windows App
+    # 重命名文件为规范格式
+    - name: Rename Release Files
       run: |
+        # 获取tag名称
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        
+        # 重命名Windows文件
         cd ./artifacts/windows/
-        zip -r ../../windows-app.zip .
+        if [ -f *.msi ]; then
+          mv *.msi "bProject_${TAG_NAME}_windows.msi"
+        fi
+        zip -r "../../bProject_${TAG_NAME}_windows.zip" .
+        
+        # 重命名macOS文件
+        cd ../macos/
+        if [ -f *.dmg ]; then
+          mv *.dmg "bProject_${TAG_NAME}_macos.dmg"
+        fi
+        
+        # 重命名Linux文件
+        cd ../linux/
+        if [ -f *.deb ]; then
+          mv *.deb "bProject_${TAG_NAME}_linux.deb"
+        fi
         
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ./windows-app.zip
-          ./artifacts/macos/**/*.dmg
-          ./artifacts/linux/**/*.deb
+          ./artifacts/windows/bProject_${{ github.ref_name }}_windows.msi
+          ./bProject_${{ github.ref_name }}_windows.zip
+          ./artifacts/macos/bProject_${{ github.ref_name }}_macos.dmg
+          ./artifacts/linux/bProject_${{ github.ref_name }}_linux.deb
         draft: false
         prerelease: false
-        tag_name: ${{ github.ref_name != 'main' && github.ref_name || format('v{0}', github.run_number) }}
-        name: ${{ github.ref_name != 'main' && github.ref_name || format('Release v{0}', github.run_number) }}
+        tag_name: ${{ github.ref_name }}
+        name: bProject ${{ github.ref_name }}
         body: |
           ### 安装说明
-          1. **Windows**: 下载 `windows-app.zip` 文件，解压后运行exe文件
-          2. **Android**: 下载 `.apk` 文件并安装
-          3. **macOS**: 下载 `.dmg` 文件，拖拽到应用程序文件夹
-          4. **Linux**: 下载 `.deb` 文件，使用 `sudo dpkg -i filename.deb` 安装
+          1. **Windows**: 
+             - MSI安装包：下载 `bProject_${{ github.ref_name }}_windows.msi` 文件并运行安装
+             - 便携版：下载 `bProject_${{ github.ref_name }}_windows.zip` 文件，解压后运行exe文件
+          2. **macOS**: 下载 `bProject_${{ github.ref_name }}_macos.dmg` 文件，拖拽到应用程序文件夹
+          3. **Linux**: 下载 `bProject_${{ github.ref_name }}_linux.deb` 文件，使用 `sudo dpkg -i bProject_${{ github.ref_name }}_linux.deb` 安装
           
           ### 更新内容
           - 最新的功能更新和bug修复

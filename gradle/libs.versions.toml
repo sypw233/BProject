@@ -4,35 +4,28 @@ android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
 androidx-activity = "1.10.1"
-androidx-appcompat = "1.7.1"
-androidx-constraintlayout = "2.2.1"
-androidx-core = "1.16.0"
-androidx-espresso = "3.6.1"
-androidx-lifecycle = "2.9.0"
 kmp-viewmodel = "0.8.0"
-androidx-testExt = "1.2.1"
 
-chart = "0.1.7"
-composeHotReload = "1.0.0-alpha10"
-composeMultiplatform = "1.8.1"
+chart = "0v1"
+composeHotReload = "1.0.0-alpha11"
+composeMultiplatform = "1.8.2"
 junit = "4.13.2"
 kotlin = "2.1.21"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.6.2"
-ktor = "3.1.3"
-koin = "4.0.2"
+ktor = "3.2.0"
+koin = "4.1.0"
 materialIconsExtended = "1.7.3"
-paging = "3.3.0-alpha02-0.5.1"
-paging-android = "3.3.0-alpha02"
-pagingCommonJs = "3.3.0-alpha02-0.5.1"
 androidx-paging = "3.3.0-alpha02"
 androidx-paging-compose = "3.3.0-alpha02"
-coil = "3.0.4"
-richeditor-compose = "1.0.0-rc12"
-markdown-renderer = "0.26.0"
+coil = "3.2.0"
+richeditor-compose = "1.0.0-rc13"
+markdown-renderer = "0.35.0"
 
 [libraries]
-chart = { module = "io.github.ehsannarmani:compose-charts", version.ref = "chart" }
+compose-chart = { module = "io.github.sypw233:compose-charts", version.ref = "chart" }
+compose-chart-android = { module = "io.github.ehsannarmani:compose-charts-android", version.ref = "chart" }
+compose-chart-ios = { module = "io.github.ehsannarmani:compose-charts-iosarm64", version.ref = "chart" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 kmp-viewmodel = { module = "io.github.hoc081098:kmp-viewmodel", version.ref = "kmp-viewmodel" }

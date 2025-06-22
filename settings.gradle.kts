@@ -25,6 +25,13 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven {
+            url = uri("https://maven.pkg.github.com/sypw233/ComposeCharts")
+            credentials {
+                username = System.getenv("GITHUB_USERNAME") ?: "sypw233"
+                password = System.getenv("GITHUB_TOKEN") ?: ""
+            }
+        }
     }
 }
 

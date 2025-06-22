@@ -1,8 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -20,23 +18,22 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
-    
+
     listOf(
-        iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+//        iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
     }
-    
+
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -44,7 +41,7 @@ kotlin {
             implementation(libs.ktor.client.android)
             // Koin Android支持
             implementation(libs.koin.android)
-//            implementation(libs.androidx.lifecycle.runtimeCompose)
+//            implementation(libs.compose.chart.android)
 
 
         }
@@ -80,8 +77,8 @@ kotlin {
             implementation(libs.markdown.renderer)
             implementation(libs.markdown.renderer.m3)
 
-            implementation(libs.chart)
-            
+            implementation(libs.compose.chart)
+
             // FileKit - 跨平台文件操作库
             implementation("io.github.vinceglb:filekit-core:0.8.7")
             implementation("io.github.vinceglb:filekit-compose:0.8.7")
@@ -96,10 +93,11 @@ kotlin {
             // Desktop平台特定的Ktor客户端
             implementation(libs.ktor.client.okhttp)
         }
-        
+
         iosMain.dependencies {
             // iOS平台特定的Ktor客户端
             implementation(libs.ktor.client.darwin)
+//            implementation(libs.compose.chart.ios)
         }
 
     }
@@ -134,7 +132,7 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    implementation(libs.chart)
+
 }
 
 compose.desktop {
