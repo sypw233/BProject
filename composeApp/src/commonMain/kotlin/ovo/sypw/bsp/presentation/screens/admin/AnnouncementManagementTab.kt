@@ -148,7 +148,7 @@ private fun AnnouncementCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(160.dp), // 固定卡片高度，确保一致性
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
             modifier = Modifier

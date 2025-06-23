@@ -84,6 +84,4 @@ class RegisterUseCase(
         val hasDigit = password.any { it.isDigit() }
         return hasLetter && hasDigit
     }
-
-
 }

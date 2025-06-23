@@ -15,10 +15,9 @@ class ExampleApiService : BaseApiService() {
      * @param token 认证令牌
      * @return 微博热搜数据
      */
-    suspend fun getWeiboData(token: String): NetworkResult<SaResult> {
-        val resWeibo: NetworkResult<SaResult> = getWithToken(
+    suspend fun getWeiboData(): NetworkResult<SaResult> {
+        val resWeibo: NetworkResult<SaResult> = get(
             endpoint = "weibohot",
-            token = token
         )
         return resWeibo
     }
@@ -41,9 +40,7 @@ class ExampleApiService : BaseApiService() {
      */
     suspend fun postExampleData(data: String): String {
         // 模拟API调用，返回处理结果
-        return "服务器已接收数据: '$data'，处理时间: ${
-            kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
-        }"
+        return post(data).getDataOrNull().toString()
     }
 }
 

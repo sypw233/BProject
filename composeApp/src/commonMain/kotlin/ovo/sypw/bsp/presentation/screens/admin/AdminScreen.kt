@@ -161,7 +161,8 @@ fun GetAdminTab(
 ) {
     when (selectedTabIndex) {
         0 -> DashboardTab(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            layoutConfig=layoutConfig
         )
 
         1 -> DepartmentManagementTab(
@@ -197,7 +198,8 @@ fun GetAdminTab(
 //        )
 
         else -> DashboardTab(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            layoutConfig = layoutConfig
         )
     }
 }

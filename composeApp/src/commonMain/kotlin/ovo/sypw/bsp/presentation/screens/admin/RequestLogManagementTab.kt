@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import org.koin.compose.koinInject
 import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.dto.RequestLogDto
-import ovo.sypw.bsp.data.dto.RequestMethod
 import ovo.sypw.bsp.presentation.components.dialog.RequestLogDetailDialog
 import ovo.sypw.bsp.presentation.components.search.RequestLogSearchAndFilter
 import ovo.sypw.bsp.presentation.components.template.ManagementPageActions
@@ -139,6 +138,7 @@ private fun RequestLogCard(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         modifier = Modifier
             .fillMaxWidth()
             .height(160.dp) // 固定卡片高度，确保一致性
@@ -167,9 +167,9 @@ private fun RequestLogCard(
                         color = getRequestMethodColor(requestLog.requestMethod),
                         modifier = Modifier.width(60.dp)
                     )
-                    
+
                     Spacer(modifier = Modifier.width(8.dp))
-                    
+
                     Text(
                         text = requestLog.requestUrl,
                         style = MaterialTheme.typography.titleMedium,
@@ -193,9 +193,9 @@ private fun RequestLogCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        
+
                         Spacer(modifier = Modifier.height(2.dp))
-                        
+
                         Row {
                             Text(
                                 text = "状态: ${requestLog.responseStatus}",
@@ -203,9 +203,9 @@ private fun RequestLogCard(
                                 color = getResponseStatusColor(requestLog.responseStatus),
                                 maxLines = 1
                             )
-                            
+
                             Spacer(modifier = Modifier.width(12.dp))
-                            
+
                             Text(
                                 text = "耗时: ${requestLog.responseTime}ms",
                                 style = MaterialTheme.typography.bodySmall,
@@ -225,18 +225,18 @@ private fun RequestLogCard(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)
                         )
-                        
+
                         Spacer(modifier = Modifier.width(8.dp))
-                        
+
                         Text(
                             text = "状态: ${requestLog.responseStatus}",
                             style = MaterialTheme.typography.bodySmall,
                             color = getResponseStatusColor(requestLog.responseStatus),
                             maxLines = 1
                         )
-                        
+
                         Spacer(modifier = Modifier.width(8.dp))
-                        
+
                         Text(
                             text = "耗时: ${requestLog.responseTime}ms",
                             style = MaterialTheme.typography.bodySmall,
@@ -258,9 +258,9 @@ private fun RequestLogCard(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
                     )
-                    
+
                     Spacer(modifier = Modifier.width(8.dp))
-                    
+
                     Text(
                         text = requestLog.createdAt,
                         style = MaterialTheme.typography.bodySmall,

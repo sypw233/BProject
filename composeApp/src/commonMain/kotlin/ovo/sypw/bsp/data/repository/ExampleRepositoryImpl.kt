@@ -22,15 +22,8 @@ class ExampleRepositoryImpl(
      */
     override suspend fun getExampleData(): NetworkResult<String> {
         return try {
-            val token = tokenStorage.getAccessToken()
-            if (token.isNullOrEmpty()) {
-                return NetworkResult.Error(
-                    exception = Exception("未找到认证令牌"),
-                    message = "请先登录"
-                )
-            }
 
-            val response = apiService.getWeiboData(token)
+            val response = apiService.getWeiboData()
             NetworkResult.Success("GET请求成功，返回数据: $response")
         } catch (e: Exception) {
             NetworkResult.Error(e)

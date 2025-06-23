@@ -44,10 +44,12 @@ import ovo.sypw.bsp.presentation.screens.announcement.PublicAnnouncementScreen
 import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
+import ovo.sypw.bsp.presentation.screens.test.ApiTestScreen
 import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
+import ovo.sypw.bsp.utils.file.FileKitExample
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
 
 /**
@@ -123,7 +125,7 @@ private fun AppContent() {
         }
         return
     }
-
+//    ApiTestScreen()
 //    MainAppContent()
     // 根据登录状态显示不同内容
     if (isLoggedIn) {

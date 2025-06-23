@@ -78,6 +78,10 @@ class StatisticsRepositoryImpl(
      */
     private fun getEmptyStatisticsData(): StatisticsData {
         return StatisticsData(
+            totalStudents = 0,
+            totalEmployees = 0,
+            totalClasses = 0,
+            totalDepartments = 0,
             studentStatusChart = emptyList(),
             employeeJobChart = emptyList(),
             classStudentChart = BarChartData(emptyList(), emptyList()),

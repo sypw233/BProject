@@ -17,6 +17,10 @@ data class StatisticsResponse(
  */
 @Serializable
 data class StatisticsData(
+    val totalStudents: Int,
+    val totalEmployees: Int,
+    val totalClasses: Int,
+    val totalDepartments: Int,
     val studentStatusChart: List<PieChartItem>,
     val employeeJobChart: List<PieChartItem>,
     val classStudentChart: BarChartData,
