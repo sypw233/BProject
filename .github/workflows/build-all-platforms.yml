@@ -118,7 +118,7 @@ jobs:
       with:
         name: windows-executable
         path: |
-          composeApp/build/compose/binaries/main/app/**/*
+          composeApp/build/compose/binaries/main/app/
         retention-days: 30
 
   # macOS构建任务
@@ -270,7 +270,7 @@ jobs:
         files: |
           ./artifacts/android/*
           ./artifacts/windows/msi/*
-          ./artifacts/windows/app/**/*
+          ./artifacts/windows/app/*
           ./artifacts/macos/*
           ./artifacts/linux/*
         draft: false
