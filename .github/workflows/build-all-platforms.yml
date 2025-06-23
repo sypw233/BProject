@@ -55,27 +55,11 @@ jobs:
         # 设置build-tools版本
         BUILD_TOOLS_VERSION: "35.0.0"
       
-    # 重命名已签名的APK文件
-    - name: Rename signed APK
-      run: |
-        # 获取tag名称
-        TAG_NAME=${GITHUB_REF#refs/tags/}
-        if [ -z "$TAG_NAME" ] || [ "$TAG_NAME" = "$GITHUB_REF" ]; then
-          TAG_NAME="latest"
-        fi
-        
-        # 重命名签名后的APK文件
-        mv ${{steps.sign_app.outputs.signedReleaseFile}} bProject_${TAG_NAME}_android.apk
-        
-        echo "APK文件重命名成功: bProject_${TAG_NAME}_android.apk"
-        ls -la *.apk
-      
     - name: Upload Android Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: android-release-apk
-        path: |
-          *.apk
+        path: ${{steps.sign_app.outputs.signedReleaseFile}}
         retention-days: 30
 
   # Windows构建任务（包含MSI安装包和可执行文件）
@@ -166,16 +150,19 @@ jobs:
       
     # 构建macOS DMG安装包
     - name: Build macOS DMG
-      run: ./gradlew :composeApp:packageDmg
+      run: |
+        ./gradlew :composeApp:packageDmg
+        echo "macOS构建完成，检查生成的文件:"
+        find composeApp/build -name "*.dmg" -type f
+        ls -la composeApp/build/compose/binaries/main/dmg/ || echo "DMG目录不存在"
       env:
         MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
     - name: Upload macOS Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: macos-desktop-app
-        path: |
-          composeApp/build/compose/binaries/main/dmg/*.dmg
-          composeApp/build/compose/binaries/main/app/
+        path: composeApp/build/compose/binaries/main/dmg/*.dmg
         retention-days: 30
       env:
         MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -209,16 +196,19 @@ jobs:
       
     # 构建Linux DEB安装包
     - name: Build Linux DEB
-      run: ./gradlew :composeApp:packageDeb
+      run: |
+        ./gradlew :composeApp:packageDeb
+        echo "Linux构建完成，检查生成的文件:"
+        find composeApp/build -name "*.deb" -type f
+        ls -la composeApp/build/compose/binaries/main/deb/ || echo "DEB目录不存在"
       env:
         MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
     - name: Upload Linux Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: linux-desktop-app
-        path: |
-          composeApp/build/compose/binaries/main/deb/*.deb
-          composeApp/build/compose/binaries/main/app/
+        path: composeApp/build/compose/binaries/main/deb/*.deb
         retention-days: 30
       env:
         MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -274,63 +264,19 @@ jobs:
         echo "下载的Linux文件:"
         ls -la ./artifacts/linux/
         
-        # 检查APK文件是否存在
-        if [ ! -f ./artifacts/android/*.apk ]; then
-          echo "错误: 未找到APK文件"
-          exit 1
-        fi
-        
-    # 重命名文件为规范格式
-    - name: Rename Release Files
-      run: |
-        # 获取tag名称
-        TAG_NAME=${GITHUB_REF#refs/tags/}
-        
-        # 处理Windows文件
-        # 重命名MSI文件
-        cd ./artifacts/windows/msi/
-        if [ -f *.msi ]; then
-          mv *.msi "../../../bProject_${TAG_NAME}_windows.msi"
-        fi
-        cd ../../../
-        
-        # 打包Windows可执行文件
-        cd ./artifacts/windows/app/
-        zip -r "../../../bProject_${TAG_NAME}_windows.zip" .
-        cd ../../../
-        
-        # 重命名macOS文件
-        cd ./artifacts/macos/
-        if [ -f *.dmg ]; then
-          mv *.dmg "../../bProject_${TAG_NAME}_macos.dmg"
-        fi
-        cd ../..
-        
-        # 重命名Linux文件
-        cd ./artifacts/linux/
-        if [ -f *.deb ]; then
-          mv *.deb "../../bProject_${TAG_NAME}_linux.deb"
-        fi
-        cd ../..
-        
-        # 验证重命名后的文件
-        echo "重命名后的文件列表:"
-        ls -la ./bProject_${TAG_NAME}_* 2>/dev/null || echo "未找到重命名的文件"
-        ls -la ./artifacts/android/*.apk 2>/dev/null || echo "Android APK文件未找到"
-        
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ./artifacts/android/*.apk
-          ./bProject_${{ github.ref_name }}_windows.msi
-          ./bProject_${{ github.ref_name }}_windows.zip
-          ./bProject_${{ github.ref_name }}_macos.dmg
-          ./bProject_${{ github.ref_name }}_linux.deb
+          ./artifacts/android/*
+          ./artifacts/windows/msi/*
+          ./artifacts/windows/app/*
+          ./artifacts/macos/*
+          ./artifacts/linux/*
         draft: false
         prerelease: false
         tag_name: ${{ github.ref_name }}
-        name: bProject ${{ github.ref_name }}
+        name: ${{ github.ref_name }}
         body: |
           使用Github Actions自动构建发布
       env:
