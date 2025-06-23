@@ -23,8 +23,8 @@ import ovo.sypw.bsp.data.dto.NetdiskFile
 import ovo.sypw.bsp.presentation.viewmodel.NetdiskViewModel
 import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import ovo.sypw.bsp.utils.file.FileUploadUtils.formatFileSize
-import com.mikepenz.markdown.m3.Markdown
-import com.mikepenz.markdown.m3.markdownTypography
+import ovo.sypw.bsp.utils.file.FileUploadUtils.formatDateTime
+import ovo.sypw.bsp.utils.file.rememberFileUtils
 
 /**
  * 网盘管理页面
@@ -49,10 +49,13 @@ fun NetdiskScreen(
     var searchText by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     
-    // 下载对话框状态
-    var showDownloadDialog by remember { mutableStateOf(false) }
-    var downloadUrl by remember { mutableStateOf("") }
+    // 下载状态
+    var isDownloading by remember { mutableStateOf(false) }
+    var downloadProgress by remember { mutableStateOf(0f) }
     var downloadFileName by remember { mutableStateOf("") }
+    
+    // 文件工具实例
+    val fileUtils = rememberFileUtils()
 
     // 显示错误信息
     LaunchedEffect(uiState.error) {
@@ -164,12 +167,36 @@ fun NetdiskScreen(
                                 if (uiState.isSelectionMode) {
                                     viewModel.toggleFileSelection(file.id)
                                 } else {
-                                    // 点击文件时显示下载对话框
-                                    val url = viewModel.downloadFile(file)
-                                    url?.let {
-                                        downloadUrl = it
+                                    // 点击文件时直接下载并保存
+                                    if (!isDownloading) {
                                         downloadFileName = file.fileName
-                                        showDownloadDialog = true
+                                        isDownloading = true
+                                        scope.launch {
+                                            try {
+                                                val success = viewModel.downloadAndSaveFile(file, fileUtils) { progress ->
+                                                    downloadProgress = progress
+                                                }
+                                                if (success) {
+                                                    snackbarHostState.showSnackbar(
+                                                        message = "文件 ${file.fileName} 下载成功",
+                                                        duration = SnackbarDuration.Short
+                                                    )
+                                                } else {
+                                                    snackbarHostState.showSnackbar(
+                                                        message = "文件下载失败",
+                                                        duration = SnackbarDuration.Short
+                                                    )
+                                                }
+                                            } catch (e: Exception) {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "下载出错: ${e.message}",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            } finally {
+                                                isDownloading = false
+                                                downloadProgress = 0f
+                                            }
+                                        }
                                     }
                                 }
                             },
@@ -182,11 +209,35 @@ fun NetdiskScreen(
                                 viewModel.deleteFile(file.id)
                             },
                             onDownload = {
-                                val url = viewModel.downloadFile(file)
-                                url?.let {
-                                    downloadUrl = it
+                                if (!isDownloading) {
                                     downloadFileName = file.fileName
-                                    showDownloadDialog = true
+                                    isDownloading = true
+                                    scope.launch {
+                                        try {
+                                            val success = viewModel.downloadAndSaveFile(file, fileUtils) { progress ->
+                                                downloadProgress = progress
+                                            }
+                                            if (success) {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "文件 ${file.fileName} 下载成功",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            } else {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "文件下载失败",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
+                                        } catch (e: Exception) {
+                                            snackbarHostState.showSnackbar(
+                                                message = "下载出错: ${e.message}",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        } finally {
+                                            isDownloading = false
+                                            downloadProgress = 0f
+                                        }
+                                    }
                                 }
                             }
                         )
@@ -224,12 +275,15 @@ fun NetdiskScreen(
         }
     }
 
-    // 下载链接对话框
-    if (showDownloadDialog) {
-        DownloadLinkDialog(
+    // 下载进度对话框
+    if (isDownloading) {
+        DownloadProgressDialog(
             fileName = downloadFileName,
-            downloadUrl = downloadUrl,
-            onDismiss = { showDownloadDialog = false }
+            progress = downloadProgress,
+            onCancel = {
+                isDownloading = false
+                downloadProgress = 0f
+            }
         )
     }
 
@@ -250,20 +304,20 @@ fun NetdiskScreen(
 }
 
 /**
- * 下载链接对话框
- * 使用Markdown格式显示下载链接
+ * 下载进度对话框
+ * 显示文件下载进度
  */
 @Composable
-private fun DownloadLinkDialog(
+private fun DownloadProgressDialog(
     fileName: String,
-    downloadUrl: String,
-    onDismiss: () -> Unit
+    progress: Float,
+    onCancel: () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { /* 下载过程中不允许点击外部关闭 */ },
         title = {
             Text(
-                text = "文件下载",
+                text = "正在下载文件",
                 style = MaterialTheme.typography.headlineSmall
             )
         },
@@ -277,46 +331,22 @@ private fun DownloadLinkDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 
-                Text(
-                    text = "下载链接:",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
+                // 进度条
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 
-                // 使用Markdown组件显示链接
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                ) {
-                    Markdown(
-                        content = "[点击下载 $fileName]($downloadUrl)",
-                        modifier = Modifier.padding(16.dp),
-                        typography = markdownTypography(
-                            text = MaterialTheme.typography.bodyMedium,
-                            h1 = MaterialTheme.typography.titleLarge,
-                            h2 = MaterialTheme.typography.titleMedium,
-                            h3 = MaterialTheme.typography.titleSmall,
-                            h4 = MaterialTheme.typography.bodyLarge,
-                            h5 = MaterialTheme.typography.bodyMedium,
-                            h6 = MaterialTheme.typography.bodySmall,
-                            code = MaterialTheme.typography.labelSmall,
-                            quote = MaterialTheme.typography.bodySmall
-                        )
-                    )
-                }
-                
                 Text(
-                    text = "提示: 点击上方链接即可下载文件",
+                    text = "下载进度: ${(progress * 100).toInt()}%",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("关闭")
+            TextButton(onClick = onCancel) {
+                Text("取消")
             }
         }
     )
@@ -472,7 +502,7 @@ private fun FileItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = file.updatedAt,
+                        text = formatDateTime(file.updatedAt),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

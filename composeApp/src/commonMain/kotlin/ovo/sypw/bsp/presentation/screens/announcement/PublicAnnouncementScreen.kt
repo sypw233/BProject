@@ -68,7 +68,6 @@ import ovo.sypw.bsp.utils.ResponsiveUtils
 
 /**
  * 公告显示界面
- * 用于展示已发布的公告列表，无需登录即可查看
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -169,8 +168,10 @@ fun PublicAnnouncementSearchAndFilter(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

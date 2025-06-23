@@ -1,10 +1,15 @@
 package ovo.sypw.bsp.presentation.viewmodel
 
 import com.hoc081098.kmp.viewmodel.ViewModel
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsChannel
+import io.ktor.utils.io.readRemaining
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.io.readByteArray
+import ovo.sypw.bsp.data.api.HttpClientConfig
 import ovo.sypw.bsp.data.dto.NetdiskFile
 import ovo.sypw.bsp.data.dto.NetdiskFileQueryParams
 import ovo.sypw.bsp.data.dto.result.NetworkResult
@@ -65,12 +70,14 @@ class NetdiskViewModel(
                                 error = null
                             )
                         }
+
                         is NetworkResult.Error -> {
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,
                                 error = "加载文件列表失败: ${result.message}"
                             )
                         }
+
                         is NetworkResult.Loading -> {
                             _uiState.value = _uiState.value.copy(isLoading = true)
                         }
@@ -110,12 +117,14 @@ class NetdiskViewModel(
                             // 重新加载文件列表
                             loadFileList()
                         }
+
                         is NetworkResult.Error -> {
                             _uiState.value = _uiState.value.copy(
                                 isUploading = false,
                                 error = "文件上传失败: ${result.message}"
                             )
                         }
+
                         is NetworkResult.Loading -> {
                             _uiState.value = _uiState.value.copy(isUploading = true)
                         }
@@ -151,12 +160,14 @@ class NetdiskViewModel(
                             // 重新加载文件列表
                             loadFileList()
                         }
+
                         is NetworkResult.Error -> {
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,
                                 error = "文件删除失败: ${result.message}"
                             )
                         }
+
                         is NetworkResult.Loading -> {
                             _uiState.value = _uiState.value.copy(isLoading = true)
                         }
@@ -192,12 +203,14 @@ class NetdiskViewModel(
                             // 重新加载文件列表
                             loadFileList()
                         }
+
                         is NetworkResult.Error -> {
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,
                                 error = "批量删除失败: ${result.message}"
                             )
                         }
+
                         is NetworkResult.Loading -> {
                             _uiState.value = _uiState.value.copy(isLoading = true)
                         }
@@ -233,12 +246,14 @@ class NetdiskViewModel(
                             // 重新加载文件列表
                             loadFileList()
                         }
+
                         is NetworkResult.Error -> {
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,
                                 error = "文件重命名失败: ${result.message}"
                             )
                         }
+
                         is NetworkResult.Loading -> {
                             _uiState.value = _uiState.value.copy(isLoading = true)
                         }
@@ -278,12 +293,14 @@ class NetdiskViewModel(
                                 error = null
                             )
                         }
+
                         is NetworkResult.Error -> {
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,
                                 error = "搜索文件失败: ${result.message}"
                             )
                         }
+
                         is NetworkResult.Loading -> {
                             _uiState.value = _uiState.value.copy(isLoading = true)
                         }
@@ -299,7 +316,6 @@ class NetdiskViewModel(
             }
         }
     }
-
 
 
     /**
@@ -331,7 +347,7 @@ class NetdiskViewModel(
     fun toggleSelectAll() {
         val allFileIds = _uiState.value.fileList.map { it.id }.toSet()
         val isAllSelected = _uiState.value.selectedFiles.containsAll(allFileIds)
-        
+
         _uiState.value = _uiState.value.copy(
             selectedFiles = if (isAllSelected) emptySet() else allFileIds
         )
@@ -356,19 +372,22 @@ class NetdiskViewModel(
 
     /**
      * 选择并上传文件
+     * 使用FileUtils选择文件并上传到网盘，保持原始文件名
      */
-    @OptIn(ExperimentalTime::class)
     fun selectAndUploadFile() {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(isUploading = true, error = null)
-                
+
                 // 选择文件
-                val fileBytes = fileUtils.selectFileBytes()
-                if (fileBytes != null) {
-                    // 这里需要获取文件名，暂时使用默认名称
-                    val fileName = "uploaded_file_${Clock.System.now().toEpochMilliseconds()}"
+                val selectedFile = fileUtils.selectFile()
+                if (selectedFile != null) {
+                    // 获取原始文件名
+                    val fileName = selectedFile.name
                     
+                    // 读取文件字节数组
+                    val fileBytes = fileUtils.readBytes(selectedFile)
+
                     // 调用上传方法
                     uploadFileWithBytes(fileBytes, fileName)
                 } else {
@@ -402,12 +421,14 @@ class NetdiskViewModel(
                             // 刷新文件列表
                             loadFileList()
                         }
+
                         is NetworkResult.Error -> {
                             _uiState.value = _uiState.value.copy(
                                 isUploading = false,
                                 error = "文件上传失败: ${result.message}"
                             )
                         }
+
                         is NetworkResult.Loading -> {
                             _uiState.value = _uiState.value.copy(isUploading = true)
                         }
@@ -429,6 +450,100 @@ class NetdiskViewModel(
      */
     fun getDownloadUrl(file: NetdiskFile): String? {
         return file.fileUrl
+    }
+
+    /**
+     * 下载文件并保存到本地
+     * @param file 要下载的文件
+     * @param fileUtils 文件工具实例
+     * @param onProgress 下载进度回调
+     * @return 是否下载成功
+     */
+    suspend fun downloadAndSaveFile(
+        file: NetdiskFile,
+        fileUtils: FileUtils,
+        onProgress: (Float) -> Unit
+    ): Boolean {
+        return try {
+            val downloadUrl = file.fileUrl
+            if (downloadUrl.isBlank()) {
+                _uiState.value = _uiState.value.copy(
+                    error = "文件下载链接无效"
+                )
+                return false
+            }
+
+            // 使用HttpClient下载文件
+            val httpClient = HttpClientConfig.createHttpClient()
+            val response = httpClient.get(downloadUrl)
+            val channel = response.bodyAsChannel()
+            val contentLength = response.headers["Content-Length"]?.toLongOrNull() ?: 0L
+
+            // 读取文件数据
+            val data = if (contentLength > 0) {
+                // 如果知道文件大小，可以显示进度
+                val buffer = ByteArray(8192)
+                val result = mutableListOf<Byte>()
+                var totalRead = 0L
+
+                while (!channel.isClosedForRead) {
+                    val packet = channel.readRemaining(buffer.size.toLong())
+                    if (packet.exhausted()) break
+
+                    val bytes = packet.readByteArray()
+                    result.addAll(bytes.toList())
+                    totalRead += bytes.size
+
+                    // 更新进度
+                    val progress = if (contentLength > 0) {
+                        (totalRead.toFloat() / contentLength.toFloat()).coerceIn(0f, 1f)
+                    } else {
+                        0f
+                    }
+                    onProgress(progress)
+                }
+
+                result.toByteArray()
+            } else {
+                // 如果不知道文件大小，直接读取全部
+                onProgress(0.5f) // 显示50%进度
+                channel.readRemaining().readByteArray()
+            }
+
+            onProgress(0.9f) // 下载完成，准备保存
+
+            // 获取文件扩展名
+            val extension = file.fileName.substringAfterLast('.', "")
+            val fileName=  file.fileName.substringBeforeLast('.',"")
+            // 保存文件
+            val savedFile = fileUtils.saveFile(
+                data = data,
+                fileName = fileName,
+                extension = extension
+            )
+
+            // 关闭httpClient
+            httpClient.close()
+
+            onProgress(1.0f) // 保存完成
+
+            if (savedFile != null) {
+                _uiState.value = _uiState.value.copy(
+                    operationResult = "文件 ${file.fileName} 下载成功"
+                )
+                true
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    error = "文件保存失败"
+                )
+                false
+            }
+        } catch (e: Exception) {
+            _uiState.value = _uiState.value.copy(
+                error = "下载失败: ${e.message}"
+            )
+            false
+        }
     }
 
     /**

@@ -75,7 +75,6 @@ fun AnnouncementDetailScreen(
                     ) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(48.dp),
-                            color = MaterialTheme.colorScheme.primary
                         )
                         Text(
                             text = "正在加载公告详情...",
@@ -152,9 +151,12 @@ fun AnnouncementDetailScreen(
         ) {
             // 标题卡片
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                shape = RoundedCornerShape(12.dp)
+                modifier = Modifier.fillMaxSize(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -204,24 +206,12 @@ fun AnnouncementDetailScreen(
                         }
                     }
                 }
-            }
 
-            // 内容卡片 - 富文本显示
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
+
+
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    Text(
-                        text = "公告内容",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
 
                     // 富文本内容展示
                     RichText(

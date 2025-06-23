@@ -34,7 +34,6 @@ import ovo.sypw.bsp.navigation.SideNavigationBar
 import ovo.sypw.bsp.navigation.getNavigationItems
 import ovo.sypw.bsp.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.screens.AIChatScreen
-import ovo.sypw.bsp.presentation.screens.HomeScreen
 import ovo.sypw.bsp.presentation.screens.NetdiskScreen
 import ovo.sypw.bsp.presentation.screens.ProfileScreen
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
@@ -44,12 +43,10 @@ import ovo.sypw.bsp.presentation.screens.announcement.PublicAnnouncementScreen
 import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
 import ovo.sypw.bsp.presentation.screens.auth.LoginScreen
 import ovo.sypw.bsp.presentation.screens.auth.RegisterScreen
-import ovo.sypw.bsp.presentation.screens.test.ApiTestScreen
 import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
-import ovo.sypw.bsp.utils.file.FileKitExample
 import ovo.sypw.bsp.utils.getResponsiveLayoutConfig
 
 /**
@@ -374,10 +371,6 @@ private fun MainContent(
     val currentScreen = navigationManager.currentScreen.value
 
     when (currentScreen) {
-        AppScreen.HOME.route -> {
-            HomeScreen(modifier = modifier)
-        }
-
         AppScreen.ANNOUNCEMENTS.route -> {
             PublicAnnouncementScreen(
                 modifier = modifier,
@@ -413,7 +406,7 @@ private fun MainContent(
         AppScreen.AI_CHAT.route -> {
             AIChatScreen(
                 modifier = modifier,
-                layoutConfig=layoutConfig
+                layoutConfig = layoutConfig
             )
         }
 
@@ -422,9 +415,6 @@ private fun MainContent(
                 modifier = modifier
             )
         }
-
-//        AppScreen.API_TEST.route ->
-//            ApiTestScreen(modifier = modifier)
 
         AppScreen.ADMIN.route -> {
             AdminScreen(
@@ -457,22 +447,22 @@ private fun MainContent(
         AppScreen.LOGIN.route -> {
             // 在主应用中不应该显示登录界面，重定向到首页
             LaunchedEffect(Unit) {
-                navigationManager.navigateTo(AppScreen.HOME.route)
+                navigationManager.navigateTo(AppScreen.ADMIN.route)
             }
-            HomeScreen(modifier = modifier)
+            AdminScreen(modifier = modifier,layoutConfig=layoutConfig)
         }
 
         AppScreen.REGISTER.route -> {
             // 在主应用中不应该显示注册界面，重定向到首页
             LaunchedEffect(Unit) {
-                navigationManager.navigateTo(AppScreen.HOME.route)
+                navigationManager.navigateTo(AppScreen.ADMIN.route)
             }
-            HomeScreen(modifier = modifier)
+            AdminScreen(modifier = modifier,layoutConfig=layoutConfig)
         }
 
         else -> {
             // 默认显示首页
-            HomeScreen(modifier = modifier)
+            AdminScreen(modifier = modifier,layoutConfig=layoutConfig)
         }
     }
 }

@@ -38,7 +38,7 @@ fun RequestLogDetailDialog(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(4.dp)
             ) {
                 Column(
                     modifier = Modifier

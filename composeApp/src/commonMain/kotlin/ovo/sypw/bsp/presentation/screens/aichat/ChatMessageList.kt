@@ -150,8 +150,8 @@ private fun MessageItem(
         Card(
             modifier = Modifier
                 .padding(
-                    start = if (isUser) 48.dp else 8.dp,
-                    end = if (isUser) 8.dp else 48.dp
+                    start = if (isUser) 24.dp else 8.dp,
+                    end = if (isUser) 8.dp else 24.dp
                 ),
             colors = CardDefaults.cardColors(
                 containerColor = backgroundColor
@@ -169,7 +169,7 @@ private fun MessageItem(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // 根据消息角色选择渲染方式
+                    // 根据消息角色和流式状态选择渲染方式
                     if (isUser) {
                         // 用户消息使用普通Text显示
                         Text(
@@ -179,35 +179,46 @@ private fun MessageItem(
                             modifier = Modifier.weight(1f)
                         )
                     } else {
-                        // AI消息使用Markdown渲染
-                         Markdown(
-                             content = message.message,
-                             modifier = Modifier.weight(1f),
-                             typography = markdownTypography(
-                                 h1 = MaterialTheme.typography.titleLarge,
-                                 h2 = MaterialTheme.typography.titleMedium,
-                                 h3 = MaterialTheme.typography.titleSmall,
-                                 h4 = MaterialTheme.typography.bodyLarge,
-                                 h5 = MaterialTheme.typography.bodyMedium,
-                                 h6 = MaterialTheme.typography.bodySmall,
-                                 text = MaterialTheme.typography.bodySmall,
-                                 code = MaterialTheme.typography.labelSmall,
-                                 quote = MaterialTheme.typography.bodySmall
-                             )
-                         )
+                        // AI消息：流式传输时使用Text，传输完成后使用Markdown
+                        if (isStreaming) {
+                            // 流式传输中，使用普通Text显示
+                            Text(
+                                text = message.message,
+                                color = textColor,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f)
+                            )
+                        } else {
+                            // 传输完成，使用Markdown渲染
+                            Markdown(
+                                content = message.message,
+                                modifier = Modifier.weight(1f),
+                                typography = markdownTypography(
+                                    h1 = MaterialTheme.typography.titleLarge,
+                                    h2 = MaterialTheme.typography.titleMedium,
+                                    h3 = MaterialTheme.typography.titleSmall,
+                                    h4 = MaterialTheme.typography.bodyLarge,
+                                    h5 = MaterialTheme.typography.bodyMedium,
+                                    h6 = MaterialTheme.typography.bodySmall,
+                                    text = MaterialTheme.typography.bodySmall,
+                                    code = MaterialTheme.typography.labelSmall,
+                                    quote = MaterialTheme.typography.bodySmall
+                                )
+                            )
+                        }
                     }
                     
                     // 流式传输时显示动画光标
                     if (isStreaming) {
                         var cursorVisible by remember { mutableStateOf(true) }
-                        
+
                         LaunchedEffect(Unit) {
                             while (true) {
                                 delay(500)
                                 cursorVisible = !cursorVisible
                             }
                         }
-                        
+
                         Text(
                             text = "|",
                             color = textColor.copy(alpha = if (cursorVisible) 0.8f else 0.2f),

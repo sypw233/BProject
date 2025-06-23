@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
  * 负责管理当前选中的页面状态
  */
 class NavigationManager {
-    private val _currentScreen = mutableStateOf(AppScreen.HOME.route)
+    private val _currentScreen = mutableStateOf(AppScreen.ADMIN.route)
     val currentScreen: State<String> = _currentScreen
 
     // 存储当前选中的公告ID

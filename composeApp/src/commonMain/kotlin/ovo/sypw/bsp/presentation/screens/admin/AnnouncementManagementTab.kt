@@ -145,6 +145,9 @@ private fun AnnouncementCard(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .height(160.dp), // 固定卡片高度，确保一致性

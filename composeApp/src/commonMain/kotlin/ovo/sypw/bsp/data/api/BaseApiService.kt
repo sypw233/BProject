@@ -185,7 +185,7 @@ abstract class BaseApiService {
                 if (bytesRead > 0) {
                     val chunk = buffer.decodeToString(0, bytesRead)
                     if (chunk.isNotEmpty()) {
-                        Logger.d("BaseApiService", "接收到数据块: ${chunk.length} 字符")
+//                        Logger.d("BaseApiService", "接收到数据块: ${chunk.length} 字符")
                         emit(chunk)
                     }
                 } else if (bytesRead == -1) {

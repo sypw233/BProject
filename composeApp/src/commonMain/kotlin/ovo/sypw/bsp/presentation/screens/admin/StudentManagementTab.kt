@@ -147,6 +147,9 @@ private fun StudentCard(
     layoutConfig: ResponsiveLayoutConfig
 ) {
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         modifier = Modifier
             .fillMaxWidth()

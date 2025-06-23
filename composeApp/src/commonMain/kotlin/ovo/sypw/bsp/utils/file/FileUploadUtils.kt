@@ -1,6 +1,7 @@
 package ovo.sypw.bsp.utils.file
 
 import kotlinx.datetime.Clock
+import ovo.sypw.bsp.utils.StringUtils.format
 import kotlin.math.log10
 import kotlin.math.pow
 
@@ -119,11 +120,54 @@ object FileUploadUtils {
     fun formatFileSize(sizeInBytes: Long): String {
         if (sizeInBytes <= 0) return "0 B"
 
-        arrayOf("B", "KB", "MB", "GB", "TB")
-        val digitGroups = (log10(sizeInBytes.toDouble()) / log10(1024.0)).toInt()
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (log10(sizeInBytes.toDouble()) / log10(1024.0)).toInt().coerceAtMost(units.size - 1)
 
         val size = sizeInBytes / 1024.0.pow(digitGroups.toDouble())
-        return size.toString()
+        return String.format("%.1f %s", size, units[digitGroups])
+    }
+
+    /**
+     * 格式化日期时间显示
+     * @param dateTimeString ISO格式的日期时间字符串
+     * @return 格式化后的日期时间字符串
+     */
+    fun formatDateTime(dateTimeString: String): String {
+        return try {
+            // 如果是ISO格式，转换为更友好的显示格式
+            if (dateTimeString.contains('T')) {
+                val parts = dateTimeString.split('T')
+                val datePart = parts[0]
+                val timePart = parts.getOrNull(1)?.substringBefore('.') ?: "00:00:00"
+                "$datePart $timePart"
+            } else {
+                dateTimeString
+            }
+        } catch (e: Exception) {
+            dateTimeString
+        }
+    }
+
+    /**
+     * 格式化相对时间显示（如：2小时前、3天前）
+     * @param dateTimeString ISO格式的日期时间字符串
+     * @return 相对时间字符串
+     */
+    fun formatRelativeTime(dateTimeString: String): String {
+        return try {
+            val now = Clock.System.now().toEpochMilliseconds()
+            // 简单的时间解析，实际项目中建议使用kotlinx-datetime
+            val timeString = if (dateTimeString.contains('T')) {
+                dateTimeString.replace('T', ' ').substringBefore('.')
+            } else {
+                dateTimeString
+            }
+            
+            // 这里返回格式化的时间，实际实现需要根据具体需求调整
+            formatDateTime(dateTimeString)
+        } catch (e: Exception) {
+            dateTimeString
+        }
     }
 
 
