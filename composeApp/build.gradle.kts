@@ -24,8 +24,9 @@ kotlin {
 //        iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "bsProject"
+            baseName = "ComposeApp"
             isStatic = true
+            binaryOption("bundleId", "ovo.sypw.bsp")
         }
     }
 
