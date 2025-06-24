@@ -52,7 +52,7 @@ class FileUploadUseCase(
     fun uploadImage(
         imageBytes: ByteArray,
         fileName: String,
-        quality: Int = 85
+        quality: Int = 50
     ): Flow<NetworkResult<FileUploadResponse>> {
         // 输入验证
         val validationResult = validateImageInput(imageBytes, fileName, quality)
@@ -151,6 +151,7 @@ class FileUploadUseCase(
         return when {
             quality < 0 || quality > 100 -> "图片质量必须在0-100之间"
             !isImageFile(fileName) -> "文件不是支持的图片格式"
+            imageBytes.size > 3 * 1024 * 1024 -> "图片大小不能超过3MB"
             else -> null
         }
     }

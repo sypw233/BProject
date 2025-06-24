@@ -48,10 +48,10 @@ interface FileUploadRepository : BaseRepository {
     /**
      * 检查文件大小是否符合要求
      * @param fileSize 文件大小（字节）
-     * @param maxSize 最大允许大小（字节），默认10MB
+     * @param maxSize 最大允许大小（字节），默认3MB
      * @return 是否符合要求
      */
-    fun validateFileSize(fileSize: Long, maxSize: Long = 10 * 1024 * 1024): Boolean
+    fun validateFileSize(fileSize: Long, maxSize: Long = 3 * 1024 * 1024): Boolean
 
     /**
      * 检查文件类型是否支持

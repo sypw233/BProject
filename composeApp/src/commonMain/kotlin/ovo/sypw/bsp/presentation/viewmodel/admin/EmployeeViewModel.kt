@@ -20,6 +20,7 @@ import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
 import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.PagingManager
 import ovo.sypw.bsp.utils.PagingUtils
+import ovo.sypw.bsp.utils.StringUtils.format
 import ovo.sypw.bsp.utils.file.FileUtils
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -803,11 +804,22 @@ class EmployeeViewModel(
 
                 val imageBytes = fileUtils.selectImageBytes()
                 if (imageBytes != null) {
+                    // 验证图片大小（3MB限制）
+                    val maxSize = 3 * 1024 * 1024 // 3MB
+                    if (imageBytes.size > maxSize) {
+                        _employeeDialogState.value = _employeeDialogState.value.copy(
+                            isUploadingAvatar = false,
+                            errorMessage = "图片大小不能超过3MB，当前大小: ${String.format("%.2f", imageBytes.size / 1024.0 / 1024.0)}MB"
+                        )
+                        Logger.w(TAG, "头像选择失败: 图片大小超过限制 ${imageBytes.size} bytes")
+                        return@launch
+                    }
+                    
                     _employeeDialogState.value = _employeeDialogState.value.copy(
                         selectedAvatarBytes = imageBytes,
                         isUploadingAvatar = false
                     )
-                    Logger.i(TAG, "头像选择成功，大小: ${imageBytes.size} bytes")
+                    Logger.i(TAG, "头像选择成功，大小: ${imageBytes.size} bytes (${String.format("%.2f", imageBytes.size / 1024.0 / 1024.0)}MB)")
                 } else {
                     _employeeDialogState.value = _employeeDialogState.value.copy(
                         isUploadingAvatar = false,
@@ -857,7 +869,6 @@ class EmployeeViewModel(
             fileUploadUseCase.uploadImage(
                 imageBytes = avatarBytes,
                 fileName = fileName,
-                quality = 85
             ).catch { e ->
                 Logger.e(TAG, "上传头像失败", e)
                 throw e
