@@ -101,19 +101,22 @@ class AIChatViewModel(
                     is NetworkResult.Success -> {
                         _availableModels.value = result.data
                         Logger.i("AIChatViewModel", "加载模型列表成功: ${result.data.size}个模型")
-                        
+
                         // 如果当前选中的模型不在可用列表中，选择第一个可用模型
                         if (_selectedModel.value !in result.data && result.data.isNotEmpty()) {
                             _selectedModel.value = result.data.first()
                         }
                     }
+
                     is NetworkResult.Error -> {
                         Logger.e("AIChatViewModel", "加载模型列表失败: ${result.message}")
                         _errorMessage.value = "加载模型列表失败: ${result.message}"
                     }
+
                     is NetworkResult.Loading -> {
                         // 保持加载状态
                     }
+
                     NetworkResult.Idle -> {
                         // 空闲状态
                     }
@@ -141,6 +144,7 @@ class AIChatViewModel(
                         Logger.i("AIChatViewModel", "更新当前会话ID: ${latestSession.sessionId}")
                     }
                 }
+
                 else -> {
                     Logger.e("AIChatViewModel", "获取最新会话ID失败")
                 }
@@ -164,6 +168,7 @@ class AIChatViewModel(
                         // SessionsResponse现在直接是List<ChatSession>
                         _sessions.value = result.data
                     }
+
                     is NetworkResult.Error -> {
                         _errorMessage.value = result.message
                         Logger.e("加载会话列表失败: ${result.message}")
@@ -195,6 +200,7 @@ class AIChatViewModel(
                         _currentSessionId.value = sessionId
                         _messages.value = result.data.messages ?: emptyList()
                     }
+
                     is NetworkResult.Error -> {
                         _errorMessage.value = result.message
                         Logger.e("加载会话失败: ${result.message}")
@@ -238,6 +244,7 @@ class AIChatViewModel(
                         // 刷新会话列表
                         loadSessions()
                     }
+
                     is NetworkResult.Error -> {
                         _errorMessage.value = result.message
                         Logger.e("删除会话失败: ${result.message}")
@@ -266,6 +273,7 @@ class AIChatViewModel(
                         // 刷新会话列表
                         loadSessions()
                     }
+
                     is NetworkResult.Error -> {
                         _errorMessage.value = result.message
                         Logger.e("更新会话标题失败: ${result.message}")
@@ -301,6 +309,7 @@ class AIChatViewModel(
                         createNewSession()
                         loadSessions()
                     }
+
                     is NetworkResult.Error -> {
                         _errorMessage.value = result.message
                         Logger.e("清空所有会话失败: ${result.message}")
@@ -315,6 +324,7 @@ class AIChatViewModel(
             }
         }
     }
+
     /**
      * 发送消息（流式传输）
      */
@@ -328,7 +338,7 @@ class AIChatViewModel(
             _streamingMessage.value = ""
 
             // 记录是否为新对话
-                val isNewSession = _currentSessionId.value.isNullOrBlank()
+            val isNewSession = _currentSessionId.value.isNullOrBlank()
 
             // 添加用户消息到列表
             val userMessage = ChatMessage(
@@ -393,7 +403,10 @@ class AIChatViewModel(
                     val latestSession = _sessions.value.firstOrNull()
                     if (latestSession != null) {
                         _currentSessionId.value = latestSession.sessionId
-                        Logger.d("AIChatViewModel", "新对话创建成功，sessionId: ${latestSession.sessionId}")
+                        Logger.d(
+                            "AIChatViewModel",
+                            "新对话创建成功，sessionId: ${latestSession.sessionId}"
+                        )
                     }
                 }
 

@@ -2,8 +2,8 @@ package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
 import ovo.sypw.bsp.data.api.AuthApiService
-import ovo.sypw.bsp.data.repository.AuthRepositoryImpl
 import ovo.sypw.bsp.domain.repository.AuthRepository
+import ovo.sypw.bsp.domain.repository.impl.AuthRepositoryImpl
 import ovo.sypw.bsp.domain.usecase.ChangePasswordUseCase
 import ovo.sypw.bsp.domain.usecase.GetUserInfoUseCase
 import ovo.sypw.bsp.domain.usecase.LoginUseCase

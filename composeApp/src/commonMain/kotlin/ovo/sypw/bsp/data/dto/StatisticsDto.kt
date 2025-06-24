@@ -1,16 +1,6 @@
-package ovo.sypw.bsp.data.model
+package ovo.sypw.bsp.data.dto
 
 import kotlinx.serialization.Serializable
-
-/**
- * 统计数据响应模型
- */
-@Serializable
-data class StatisticsResponse(
-    val code: Int,
-    val msg: String,
-    val data: StatisticsData?
-)
 
 /**
  * 统计数据模型

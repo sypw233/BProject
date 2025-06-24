@@ -2,8 +2,8 @@ package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
 import ovo.sypw.bsp.data.api.NetdiskApiService
-import ovo.sypw.bsp.data.repository.NetdiskRepositoryImpl
 import ovo.sypw.bsp.domain.repository.NetdiskRepository
+import ovo.sypw.bsp.domain.repository.impl.NetdiskRepositoryImpl
 import ovo.sypw.bsp.presentation.viewmodel.NetdiskViewModel
 
 /**

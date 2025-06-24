@@ -1,11 +1,11 @@
-package ovo.sypw.bsp.data.repository
+package ovo.sypw.bsp.domain.repository.impl
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import ovo.sypw.bsp.data.api.StatisticsApiService
+import ovo.sypw.bsp.data.dto.BarChartData
+import ovo.sypw.bsp.data.dto.StatisticsData
 import ovo.sypw.bsp.data.dto.result.NetworkResult
-import ovo.sypw.bsp.data.model.BarChartData
-import ovo.sypw.bsp.data.model.StatisticsData
 import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.domain.repository.StatisticsRepository
 import ovo.sypw.bsp.utils.Logger

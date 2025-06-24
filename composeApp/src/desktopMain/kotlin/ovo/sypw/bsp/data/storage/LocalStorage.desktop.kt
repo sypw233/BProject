@@ -5,18 +5,18 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Properties
 
 /**
  * Desktop平台的LocalStorage实现
  * 使用Properties文件进行数据存储
  */
 actual class LocalStorage {
-    
+
     companion object {
         private const val STORAGE_FILE_NAME = "bsp_local_storage.properties"
     }
-    
+
     private val storageFile: File by lazy {
         val userHome = System.getProperty("user.home")
         val appDir = File(userHome, ".bsp")
@@ -25,13 +25,13 @@ actual class LocalStorage {
         }
         File(appDir, STORAGE_FILE_NAME)
     }
-    
+
     private val properties = Properties()
-    
+
     init {
         loadProperties()
     }
-    
+
     /**
      * 加载Properties文件
      */
@@ -46,7 +46,7 @@ actual class LocalStorage {
             e.printStackTrace()
         }
     }
-    
+
     /**
      * 保存Properties到文件
      */
@@ -61,7 +61,7 @@ actual class LocalStorage {
             }
         }
     }
-    
+
     /**
      * 保存字符串数据
      * @param key 键
@@ -71,7 +71,7 @@ actual class LocalStorage {
         properties.setProperty(key, value)
         saveProperties()
     }
-    
+
     /**
      * 获取字符串数据
      * @param key 键
@@ -80,7 +80,7 @@ actual class LocalStorage {
     actual suspend fun getString(key: String): String? {
         return properties.getProperty(key)
     }
-    
+
     /**
      * 保存布尔值数据
      * @param key 键
@@ -90,7 +90,7 @@ actual class LocalStorage {
         properties.setProperty(key, value.toString())
         saveProperties()
     }
-    
+
     /**
      * 获取布尔值数据
      * @param key 键
@@ -101,7 +101,7 @@ actual class LocalStorage {
         val value = properties.getProperty(key)
         return value?.toBooleanStrictOrNull() ?: defaultValue
     }
-    
+
     /**
      * 保存整数数据
      * @param key 键
@@ -111,7 +111,7 @@ actual class LocalStorage {
         properties.setProperty(key, value.toString())
         saveProperties()
     }
-    
+
     /**
      * 获取整数数据
      * @param key 键
@@ -122,7 +122,7 @@ actual class LocalStorage {
         val value = properties.getProperty(key)
         return value?.toIntOrNull() ?: defaultValue
     }
-    
+
     /**
      * 保存长整数数据
      * @param key 键
@@ -132,7 +132,7 @@ actual class LocalStorage {
         properties.setProperty(key, value.toString())
         saveProperties()
     }
-    
+
     /**
      * 获取长整数数据
      * @param key 键
@@ -143,7 +143,7 @@ actual class LocalStorage {
         val value = properties.getProperty(key)
         return value?.toLongOrNull() ?: defaultValue
     }
-    
+
     /**
      * 删除指定键的数据
      * @param key 键
@@ -152,7 +152,7 @@ actual class LocalStorage {
         properties.remove(key)
         saveProperties()
     }
-    
+
     /**
      * 清除所有数据
      */
@@ -160,7 +160,7 @@ actual class LocalStorage {
         properties.clear()
         saveProperties()
     }
-    
+
     /**
      * 检查是否包含指定键
      * @param key 键

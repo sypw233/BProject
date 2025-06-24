@@ -2,8 +2,8 @@ package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
 import ovo.sypw.bsp.data.api.FileUploadApiService
-import ovo.sypw.bsp.data.repository.FileUploadRepositoryImpl
 import ovo.sypw.bsp.domain.repository.FileUploadRepository
+import ovo.sypw.bsp.domain.repository.impl.FileUploadRepositoryImpl
 import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
 
 /**

@@ -2,8 +2,8 @@ package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
 import ovo.sypw.bsp.data.api.StatisticsApiService
-import ovo.sypw.bsp.data.repository.StatisticsRepositoryImpl
 import ovo.sypw.bsp.domain.repository.StatisticsRepository
+import ovo.sypw.bsp.domain.repository.impl.StatisticsRepositoryImpl
 import ovo.sypw.bsp.domain.usecase.StatisticsUseCase
 
 /**

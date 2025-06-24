@@ -1,6 +1,6 @@
 package ovo.sypw.bsp.domain.usecase
 
-import ovo.sypw.bsp.data.model.StatisticsData
+import ovo.sypw.bsp.data.dto.StatisticsData
 import ovo.sypw.bsp.domain.repository.StatisticsRepository
 import ovo.sypw.bsp.utils.Logger
 

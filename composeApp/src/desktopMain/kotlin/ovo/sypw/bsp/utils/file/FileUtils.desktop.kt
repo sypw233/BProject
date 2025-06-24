@@ -2,25 +2,25 @@ package ovo.sypw.bsp.utils.file
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
-import org.jetbrains.skia.Image
 import io.github.vinceglb.filekit.core.FileKit
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
 import io.github.vinceglb.filekit.core.PlatformFile
+import org.jetbrains.skia.Image
 
 /**
  * Desktop平台的FileUtils实现
  * 使用FileKit库提供跨平台文件操作功能
  */
 class DesktopFileUtils : FileUtils {
-    
+
     /**
      * 检查当前平台是否支持文件选择
      * Desktop平台始终支持文件选择
      * @return 始终返回true
      */
     override fun isFileSelectionSupported(): Boolean = true
-    
+
     /**
      * 选择图片文件
      * 使用FileKit的图片选择器，支持常见的图片格式
@@ -37,7 +37,7 @@ class DesktopFileUtils : FileUtils {
             null
         }
     }
-    
+
     /**
      * 选择单个文件
      * 支持选择任意类型的文件
@@ -54,7 +54,7 @@ class DesktopFileUtils : FileUtils {
             null
         }
     }
-    
+
 
     /**
      * 保存文件
@@ -64,7 +64,11 @@ class DesktopFileUtils : FileUtils {
      * @param extension 文件扩展名
      * @return 保存的文件，取消保存时返回null
      */
-    override suspend fun saveFile(data: ByteArray, fileName: String, extension: String): PlatformFile? {
+    override suspend fun saveFile(
+        data: ByteArray,
+        fileName: String,
+        extension: String
+    ): PlatformFile? {
         return try {
             val file = FileKit.saveFile(
                 bytes = data,
@@ -77,7 +81,7 @@ class DesktopFileUtils : FileUtils {
             null
         }
     }
-    
+
     /**
      * 从PlatformFile读取字节数组
      * @param file 平台文件对象
@@ -91,7 +95,7 @@ class DesktopFileUtils : FileUtils {
             ByteArray(0)
         }
     }
-    
+
     /**
      * 将字节数组转换为ImageBitmap
      * 使用Skia进行图片解码，适用于Desktop平台
@@ -107,7 +111,7 @@ class DesktopFileUtils : FileUtils {
             null
         }
     }
-    
+
     /**
      * 从PlatformFile转换为ImageBitmap
      * 先读取文件字节数组，然后转换为ImageBitmap

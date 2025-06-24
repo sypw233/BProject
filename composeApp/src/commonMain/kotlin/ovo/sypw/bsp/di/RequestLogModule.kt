@@ -2,8 +2,8 @@ package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
 import ovo.sypw.bsp.data.api.RequestLogApiService
-import ovo.sypw.bsp.data.repository.RequestLogRepositoryImpl
 import ovo.sypw.bsp.domain.repository.RequestLogRepository
+import ovo.sypw.bsp.domain.repository.impl.RequestLogRepositoryImpl
 import ovo.sypw.bsp.domain.usecase.RequestLogUseCase
 
 /**

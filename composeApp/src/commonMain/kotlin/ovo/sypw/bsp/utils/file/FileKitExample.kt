@@ -1,10 +1,23 @@
 package ovo.sypw.bsp.utils.file
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,7 +34,7 @@ fun FileKitExample() {
     val scope = rememberCoroutineScope()
     var message by remember { mutableStateOf("准备就绪") }
     var isLoading by remember { mutableStateOf(false) }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,7 +47,7 @@ fun FileKitExample() {
             text = "FileKit 功能演示",
             style = MaterialTheme.typography.headlineMedium
         )
-        
+
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -61,7 +74,7 @@ fun FileKitExample() {
                 }
             }
         }
-        
+
         // 图片选择功能
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -74,7 +87,7 @@ fun FileKitExample() {
                     text = "图片操作",
                     style = MaterialTheme.typography.titleMedium
                 )
-                
+
                 Button(
                     onClick = {
                         scope.launch {
@@ -83,8 +96,9 @@ fun FileKitExample() {
                                 message = "正在选择图片..."
                                 val imageFile = fileUtils.selectImage()
                                 if (imageFile != null) {
-                                    message = "选择了图片: ${imageFile.name}, 大小: ${imageFile.getSize()} 字节"
-                                    
+                                    message =
+                                        "选择了图片: ${imageFile.name}, 大小: ${imageFile.getSize()} 字节"
+
                                     // 转换为ImageBitmap
                                     val imageBitmap = fileUtils.fileToImageBitmap(imageFile)
                                     if (imageBitmap != null) {
@@ -105,7 +119,7 @@ fun FileKitExample() {
                 ) {
                     Text("选择图片")
                 }
-                
+
                 Button(
                     onClick = {
                         scope.launch {
@@ -115,7 +129,7 @@ fun FileKitExample() {
                                 val imageBytes = fileUtils.selectImageBytes()
                                 if (imageBytes != null) {
                                     message = "选择了图片: ${imageBytes.size} 字节"
-                                    
+
                                     // 转换为ImageBitmap
                                     val imageBitmap = fileUtils.bytesToImageBitmap(imageBytes)
                                     if (imageBitmap != null) {
@@ -138,7 +152,7 @@ fun FileKitExample() {
                 }
             }
         }
-        
+
         // 文件选择功能
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -151,7 +165,7 @@ fun FileKitExample() {
                     text = "文件操作",
                     style = MaterialTheme.typography.titleMedium
                 )
-                
+
                 Button(
                     onClick = {
                         scope.launch {
@@ -160,7 +174,8 @@ fun FileKitExample() {
                                 message = "正在选择单个文件..."
                                 val file = fileUtils.selectFile()
                                 if (file != null) {
-                                    message = "选择了文件: ${file.name}, 大小: ${file.getSize()} 字节"
+                                    message =
+                                        "选择了文件: ${file.name}, 大小: ${file.getSize()} 字节"
                                 } else {
                                     message = "取消选择文件"
                                 }
@@ -180,7 +195,7 @@ fun FileKitExample() {
 
             }
         }
-        
+
         // 文件保存功能
         Card(
             modifier = Modifier.fillMaxWidth()
@@ -193,14 +208,15 @@ fun FileKitExample() {
                     text = "文件保存",
                     style = MaterialTheme.typography.titleMedium
                 )
-                
+
                 Button(
                     onClick = {
                         scope.launch {
                             isLoading = true
                             try {
                                 message = "正在保存文本文件..."
-                                val testData = "Hello, FileKit!\n这是一个测试文件。\n当前时间: ${kotlinx.datetime.Clock.System.now()}"
+                                val testData =
+                                    "Hello, FileKit!\n这是一个测试文件。\n当前时间: ${kotlinx.datetime.Clock.System.now()}"
                                 val savedFile = fileUtils.saveFile(
                                     data = testData.toByteArray(),
                                     fileName = "filekit_test",
@@ -223,7 +239,7 @@ fun FileKitExample() {
                 ) {
                     Text("保存文本文件")
                 }
-                
+
                 Button(
                     onClick = {
                         scope.launch {

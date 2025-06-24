@@ -1,13 +1,13 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop.
-
 # BSP - 企业级管理系统
 
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF.svg?style=flat&logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-4285F4.svg?style=flat&logo=jetpackcompose)](https://github.com/JetBrains/compose-multiplatform)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Build Status](https://github.com/yourusername/bProject/workflows/Build%20All%20Platforms/badge.svg)](https://github.com/yourusername/bProject/actions)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
+[![Compose](https://img.shields.io/badge/Compose-1.8.2-green.svg?style=flat&logo=jetpackcompose)](https://github.com/JetBrains/compose-multiplatform)
 
-一个基于 Kotlin Multiplatform 和 Compose Multiplatform 构建的现代化企业级管理系统，支持 Android、iOS、Desktop 多平台部署。
+一个基于 **Kotlin Multiplatform** 和 **Compose Multiplatform** 构建的现代化企业级管理系统，支持 **Android**、**iOS**、**Desktop** 多平台部署。采用 Clean Architecture 架构模式，提供完整的企业级功能模块。
 
 ## ✨ 功能特性
 
@@ -37,37 +37,41 @@ This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop.
 ## 🏗️ 技术栈
 
 ### 核心框架
-- **[Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)** - 跨平台开发框架
-- **[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform)** - 声明式 UI 框架
-- **[Ktor Client](https://ktor.io/docs/client.html)** - 跨平台网络请求库
-- **[Koin](https://insert-koin.io/)** - 轻量级依赖注入框架
+- **[Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html) 2.1.20** - 跨平台开发框架
+- **[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) 1.8.2** - 声明式 UI 框架
+- **[Ktor Client](https://ktor.io/docs/client.html) 3.1.3** - 跨平台网络请求库
+- **[Koin](https://insert-koin.io/) 4.1.0** - 轻量级依赖注入框架
 
 ### UI 组件
 - **Material Design 3** - 现代化设计语言
+- **Material Icons Extended** - 扩展图标库
 - **Compose Charts** - 数据可视化图表
-- **Rich Text Editor** - 富文本编辑器
-- **Coil** - 图片加载库
+- **Rich Text Editor** - 富文本编辑器 (RichEditor Compose)
+- **Coil 3.2.0** - 图片加载库
+- **Markdown Renderer** - Markdown 渲染支持
 
 ### 数据处理
 - **Kotlinx Serialization** - JSON 序列化
-- **Kotlinx Coroutines** - 异步编程
-- **Kotlinx DateTime** - 时间处理
-- **Paging 3** - 分页加载
+- **Kotlinx Coroutines 1.10.2** - 异步编程
+- **Kotlinx DateTime 0.6.2** - 时间处理
+- **FileKit** - 跨平台文件操作
 
 ### 架构组件
 - **expect/actual 机制** - 平台特定实现
 - **Repository 模式** - 数据访问抽象
 - **UseCase 模式** - 业务逻辑封装
-- **ViewModel** - UI 状态管理
+- **KMP ViewModel** - 跨平台状态管理
+- **Clean Architecture** - 分层架构设计
 
 ## 🚀 快速开始
 
 ### 环境要求
 
 - **JDK 21** 或更高版本
-- **Android Studio** 最新版本
+- **Android Studio** 最新版本 (推荐 2024.2.1+)
 - **Xcode 15+** (iOS 开发)
-- **Kotlin 2.1.21+**
+- **Kotlin 2.1.20**
+- **Gradle 8.10+**
 
 ### 克隆项目
 
@@ -80,17 +84,32 @@ cd bProject
 
 #### Android
 ```bash
+# 构建Debug版本
 ./gradlew :composeApp:assembleDebug
+
+# 安装到设备
+./gradlew :composeApp:installDebug
 ```
 
 #### iOS
 ```bash
+# 在iOS模拟器运行
 ./gradlew :composeApp:iosSimulatorArm64Test
+
+# 构建iOS Framework
+./gradlew :composeApp:iosArm64Archive
 ```
 
 #### Desktop
 ```bash
+# 运行桌面应用
 ./gradlew :composeApp:run
+
+# 创建可分发包
+./gradlew :composeApp:createDistributable
+
+# 打包为平台特定格式
+./gradlew :composeApp:packageDistributionForCurrentOS
 ```
 
 ### 开发环境配置
@@ -119,30 +138,69 @@ sudo gem install cocoapods
 bProject/
 ├── composeApp/                 # 主应用模块
 │   ├── src/
-│   │   ├── commonMain/         # 共享代码
-│   │   │   └── kotlin/ovo/sypw/bsp/
-│   │   │       ├── data/       # 数据层
-│   │   │       │   ├── api/    # API 服务
-│   │   │       │   ├── dto/    # 数据传输对象
-│   │   │       │   ├── repository/ # 仓储实现
-│   │   │       │   └── storage/    # 本地存储
-│   │   │       ├── domain/     # 业务逻辑层
-│   │   │       │   ├── repository/ # 仓储接口
-│   │   │       │   └── usecase/    # 用例
-│   │   │       ├── presentation/   # 表现层
-│   │   │       │   ├── components/ # UI 组件
-│   │   │       │   ├── screens/    # 页面
-│   │   │       │   └── viewmodel/  # 视图模型
-│   │   │       ├── di/         # 依赖注入
-│   │   │       ├── navigation/ # 导航管理
-│   │   │       └── utils/      # 工具类
+│   │   ├── commonMain/kotlin/ovo/sypw/bsp/  # 共享代码
+│   │   │   ├── data/           # 数据层
+│   │   │   │   ├── api/        # API 服务层
+│   │   │   │   │   ├── *ApiService.kt      # 各模块API服务
+│   │   │   │   │   ├── BaseApiService.kt   # 基础API服务
+│   │   │   │   │   ├── HttpClientConfig.kt # HTTP客户端配置
+│   │   │   │   │   └── NetworkConfig.kt    # 网络配置
+│   │   │   │   ├── dto/        # 数据传输对象
+│   │   │   │   │   ├── *Dto.kt             # 各模块DTO
+│   │   │   │   │   └── result/             # 网络结果封装
+│   │   │   │   ├── model/      # 数据模型
+│   │   │   │   ├── paging/     # 分页数据源
+│   │   │   │   └── storage/    # 本地存储
+│   │   │   │       ├── LocalStorage.kt     # 存储抽象
+│   │   │   │       └── TokenStorage*.kt    # Token存储
+│   │   │   ├── domain/         # 业务逻辑层
+│   │   │   │   ├── repository/ # 仓储接口
+│   │   │   │   │   ├── *Repository.kt      # 各模块仓储接口
+│   │   │   │   │   └── impl/               # 仓储实现
+│   │   │   │   └── usecase/    # 用例层
+│   │   │   │       └── *UseCase.kt         # 各模块用例
+│   │   │   ├── presentation/   # 表现层
+│   │   │   │   ├── components/ # UI 组件
+│   │   │   │   │   ├── ChartComponents.kt  # 图表组件
+│   │   │   │   │   ├── CommonComponents.kt # 通用组件
+│   │   │   │   │   ├── dialog/             # 对话框组件
+│   │   │   │   │   ├── search/             # 搜索组件
+│   │   │   │   │   └── template/           # 模板组件
+│   │   │   │   ├── navigation/ # 导航管理
+│   │   │   │   ├── screens/    # 页面
+│   │   │   │   │   ├── admin/              # 管理员页面
+│   │   │   │   │   ├── aichat/             # AI聊天页面
+│   │   │   │   │   ├── announcement/       # 公告页面
+│   │   │   │   │   └── auth/               # 认证页面
+│   │   │   │   └── viewmodel/  # 视图模型
+│   │   │   │       ├── admin/              # 管理员ViewModel
+│   │   │   │       └── *ViewModel.kt       # 各模块ViewModel
+│   │   │   ├── di/             # 依赖注入
+│   │   │   │   └── *Module.kt              # 各模块DI配置
+│   │   │   ├── utils/          # 工具类
+│   │   │   │   ├── file/                   # 文件操作工具
+│   │   │   │   ├── Logger.kt               # 日志工具
+│   │   │   │   ├── ResponsiveUtils.kt      # 响应式布局工具
+│   │   │   │   └── *.kt                    # 其他工具类
+│   │   │   ├── App.kt          # 应用入口
+│   │   │   └── Platform.kt     # 平台抽象
 │   │   ├── androidMain/        # Android 特定代码
 │   │   ├── iosMain/           # iOS 特定代码
-│   │   └── desktopMain/       # Desktop 特定代码
-│   └── build.gradle.kts
+│   │   ├── desktopMain/       # Desktop 特定代码
+│   │   └── commonTest/        # 共享测试代码
+│   └── build.gradle.kts       # 构建配置
 ├── iosApp/                     # iOS 应用入口
+│   ├── iosApp/
+│   │   ├── ContentView.swift   # SwiftUI视图
+│   │   └── iOSApp.swift        # iOS应用入口
+│   └── iosApp.xcodeproj/       # Xcode项目文件
 ├── .github/workflows/          # CI/CD 配置
-└── docs/                       # 项目文档
+│   └── build-all-platforms.yml # 多平台构建流程
+├── gradle/                     # Gradle配置
+│   └── libs.versions.toml      # 版本目录
+├── docs/                       # 项目文档
+├── README.md                   # 项目说明
+└── settings.gradle.kts         # 项目设置
 ```
 
 ## 🏛️ 架构设计
@@ -289,8 +347,14 @@ val networkModule = module {
         }
     }
     
-    // 平台特定的 HttpClientEngine
-    single<HttpClientEngine> { createHttpClientEngine() }
+    //// 平台特定的 HttpClientEngine
+    single<HttpClientEngine> { 
+        when (Platform.current) {
+            is Platform.Android -> OkHttp.create()
+            is Platform.iOS -> Darwin.create()
+            is Platform.Desktop -> OkHttp.create()
+        }
+    }
 }
 
 // RepositoryModule.kt
@@ -613,9 +677,21 @@ class ApiIntegrationTest {
 
 项目配置了 GitHub Actions 自动化构建流程，支持：
 
-- ✅ Android APK 构建和签名
-- ✅ iOS IPA 构建
-- ✅ Desktop 应用打包
+- ✅ **Android APK** 构建和签名 (支持自动签名)
+- ✅ **Windows MSI** 安装包构建
+- ✅ **macOS DMG** 应用包构建
+- ✅ **Linux DEB** 包构建
+- ✅ **iOS Framework** 构建 (需要 macOS 环境)
+
+### 触发构建
+
+```bash
+# 创建版本标签触发自动构建
+git tag v1.0.0
+git push origin v1.0.0
+
+# 或手动触发 GitHub Actions
+```
 
 ### 手动构建
 
@@ -626,14 +702,69 @@ class ApiIntegrationTest {
 # iOS Release
 ./gradlew :composeApp:iosArm64Archive
 
-# Desktop 打包
+# Desktop 可执行文件
+./gradlew :composeApp:createDistributable
+
+# Desktop 安装包 (Windows MSI, macOS DMG, Linux DEB)
 ./gradlew :composeApp:packageDistributionForCurrentOS
 
 # 生成所有平台的发布版本
 ./gradlew :composeApp:assembleRelease  # Android
 ./gradlew :composeApp:packageReleaseDistributionForCurrentOS  # Desktop
+```
 
+### 构建产物
+
+- **Android**: `composeApp/build/outputs/apk/release/`
+- **Desktop**: `composeApp/build/compose/binaries/main/`
+- **iOS**: `composeApp/build/bin/iosArm64/`
+
+## 🔧 开发工具
+
+### 推荐 IDE 插件
+
+- **Kotlin Multiplatform Mobile** - KMM 开发支持
+- **Compose Multiplatform IDE Support** - Compose 预览支持
+- **Ktor** - 网络请求支持
+
+### 代码质量
+
+```bash
+# 代码格式化
+./gradlew ktlintFormat
+
+# 代码检查
+./gradlew ktlintCheck
+
+# 依赖分析
+./gradlew dependencyUpdates
+```
+
+## 🤝 贡献指南
+
+1. Fork 本项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+### 代码规范
+
+- 遵循 Kotlin 官方编码规范
+- 使用有意义的变量和函数命名
+- 添加适当的注释和文档
+- 编写单元测试
 
 ## 📄 许可证
 
 本项目基于 MIT 许可证开源 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+## 📞 联系方式
+
+- 项目地址: [GitHub Repository](https://github.com/yourusername/bProject)
+- 问题反馈: [Issues](https://github.com/yourusername/bProject/issues)
+- 讨论交流: [Discussions](https://github.com/yourusername/bProject/discussions)
+
+---
+
+**⭐ 如果这个项目对你有帮助，请给个 Star 支持一下！**

@@ -15,8 +15,6 @@ import ovo.sypw.bsp.data.dto.NetdiskFileQueryParams
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.NetdiskRepository
 import ovo.sypw.bsp.utils.file.FileUtils
-import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 /**
  * 网盘管理页面的ViewModel
@@ -384,7 +382,7 @@ class NetdiskViewModel(
                 if (selectedFile != null) {
                     // 获取原始文件名
                     val fileName = selectedFile.name
-                    
+
                     // 读取文件字节数组
                     val fileBytes = fileUtils.readBytes(selectedFile)
 
@@ -514,7 +512,7 @@ class NetdiskViewModel(
 
             // 获取文件扩展名
             val extension = file.fileName.substringAfterLast('.', "")
-            val fileName=  file.fileName.substringBeforeLast('.',"")
+            val fileName = file.fileName.substringBeforeLast('.', "")
             // 保存文件
             val savedFile = fileUtils.saveFile(
                 data = data,

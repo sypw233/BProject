@@ -1,6 +1,6 @@
 package ovo.sypw.bsp.domain.repository
 
-import ovo.sypw.bsp.data.model.StatisticsData
+import ovo.sypw.bsp.data.dto.StatisticsData
 
 /**
  * 统计数据仓库接口

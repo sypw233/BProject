@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.data.repository
+package ovo.sypw.bsp.domain.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

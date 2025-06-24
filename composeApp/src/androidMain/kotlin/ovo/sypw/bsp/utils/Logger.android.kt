@@ -12,7 +12,7 @@ actual fun log(level: Logger.Level, tag: String, message: String, throwable: Thr
     } else {
         message
     }
-    
+
     when (level) {
         Logger.Level.DEBUG -> Log.d(tag, logMessage)
         Logger.Level.INFO -> Log.i(tag, logMessage)

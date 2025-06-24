@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
@@ -43,10 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.Month
 import ovo.sypw.bsp.data.dto.ChatSession
 import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
-import ovo.sypw.bsp.utils.Logger
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 
 /**
@@ -107,10 +104,10 @@ fun ChatSessionSidebar(
                             )
                         }
                     }
-                    
+
                     // 新建对话按钮
                     IconButton(
-                        onClick = { 
+                        onClick = {
                             viewModel.createNewSession()
                             onCloseDrawer?.invoke()
                         }
@@ -162,7 +159,7 @@ fun ChatSessionSidebar(
                             session = session,
                             isSelected = session.sessionId == currentSessionId,
                             isExpanded = isExpanded,
-                            onSessionClick = { 
+                            onSessionClick = {
                                 viewModel.loadSession(session.sessionId)
                                 onCloseDrawer?.invoke()
                             },

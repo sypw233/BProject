@@ -1,6 +1,7 @@
 package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
+import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
 import ovo.sypw.bsp.presentation.viewmodel.ApiTestViewModel
 import ovo.sypw.bsp.presentation.viewmodel.PublicAnnouncementViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.AdminViewModel
@@ -9,10 +10,9 @@ import ovo.sypw.bsp.presentation.viewmodel.admin.AuthViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.ClassViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.DepartmentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.EmployeeViewModel
-import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.RequestLogViewModel
-import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
 import ovo.sypw.bsp.presentation.viewmodel.admin.StatisticsViewModel
+import ovo.sypw.bsp.presentation.viewmodel.admin.StudentViewModel
 
 /**
  * ViewModel模块依赖注入配置

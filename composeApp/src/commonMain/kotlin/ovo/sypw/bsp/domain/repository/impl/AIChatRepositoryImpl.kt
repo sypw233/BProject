@@ -1,18 +1,15 @@
-package ovo.sypw.bsp.data.repository
+package ovo.sypw.bsp.domain.repository.impl
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import ovo.sypw.bsp.data.api.AIChatApiService
-import ovo.sypw.bsp.data.dto.AIChatRequest
-import ovo.sypw.bsp.data.dto.AIChatResponse
-import ovo.sypw.bsp.data.dto.AIChatStreamResponse
-import ovo.sypw.bsp.data.dto.ChatSession
-import ovo.sypw.bsp.data.dto.SessionsResponse
-import ovo.sypw.bsp.data.dto.SessionDetailResponse
 import ovo.sypw.bsp.data.dto.DeleteSessionResponse
 import ovo.sypw.bsp.data.dto.ModelsResponse
+import ovo.sypw.bsp.data.dto.SessionDetailResponse
+import ovo.sypw.bsp.data.dto.SessionsResponse
 import ovo.sypw.bsp.data.dto.result.NetworkResult
-import ovo.sypw.bsp.data.dto.result.NetworkResult.*
+import ovo.sypw.bsp.data.dto.result.NetworkResult.Error
+import ovo.sypw.bsp.data.dto.result.NetworkResult.Idle
+import ovo.sypw.bsp.data.dto.result.NetworkResult.Loading
+import ovo.sypw.bsp.data.dto.result.NetworkResult.Success
 import ovo.sypw.bsp.data.dto.result.isSuccess
 import ovo.sypw.bsp.data.dto.result.parseData
 import ovo.sypw.bsp.data.storage.TokenStorage
@@ -31,7 +28,6 @@ class AIChatRepositoryImpl(
     companion object {
         private const val TAG = "AIChatRepository"
     }
-
 
 
     /**
@@ -93,14 +89,17 @@ class AIChatRepositoryImpl(
             )
 
         return when (val result = aiChatApiService.getSession(sessionId, token)) {
-            is NetworkResult.Success -> {
+            is Success -> {
                 Logger.i(TAG, "获取会话详情成功: $sessionId")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
                     val sessionDetail = saResult.parseData<SessionDetailResponse>()
                     if (sessionDetail != null) {
                         // SessionDetailResponse现在是包装在SaResult的data字段中的ChatSession
-                        Logger.i(TAG, "会话详情解析成功: ${sessionDetail.messages?.size ?: 0}条消息")
+                        Logger.i(
+                            TAG,
+                            "会话详情解析成功: ${sessionDetail.messages?.size ?: 0}条消息"
+                        )
                         Success(sessionDetail)
                     } else {
                         Logger.e(TAG, "会话详情解析失败")
@@ -123,9 +122,9 @@ class AIChatRepositoryImpl(
                 result
             }
 
-            is NetworkResult.Loading -> result
-            NetworkResult.Idle -> TODO()
-            is NetworkResult.Success<*> -> TODO()
+            is Loading -> result
+            Idle -> TODO()
+            is Success<*> -> TODO()
         }
     }
 

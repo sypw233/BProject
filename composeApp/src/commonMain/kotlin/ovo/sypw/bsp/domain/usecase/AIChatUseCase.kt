@@ -1,14 +1,8 @@
 package ovo.sypw.bsp.domain.usecase
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
-import ovo.sypw.bsp.data.dto.AIChatRequest
-import ovo.sypw.bsp.data.dto.AIChatResponse
-import ovo.sypw.bsp.data.dto.ChatSession
-import ovo.sypw.bsp.data.dto.SessionsResponse
-import ovo.sypw.bsp.data.dto.SessionDetailResponse
 import ovo.sypw.bsp.data.dto.DeleteSessionResponse
+import ovo.sypw.bsp.data.dto.SessionDetailResponse
+import ovo.sypw.bsp.data.dto.SessionsResponse
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.domain.repository.AIChatRepository
 import ovo.sypw.bsp.utils.Logger
@@ -28,6 +22,7 @@ class AIChatUseCase(
         private const val MIN_TITLE_LENGTH = 1
         private const val MAX_TITLE_LENGTH = 100
     }
+
     /**
      * 获取会话列表
      * @return 会话列表结果
@@ -216,7 +211,6 @@ class AIChatUseCase(
             else -> null
         }
     }
-
 
 
     /**

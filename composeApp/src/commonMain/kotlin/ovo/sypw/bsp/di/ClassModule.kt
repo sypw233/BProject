@@ -2,8 +2,8 @@ package ovo.sypw.bsp.di
 
 import org.koin.dsl.module
 import ovo.sypw.bsp.data.api.ClassApiService
-import ovo.sypw.bsp.data.repository.ClassRepositoryImpl
 import ovo.sypw.bsp.domain.repository.ClassRepository
+import ovo.sypw.bsp.domain.repository.impl.ClassRepositoryImpl
 import ovo.sypw.bsp.domain.usecase.ClassUseCase
 
 /**

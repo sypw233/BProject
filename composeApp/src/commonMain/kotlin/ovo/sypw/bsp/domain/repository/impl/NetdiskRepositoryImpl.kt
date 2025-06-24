@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.data.repository
+package ovo.sypw.bsp.domain.repository.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -9,7 +9,10 @@ import ovo.sypw.bsp.data.dto.NetdiskFileOperationResult
 import ovo.sypw.bsp.data.dto.NetdiskFilePageResponse
 import ovo.sypw.bsp.data.dto.NetdiskFileQueryParams
 import ovo.sypw.bsp.data.dto.result.NetworkResult
-import ovo.sypw.bsp.data.dto.result.NetworkResult.*
+import ovo.sypw.bsp.data.dto.result.NetworkResult.Error
+import ovo.sypw.bsp.data.dto.result.NetworkResult.Idle
+import ovo.sypw.bsp.data.dto.result.NetworkResult.Loading
+import ovo.sypw.bsp.data.dto.result.NetworkResult.Success
 import ovo.sypw.bsp.data.dto.result.SaResult
 import ovo.sypw.bsp.data.storage.TokenStorage
 import ovo.sypw.bsp.domain.repository.BaseRepository
@@ -48,7 +51,7 @@ class NetdiskRepositoryImpl(
         transform: (T) -> R
     ): NetworkResult<R> {
         return when (result) {
-            is NetworkResult.Success -> {
+            is Success -> {
                 try {
                     val data = result.data.data as? T
                     if (data != null) {
@@ -67,9 +70,10 @@ class NetdiskRepositoryImpl(
                     )
                 }
             }
-            is NetworkResult.Error -> Error(result.exception, result.message)
-            is NetworkResult.Loading -> NetworkResult.Loading
-            NetworkResult.Idle -> TODO()
+
+            is Error -> Error(result.exception, result.message)
+            is Loading -> Loading
+            Idle -> TODO()
         }
     }
 
@@ -80,7 +84,7 @@ class NetdiskRepositoryImpl(
     ): Flow<NetworkResult<NetdiskFileOperationResult>> = performNetworkCall {
         val token = getAuthToken()
         if (token.isNullOrEmpty()) {
-            return@performNetworkCall NetworkResult.Error(
+            return@performNetworkCall Error(
                 exception = Exception("未找到认证令牌"),
                 message = "请先登录"
             )
@@ -88,12 +92,13 @@ class NetdiskRepositoryImpl(
 
         Logger.d(TAG, "上传文件: $fileName")
         val result = netdiskApiService.uploadFile(token, fileBytes, fileName, mimeType)
-        
+
         when (result) {
             is Success -> {
                 Logger.d(TAG, "文件上传成功: $fileName")
                 Success(NetdiskFileOperationResult.Success("文件上传成功"))
             }
+
             is Error -> {
                 Logger.e(TAG, "文件上传失败: ${result.message}")
                 Error(
@@ -101,6 +106,7 @@ class NetdiskRepositoryImpl(
                     message = result.message ?: "文件上传失败"
                 )
             }
+
             is Loading -> Loading
             Idle -> TODO()
         }
@@ -111,7 +117,7 @@ class NetdiskRepositoryImpl(
     ): Flow<NetworkResult<NetdiskFilePageResponse>> = performNetworkCall {
         val token = getAuthToken()
         if (token.isNullOrEmpty()) {
-            return@performNetworkCall NetworkResult.Error(
+            return@performNetworkCall Error(
                 exception = Exception("未找到认证令牌"),
                 message = "请先登录"
             )
@@ -132,9 +138,12 @@ class NetdiskRepositoryImpl(
                     // 直接从SaResult的data字段解析NetdiskFilePageResponse
                     val saResult = result.data
                     val pageResponse = saResult.data?.let { dataElement ->
-                        Json.decodeFromJsonElement(NetdiskFilePageResponse.serializer(), dataElement)
+                        Json.decodeFromJsonElement(
+                            NetdiskFilePageResponse.serializer(),
+                            dataElement
+                        )
                     } ?: throw Exception("响应数据为空")
-                    
+
                     Logger.d(TAG, "获取文件列表成功，共 ${pageResponse.total} 个文件")
                     Success(pageResponse)
                 } catch (e: Exception) {
@@ -145,6 +154,7 @@ class NetdiskRepositoryImpl(
                     )
                 }
             }
+
             is Error -> {
                 Logger.e(TAG, "获取文件列表失败: ${result.message}")
                 Error(
@@ -152,6 +162,7 @@ class NetdiskRepositoryImpl(
                     message = result.message ?: "获取文件列表失败"
                 )
             }
+
             is Loading -> Loading
             Idle -> TODO()
         }
@@ -162,7 +173,7 @@ class NetdiskRepositoryImpl(
     ): Flow<NetworkResult<NetdiskFile>> = performNetworkCall {
         val token = getAuthToken()
         if (token.isNullOrEmpty()) {
-            return@performNetworkCall NetworkResult.Error(
+            return@performNetworkCall Error(
                 exception = Exception("未找到认证令牌"),
                 message = "请先登录"
             )
@@ -174,9 +185,11 @@ class NetdiskRepositoryImpl(
         when (result) {
             is Success -> {
                 try {
-                    val fileDetail = Json.decodeFromString(NetdiskFile.serializer(), 
-                        Json.encodeToString(SaResult.serializer(), result.data.data as SaResult))
-                    
+                    val fileDetail = Json.decodeFromString(
+                        NetdiskFile.serializer(),
+                        Json.encodeToString(SaResult.serializer(), result.data.data as SaResult)
+                    )
+
                     Logger.d(TAG, "获取文件详情成功: ${fileDetail.fileName}")
                     Success(fileDetail)
                 } catch (e: Exception) {
@@ -187,6 +200,7 @@ class NetdiskRepositoryImpl(
                     )
                 }
             }
+
             is Error -> {
                 Logger.e(TAG, "获取文件详情失败: ${result.message}")
                 Error(
@@ -194,6 +208,7 @@ class NetdiskRepositoryImpl(
                     message = result.message ?: "获取文件详情失败"
                 )
             }
+
             is Loading -> Loading
             Idle -> TODO()
         }
@@ -205,7 +220,7 @@ class NetdiskRepositoryImpl(
     ): Flow<NetworkResult<NetdiskFileOperationResult>> = performNetworkCall {
         val token = getAuthToken()
         if (token.isNullOrEmpty()) {
-            return@performNetworkCall NetworkResult.Error(
+            return@performNetworkCall Error(
                 exception = Exception("未找到认证令牌"),
                 message = "请先登录"
             )
@@ -219,6 +234,7 @@ class NetdiskRepositoryImpl(
                 Logger.d(TAG, "文件名修改成功")
                 Success(NetdiskFileOperationResult.Success("文件名修改成功"))
             }
+
             is Error -> {
                 Logger.e(TAG, "文件名修改失败: ${result.message}")
                 Error(
@@ -226,6 +242,7 @@ class NetdiskRepositoryImpl(
                     message = result.message ?: "文件名修改失败"
                 )
             }
+
             is Loading -> Loading
             Idle -> TODO()
         }
@@ -236,7 +253,7 @@ class NetdiskRepositoryImpl(
     ): Flow<NetworkResult<NetdiskFileOperationResult>> = performNetworkCall {
         val token = getAuthToken()
         if (token.isNullOrEmpty()) {
-            return@performNetworkCall NetworkResult.Error(
+            return@performNetworkCall Error(
                 exception = Exception("未找到认证令牌"),
                 message = "请先登录"
             )
@@ -250,6 +267,7 @@ class NetdiskRepositoryImpl(
                 Logger.d(TAG, "文件删除成功")
                 Success(NetdiskFileOperationResult.Success("文件删除成功"))
             }
+
             is Error -> {
                 Logger.e(TAG, "文件删除失败: ${result.message}")
                 Error(
@@ -257,6 +275,7 @@ class NetdiskRepositoryImpl(
                     message = result.message ?: "文件删除失败"
                 )
             }
+
             is Loading -> Loading
             Idle -> TODO()
         }
@@ -267,7 +286,7 @@ class NetdiskRepositoryImpl(
     ): Flow<NetworkResult<NetdiskFileOperationResult>> = performNetworkCall {
         val token = getAuthToken()
         if (token.isNullOrEmpty()) {
-            return@performNetworkCall NetworkResult.Error(
+            return@performNetworkCall Error(
                 exception = Exception("未找到认证令牌"),
                 message = "请先登录"
             )
@@ -280,12 +299,13 @@ class NetdiskRepositoryImpl(
             is Success -> {
                 val successCount = result.data.count { it is Success }
                 val totalCount = result.data.size
-                
+
                 Logger.d(TAG, "批量删除完成: $successCount/$totalCount")
                 Success(
                     NetdiskFileOperationResult.Success("批量删除完成: $successCount/$totalCount")
                 )
             }
+
             is Error -> {
                 Logger.e(TAG, "批量删除失败: ${result.message}")
                 Error(
@@ -293,6 +313,7 @@ class NetdiskRepositoryImpl(
                     message = result.message ?: "批量删除失败"
                 )
             }
+
             is Loading -> Loading
             Idle -> TODO()
         }
@@ -315,8 +336,8 @@ class NetdiskRepositoryImpl(
     }
 
     override fun getFileTypeStatistics(): Flow<NetworkResult<Map<String, Int>>> = flow {
-        emit(NetworkResult.Loading)
-        
+        emit(Loading)
+
         try {
             // 获取所有文件并统计类型
             val fileListResult = getFileList(NetdiskFileQueryParams(page = 1, size = 1000))
@@ -326,12 +347,14 @@ class NetdiskRepositoryImpl(
                         val statistics = result.data.records
                             .groupBy { it.fileType }
                             .mapValues { it.value.size }
-                        
+
                         emit(Success(statistics))
                     }
+
                     is Error -> {
                         emit(Error(result.exception, result.message))
                     }
+
                     is Loading -> {
                         // 继续等待
                     }
@@ -341,15 +364,15 @@ class NetdiskRepositoryImpl(
             }
         } catch (e: Exception) {
             Logger.e(TAG, "获取文件类型统计失败", e)
-            emit(NetworkResult.Error(e, "获取文件类型统计失败: ${e.message}"))
+            emit(Error(e, "获取文件类型统计失败: ${e.message}"))
         }
     }
 
     override fun checkFileExists(
         fileName: String
     ): Flow<NetworkResult<Boolean>> = flow {
-        emit(NetworkResult.Loading)
-        
+        emit(Loading)
+
         try {
             val searchResult = searchFiles(fileName, page = 1, size = 1)
             searchResult.collect { result ->
@@ -358,9 +381,11 @@ class NetdiskRepositoryImpl(
                         val exists = result.data.records.any { it.fileName == fileName }
                         emit(Success(exists))
                     }
+
                     is Error -> {
                         emit(Error(result.exception, result.message))
                     }
+
                     is Loading -> {
                         // 继续等待
                     }
@@ -370,13 +395,13 @@ class NetdiskRepositoryImpl(
             }
         } catch (e: Exception) {
             Logger.e(TAG, "检查文件是否存在失败", e)
-            emit(NetworkResult.Error(e, "检查文件是否存在失败: ${e.message}"))
+            emit(Error(e, "检查文件是否存在失败: ${e.message}"))
         }
     }
 
     override fun getStorageInfo(): Flow<NetworkResult<Map<String, Any>>> = flow {
-        emit(NetworkResult.Loading)
-        
+        emit(Loading)
+
         try {
             // 获取所有文件并计算存储信息
             val fileListResult = getFileList(NetdiskFileQueryParams(page = 1, size = 1000))
@@ -386,7 +411,7 @@ class NetdiskRepositoryImpl(
                         val totalFiles = result.data.total
                         val totalSize = result.data.records.sumOf { it.fileSize }
                         val averageSize = if (totalFiles > 0) totalSize / totalFiles else 0
-                        
+
                         val storageInfo = mapOf(
                             "totalFiles" to totalFiles,
                             "totalSize" to totalSize,
@@ -394,12 +419,14 @@ class NetdiskRepositoryImpl(
                             "usedSpace" to totalSize,
                             "freeSpace" to (Long.MAX_VALUE - totalSize) // 模拟剩余空间
                         )
-                        
+
                         emit(Success(storageInfo))
                     }
+
                     is Error -> {
                         emit(Error(result.exception, result.message))
                     }
+
                     is Loading -> {
                         // 继续等待
                     }
@@ -409,18 +436,18 @@ class NetdiskRepositoryImpl(
             }
         } catch (e: Exception) {
             Logger.e(TAG, "获取存储信息失败", e)
-            emit(NetworkResult.Error(e, "获取存储信息失败: ${e.message}"))
+            emit(Error(e, "获取存储信息失败: ${e.message}"))
         }
     }
 
     override fun uploadMultipleFiles(
         files: List<Triple<ByteArray, String, String>>
     ): Flow<NetworkResult<List<NetdiskFileOperationResult>>> = flow {
-        emit(NetworkResult.Loading)
-        
+        emit(Loading)
+
         try {
             val results = mutableListOf<NetdiskFileOperationResult>()
-            
+
             for ((fileBytes, fileName, mimeType) in files) {
                 val uploadResult = uploadFile(fileBytes, fileName, mimeType)
                 uploadResult.collect { result ->
@@ -428,6 +455,7 @@ class NetdiskRepositoryImpl(
                         is Success -> {
                             results.add(result.data)
                         }
+
                         is Error -> {
                             results.add(
                                 NetdiskFileOperationResult.Error(
@@ -436,6 +464,7 @@ class NetdiskRepositoryImpl(
                                 )
                             )
                         }
+
                         is Loading -> {
                             // 继续等待
                         }
@@ -444,19 +473,19 @@ class NetdiskRepositoryImpl(
                     }
                 }
             }
-            
-            emit(NetworkResult.Success(results))
+
+            emit(Success(results))
         } catch (e: Exception) {
             Logger.e(TAG, "批量上传文件失败", e)
-            emit(NetworkResult.Error(e, "批量上传文件失败: ${e.message}"))
+            emit(Error(e, "批量上传文件失败: ${e.message}"))
         }
     }
 
     override fun downloadFile(
         fileId: Int
     ): Flow<NetworkResult<ByteArray>> = flow {
-        emit(NetworkResult.Loading)
-        
+        emit(Loading)
+
         try {
             // 首先获取文件详情以获取下载URL
             val fileDetailResult = getFileDetail(fileId)
@@ -472,9 +501,11 @@ class NetdiskRepositoryImpl(
                             )
                         )
                     }
+
                     is Error -> {
                         emit(Error(result.exception, result.message))
                     }
+
                     is Loading -> {
                         // 继续等待
                     }
@@ -484,15 +515,15 @@ class NetdiskRepositoryImpl(
             }
         } catch (e: Exception) {
             Logger.e(TAG, "下载文件失败", e)
-            emit(NetworkResult.Error(e, "下载文件失败: ${e.message}"))
+            emit(Error(e, "下载文件失败: ${e.message}"))
         }
     }
 
     override fun getDownloadUrl(
         fileId: Int
     ): Flow<NetworkResult<String>> = flow {
-        emit(NetworkResult.Loading)
-        
+        emit(Loading)
+
         try {
             val fileDetailResult = getFileDetail(fileId)
             fileDetailResult.collect { result ->
@@ -500,9 +531,11 @@ class NetdiskRepositoryImpl(
                     is Success -> {
                         emit(Success(result.data.fileUrl))
                     }
+
                     is Error -> {
                         emit(Error(result.exception, result.message))
                     }
+
                     is Loading -> {
                         // 继续等待
                     }
@@ -512,7 +545,7 @@ class NetdiskRepositoryImpl(
             }
         } catch (e: Exception) {
             Logger.e(TAG, "获取下载链接失败", e)
-            emit(NetworkResult.Error(e, "获取下载链接失败: ${e.message}"))
+            emit(Error(e, "获取下载链接失败: ${e.message}"))
         }
     }
 

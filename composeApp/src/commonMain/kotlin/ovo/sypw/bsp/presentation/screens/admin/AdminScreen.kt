@@ -20,11 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
-import ovo.sypw.bsp.domain.usecase.FileUploadUseCase
-import ovo.sypw.bsp.navigation.SideNavigationBar
-import ovo.sypw.bsp.navigation.rememberNavigationManager
-import ovo.sypw.bsp.presentation.screens.test.FileUploadTestScreen
-import ovo.sypw.bsp.presentation.screens.test.ImageTestScreen
+import ovo.sypw.bsp.presentation.navigation.SideNavigationBar
+import ovo.sypw.bsp.presentation.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.viewmodel.admin.AdminViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
@@ -162,7 +159,7 @@ fun GetAdminTab(
     when (selectedTabIndex) {
         0 -> DashboardTab(
             modifier = Modifier.fillMaxSize(),
-            layoutConfig=layoutConfig
+            layoutConfig = layoutConfig
         )
 
         1 -> DepartmentManagementTab(

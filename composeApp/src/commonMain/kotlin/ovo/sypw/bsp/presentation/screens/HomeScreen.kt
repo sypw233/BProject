@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +53,7 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.primary
         )
 
-        LaunchedEffect(Unit){
+        LaunchedEffect(Unit) {
             showContent = true
         }
 
@@ -65,9 +64,9 @@ fun HomeScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             ) {
                 Box(
-                    modifier= Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,7 +84,7 @@ fun HomeScreen(
                         )
                     }
                 }
-                }
+            }
 
         }
 

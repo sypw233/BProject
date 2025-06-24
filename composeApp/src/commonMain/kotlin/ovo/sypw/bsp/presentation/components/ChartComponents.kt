@@ -3,7 +3,6 @@ package ovo.sypw.bsp.presentation.components
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -45,19 +43,17 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
 import ir.ehsannarmani.compose_charts.PieChart
 import ir.ehsannarmani.compose_charts.RowChart
 import ir.ehsannarmani.compose_charts.models.BarProperties
 import ir.ehsannarmani.compose_charts.models.Bars
 import ir.ehsannarmani.compose_charts.models.Pie
-
-import ovo.sypw.bsp.data.model.BarChartData
-import ovo.sypw.bsp.data.model.PieChartItem
+import kotlinx.coroutines.delay
+import ovo.sypw.bsp.data.dto.BarChartData
+import ovo.sypw.bsp.data.dto.PieChartItem
 import ovo.sypw.bsp.utils.StringUtils.format
 
 /**
@@ -80,12 +76,12 @@ fun CustomPieChart(
             stiffness = Spring.StiffnessLow
         )
     )
-    
+
     LaunchedEffect(Unit) {
         delay(200)
         isVisible = true
     }
-    
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -114,13 +110,13 @@ fun CustomPieChart(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             if (data.isNotEmpty()) {
                 // 计算总值用于百分比计算
                 val totalValue = data.sumOf { it.value }
-                
+
                 val pieData = data.mapIndexed { index, item ->
                     Pie(
                         label = item.name,
@@ -151,7 +147,7 @@ fun CustomPieChart(
                                 )
                             )
                     )
-                    
+
                     PieChart(
                         modifier = Modifier.size(180.dp),
                         data = pieData,
@@ -161,9 +157,9 @@ fun CustomPieChart(
                         selectedScale = 1.1f,
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 // 数据详情图例
                 Card(
                     modifier = Modifier
@@ -186,7 +182,7 @@ fun CustomPieChart(
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
-                        
+
                         // 自适应网格布局显示数据详情 - 确保每行至少两个项目
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(minSize = 100.dp),
@@ -196,8 +192,9 @@ fun CustomPieChart(
                         ) {
                             items(data) { item ->
                                 val index = data.indexOf(item)
-                                val percentage = if (totalValue > 0) (item.value.toFloat() / totalValue * 100) else 0f
-                                
+                                val percentage =
+                                    if (totalValue > 0) (item.value.toFloat() / totalValue * 100) else 0f
+
                                 StatisticItem(
                                     label = item.name,
                                     value = "${item.value} (${String.format("%.1f", percentage)}%)",
@@ -268,12 +265,12 @@ fun CustomBarChart(
             stiffness = Spring.StiffnessLow
         )
     )
-    
+
     LaunchedEffect(Unit) {
         delay(300)
         isVisible = true
     }
-    
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -303,9 +300,9 @@ fun CustomBarChart(
                 )
 
             }
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             if (data.categories.isNotEmpty() && data.values.isNotEmpty()) {
                 // 计算合适的图表高度
                 val chartHeight = when {
@@ -322,7 +319,8 @@ fun CustomBarChart(
                         values = listOf(
                             Bars.Data(
                                 label = category,
-                                value = (data.values.getOrNull(index)?.toDouble() ?: 0.0) * animationProgress,
+                                value = (data.values.getOrNull(index)?.toDouble()
+                                    ?: 0.0) * animationProgress,
                                 color = androidx.compose.ui.graphics.SolidColor(getChartColor(index))
                             )
                         )
@@ -351,7 +349,7 @@ fun CustomBarChart(
                         data = barsData,
                         barProperties = BarProperties(
                             cornerRadius = Bars.Data.Radius.Rectangle(
-                                topRight = 12.dp, 
+                                topRight = 12.dp,
                                 topLeft = 12.dp,
                                 bottomRight = 4.dp,
                                 bottomLeft = 4.dp
@@ -365,9 +363,9 @@ fun CustomBarChart(
                         )
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 // 数据详情图例
                 Card(
                     modifier = Modifier
@@ -390,7 +388,7 @@ fun CustomBarChart(
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
-                        
+
                         // 自适应网格布局显示数据详情 - 确保每行至少两个项目
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(minSize = 100.dp),
@@ -401,7 +399,7 @@ fun CustomBarChart(
                             items(data.categories.size) { index ->
                                 val category = data.categories[index]
                                 val value = data.values.getOrNull(index) ?: 0
-                                
+
                                 StatisticItem(
                                     label = category,
                                     value = value.toString(),
@@ -451,7 +449,6 @@ fun CustomBarChart(
         }
     }
 }
-
 
 
 /**
@@ -515,15 +512,19 @@ private fun getStatisticGradient(title: String): Brush {
         title.contains("学生") -> Brush.linearGradient(
             colors = listOf(Color(0xFF667eea), Color(0xFF764ba2))
         )
+
         title.contains("员工") -> Brush.linearGradient(
             colors = listOf(Color(0xFF11998e), Color(0xFF38ef7d))
         )
+
         title.contains("班级") -> Brush.linearGradient(
             colors = listOf(Color(0xFFf093fb), Color(0xFFf5576c))
         )
+
         title.contains("部门") -> Brush.linearGradient(
             colors = listOf(Color(0xFF4facfe), Color(0xFF00f2fe))
         )
+
         else -> Brush.linearGradient(
             colors = listOf(Color(0xFF667eea), Color(0xFF764ba2))
         )
@@ -550,12 +551,12 @@ fun StatisticCard(
             stiffness = Spring.StiffnessLow
         )
     )
-    
+
     LaunchedEffect(Unit) {
         delay(100)
         isVisible = true
     }
-    
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -603,7 +604,7 @@ fun StatisticCard(
                         color = Color.White.copy(alpha = 0.9f)
                     )
                 }
-                
+
                 Box(
                     modifier = Modifier
                         .size(52.dp)

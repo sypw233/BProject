@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.data.repository
+package ovo.sypw.bsp.domain.repository.impl
 
 import ovo.sypw.bsp.data.api.RequestLogApiService
 import ovo.sypw.bsp.data.dto.PageResultDto
@@ -93,10 +93,12 @@ class RequestLogRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "获取请求日志分页列表网络请求失败: ${result.message}")
                 result
             }
+
             else -> {
                 Logger.w(TAG, "获取请求日志分页列表: 未知状态")
                 NetworkResult.Error(
@@ -146,10 +148,12 @@ class RequestLogRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "获取请求日志详情网络请求失败: ${result.message}")
                 result
             }
+
             else -> {
                 Logger.w(TAG, "获取请求日志详情: 未知状态")
                 NetworkResult.Error(
@@ -190,10 +194,12 @@ class RequestLogRepositoryImpl(
                     )
                 }
             }
+
             is NetworkResult.Error -> {
                 Logger.e(TAG, "清理请求日志网络请求失败: ${result.message}")
                 result
             }
+
             else -> {
                 Logger.w(TAG, "清理请求日志: 未知状态")
                 NetworkResult.Error(

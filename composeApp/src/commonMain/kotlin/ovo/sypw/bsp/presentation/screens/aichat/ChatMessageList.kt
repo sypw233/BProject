@@ -31,17 +31,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownTypography
 import kotlinx.coroutines.delay
 import ovo.sypw.bsp.data.dto.ChatMessage
 import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
-import com.mikepenz.markdown.m3.Markdown
-import com.mikepenz.markdown.m3.markdownTypography
 
 
 /**
@@ -80,8 +77,9 @@ fun ChatMessageList(
             ) {
                 items(messages) { message ->
                     val isLastMessage = message == messages.lastOrNull()
-                    val showStreamingCursor = isLastMessage && message.role == "assistant" && isStreaming
-                    
+                    val showStreamingCursor =
+                        isLastMessage && message.role == "assistant" && isStreaming
+
                     MessageItem(
                         message = message,
                         layoutConfig = layoutConfig,
@@ -207,7 +205,7 @@ private fun MessageItem(
                             )
                         }
                     }
-                    
+
                     // 流式传输时显示动画光标
                     if (isStreaming) {
                         var cursorVisible by remember { mutableStateOf(true) }
@@ -268,14 +266,14 @@ private fun EmptyMessageState(
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
         )
-        
+
         Text(
             text = "开始与AI助手对话",
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             modifier = Modifier.padding(top = 16.dp)
         )
-        
+
         Text(
             text = "输入您的问题，AI助手将为您提供帮助",
             style = MaterialTheme.typography.bodyMedium,

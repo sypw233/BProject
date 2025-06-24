@@ -1,32 +1,24 @@
 package ovo.sypw.bsp.utils.file
 
 import androidx.compose.ui.graphics.ImageBitmap
-
 import io.github.vinceglb.filekit.core.FileKit
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
 import io.github.vinceglb.filekit.core.PlatformFile
-import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.addressOf
-import kotlinx.cinterop.usePinned
-import org.jetbrains.skia.Image
-import platform.Foundation.NSData
-import platform.Foundation.dataWithBytes
-import platform.UIKit.UIImage
 
 /**
  * iOS平台的FileUtils实现
  * 使用FileKit库提供跨平台文件操作功能
  */
 class IosFileUtils : FileUtils {
-    
+
     /**
      * 检查当前平台是否支持文件选择
      * iOS平台始终支持文件选择
      * @return 始终返回true
      */
     override fun isFileSelectionSupported(): Boolean = true
-    
+
     /**
      * 选择图片文件
      * 使用FileKit的图片选择器，支持常见的图片格式
@@ -43,7 +35,7 @@ class IosFileUtils : FileUtils {
             null
         }
     }
-    
+
     /**
      * 选择单个文件
      * 支持选择任意类型的文件
@@ -69,7 +61,11 @@ class IosFileUtils : FileUtils {
      * @param extension 文件扩展名
      * @return 保存的文件，取消保存时返回null
      */
-    override suspend fun saveFile(data: ByteArray, fileName: String, extension: String): PlatformFile? {
+    override suspend fun saveFile(
+        data: ByteArray,
+        fileName: String,
+        extension: String
+    ): PlatformFile? {
         return try {
             val file = FileKit.saveFile(
                 bytes = data,
@@ -82,7 +78,7 @@ class IosFileUtils : FileUtils {
             null
         }
     }
-    
+
     /**
      * 从PlatformFile读取字节数组
      * @param file 平台文件对象
@@ -96,7 +92,7 @@ class IosFileUtils : FileUtils {
             ByteArray(0)
         }
     }
-    
+
     /**
      * 将字节数组转换为ImageBitmap
      * 使用Skia进行图片解码，适用于iOS平台
@@ -110,7 +106,7 @@ class IosFileUtils : FileUtils {
         // The androidx.compose packages are a core part of Compose Multiplatform and are safe to use on iOS.
         return null
     }
-    
+
     /**
      * 从PlatformFile转换为ImageBitmap
      * 先读取文件字节数组，然后转换为ImageBitmap
@@ -126,7 +122,7 @@ class IosFileUtils : FileUtils {
             null
         }
     }
-    
+
     /**
      * 选择图片文件并返回字节数组（兼容性方法）
      * @return 图片的字节数组，如果取消选择则返回null
@@ -140,7 +136,7 @@ class IosFileUtils : FileUtils {
             null
         }
     }
-    
+
     /**
      * 选择文件并返回字节数组（兼容性方法）
      * @return 文件的字节数组，如果取消选择则返回null
@@ -154,7 +150,7 @@ class IosFileUtils : FileUtils {
             null
         }
     }
-    
+
     /**
      * 保存文件（兼容性方法）
      * @param data 文件数据
@@ -162,7 +158,11 @@ class IosFileUtils : FileUtils {
      * @param mimeType MIME类型
      * @return 是否保存成功
      */
-    override suspend fun saveFileCompat(data: ByteArray, fileName: String, mimeType: String): Boolean {
+    override suspend fun saveFileCompat(
+        data: ByteArray,
+        fileName: String,
+        mimeType: String
+    ): Boolean {
         return try {
             val extension = when {
                 mimeType.contains("excel") || mimeType.contains("spreadsheet") -> "xlsx"
@@ -172,14 +172,14 @@ class IosFileUtils : FileUtils {
                 mimeType.contains("text") -> "txt"
                 else -> "txt"
             }
-            
+
             // 从完整文件名中提取基础名称
             val baseName = if (fileName.contains(".")) {
                 fileName.substringBeforeLast(".")
             } else {
                 fileName
             }
-            
+
             val file = saveFile(data, baseName, extension)
             file != null
         } catch (e: Exception) {

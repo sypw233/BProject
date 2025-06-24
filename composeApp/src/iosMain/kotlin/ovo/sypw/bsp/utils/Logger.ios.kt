@@ -13,12 +13,12 @@ actual fun log(level: Logger.Level, tag: String, message: String, throwable: Thr
         Logger.Level.WARN -> "[WARN]"
         Logger.Level.ERROR -> "[ERROR]"
     }
-    
+
     val logMessage = if (throwable != null) {
         "$levelStr [$tag] $message\nException: ${throwable.message}\n${throwable.stackTraceToString()}"
     } else {
         "$levelStr [$tag] $message"
     }
-    
+
     NSLog(logMessage)
 }

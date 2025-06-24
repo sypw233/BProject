@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.data.repository
+package ovo.sypw.bsp.domain.repository.impl
 
 import ovo.sypw.bsp.data.api.EmployeeApiService
 import ovo.sypw.bsp.data.dto.EmployeeCreateDto

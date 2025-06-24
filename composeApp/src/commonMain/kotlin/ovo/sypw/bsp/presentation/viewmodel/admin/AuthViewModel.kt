@@ -2,14 +2,14 @@ package ovo.sypw.bsp.presentation.viewmodel.admin
 
 import com.hoc081098.kmp.viewmodel.ViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.GlobalScope
 import ovo.sypw.bsp.data.dto.LoginResponse
 import ovo.sypw.bsp.data.dto.UserInfo
 import ovo.sypw.bsp.data.dto.result.NetworkResult
@@ -59,28 +59,28 @@ class AuthViewModel(
             started = SharingStarted.Eagerly,
             initialValue = _uiState.value.isLoggedIn
         )
-    
+
     val userInfo: StateFlow<UserInfo?> = _uiState.map { it.userInfo }
         .stateIn(
             scope = GlobalScope,
             started = SharingStarted.Eagerly,
             initialValue = _uiState.value.userInfo
         )
-    
+
     val isLoading: StateFlow<Boolean> = _uiState.map { it.isLoading }
         .stateIn(
             scope = GlobalScope,
             started = SharingStarted.Eagerly,
             initialValue = _uiState.value.isLoading
         )
-    
+
     val errorMessage: StateFlow<String?> = _uiState.map { it.errorMessage }
         .stateIn(
             scope = GlobalScope,
             started = SharingStarted.Eagerly,
             initialValue = _uiState.value.errorMessage
         )
-    
+
     val loginResult: StateFlow<NetworkResult<LoginResponse>?> = _uiState.map { it.loginResult }
         .stateIn(
             scope = GlobalScope,
@@ -98,11 +98,11 @@ class AuthViewModel(
     private fun checkLoginStatus() {
         viewModelScope.launch {
             updateUiState { it.copy(isLoading = true, errorMessage = null) }
-            
+
             try {
                 val hasToken = tokenStorage.hasValidToken()
                 Logger.d("AuthViewModel", "检查登录状态: hasToken=$hasToken")
-                
+
                 updateUiState { it.copy(isLoggedIn = hasToken) }
 
                 if (hasToken) {
@@ -114,7 +114,7 @@ class AuthViewModel(
                 }
             } catch (e: Exception) {
                 Logger.e("AuthViewModel", "检查登录状态失败", e)
-                updateUiState { 
+                updateUiState {
                     it.copy(
                         isLoggedIn = false,
                         userInfo = null,
@@ -141,25 +141,28 @@ class AuthViewModel(
         rememberMe: Boolean = false
     ) {
         Logger.i("AuthViewModel", "=== 开始登录流程 ===")
-        Logger.d("AuthViewModel", "登录参数 - 用户名: '$username', 密码长度: ${password.length}, 记住我: $rememberMe")
-        
+        Logger.d(
+            "AuthViewModel",
+            "登录参数 - 用户名: '$username', 密码长度: ${password.length}, 记住我: $rememberMe"
+        )
+
         Logger.d("AuthViewModel", "准备启动协程，viewModelScope: ${viewModelScope}")
-        
+
         // 临时使用GlobalScope测试协程是否能正常执行
         GlobalScope.launch {
             Logger.d("AuthViewModel", "GlobalScope协程已启动，开始执行登录逻辑")
             try {
                 Logger.d("AuthViewModel", "重置UI状态并开始加载")
-                
+
                 // 重置状态并开始加载
-                updateUiState { 
+                updateUiState {
                     it.copy(
-                        isLoading = true, 
+                        isLoading = true,
                         errorMessage = null,
                         loginResult = null
                     )
                 }
-                
+
                 Logger.d("AuthViewModel", "调用 loginUseCase")
                 val result = loginUseCase(username, password, rememberMe)
                 Logger.d("AuthViewModel", "loginUseCase 返回结果类型: ${result::class.simpleName}")
@@ -167,22 +170,26 @@ class AuthViewModel(
                 when (result) {
                     is NetworkResult.Success -> {
                         Logger.i("AuthViewModel", "登录成功，响应数据: ${result.data}")
-                        updateUiState { 
+                        updateUiState {
                             it.copy(
                                 isLoggedIn = true,
                                 loginResult = result,
                                 errorMessage = null
                             )
                         }
-                        
+
                         // 登录成功后自动获取用户信息
                         Logger.d("AuthViewModel", "开始获取用户信息")
                         refreshUserInfo(forceRefresh = true)
                     }
 
                     is NetworkResult.Error -> {
-                        Logger.e("AuthViewModel", "登录失败 - 错误信息: ${result.message}", result.exception)
-                        updateUiState { 
+                        Logger.e(
+                            "AuthViewModel",
+                            "登录失败 - 错误信息: ${result.message}",
+                            result.exception
+                        )
+                        updateUiState {
                             it.copy(
                                 isLoggedIn = false,
                                 errorMessage = result.message,
@@ -202,7 +209,7 @@ class AuthViewModel(
                 }
             } catch (e: Exception) {
                 Logger.e("AuthViewModel", "登录过程中发生异常: ${e.message}", e)
-                updateUiState { 
+                updateUiState {
                     it.copy(
                         isLoggedIn = false,
                         errorMessage = "登录过程中发生错误: ${e.message}",
@@ -215,7 +222,7 @@ class AuthViewModel(
             }
         }
     }
-    
+
     /**
      * 验证登录表单
      * @param username 用户名
@@ -223,11 +230,11 @@ class AuthViewModel(
      * @return 是否有效
      */
     fun validateLoginForm(username: String, password: String): Boolean {
-        val isValid = username.isNotBlank() && 
-                     password.isNotBlank() && 
-                     username.length >= 3 && 
-                     password.length >= 6
-        
+        val isValid = username.isNotBlank() &&
+                password.isNotBlank() &&
+                username.length >= 3 &&
+                password.length >= 6
+
         updateUiState { it.copy(isLoginFormValid = isValid) }
         return isValid
     }
@@ -244,10 +251,10 @@ class AuthViewModel(
     ) {
         viewModelScope.launch {
             Logger.d("AuthViewModel", "开始注册: username=$username")
-            
-            updateUiState { 
+
+            updateUiState {
                 it.copy(
-                    isLoading = true, 
+                    isLoading = true,
                     errorMessage = null,
                     loginResult = null
                 )
@@ -257,21 +264,21 @@ class AuthViewModel(
                 when (val result = registerUseCase(username, password)) {
                     is NetworkResult.Success -> {
                         Logger.i("AuthViewModel", "注册成功")
-                        updateUiState { 
+                        updateUiState {
                             it.copy(
                                 isLoggedIn = true,
                                 loginResult = result,
                                 errorMessage = null
                             )
                         }
-                        
+
                         // 注册成功后自动获取用户信息
                         refreshUserInfo(forceRefresh = true)
                     }
 
                     is NetworkResult.Error -> {
                         Logger.w("AuthViewModel", "注册失败: ${result.message}")
-                        updateUiState { 
+                        updateUiState {
                             it.copy(
                                 isLoggedIn = false,
                                 userInfo = null,
@@ -291,7 +298,7 @@ class AuthViewModel(
                 }
             } catch (e: Exception) {
                 Logger.e("AuthViewModel", "注册过程中发生异常", e)
-                updateUiState { 
+                updateUiState {
                     it.copy(
                         isLoggedIn = false,
                         userInfo = null,
@@ -312,38 +319,38 @@ class AuthViewModel(
     fun logout() {
         viewModelScope.launch {
             Logger.d("AuthViewModel", "开始登出")
-            
-            updateUiState { 
+
+            updateUiState {
                 it.copy(
                     isLoading = true,
                     errorMessage = null
                 )
             }
-            
+
             when (val result = logoutUseCase()) {
                 is NetworkResult.Success -> {
                     Logger.i("AuthViewModel", "登出成功")
-                    
+
                     // 清除所有认证相关状态
-                    updateUiState { 
+                    updateUiState {
                         AuthUiState() // 重置为初始状态
                     }
                 }
-                
+
                 is NetworkResult.Error -> {
                     Logger.e("AuthViewModel", "登出失败: ${result.message}")
-                    updateUiState { 
+                    updateUiState {
                         it.copy(
                             isLoading = false,
                             errorMessage = "登出失败: ${result.message}"
                         )
                     }
                 }
-                
+
                 is NetworkResult.Loading -> {
                     Logger.d("AuthViewModel", "登出中...")
                 }
-                
+
                 NetworkResult.Idle -> {
                     Logger.d("AuthViewModel", "登出空闲状态")
                 }
@@ -359,10 +366,10 @@ class AuthViewModel(
     fun refreshUserInfo(forceRefresh: Boolean = false) {
         viewModelScope.launch {
             Logger.d("AuthViewModel", "刷新用户信息: forceRefresh=$forceRefresh")
-            
-            updateUiState { 
+
+            updateUiState {
                 it.copy(
-                    isLoading = true, 
+                    isLoading = true,
                     errorMessage = null
                 )
             }
@@ -371,7 +378,7 @@ class AuthViewModel(
                 when (val result = getUserInfoUseCase(forceRefresh)) {
                     is NetworkResult.Success -> {
                         Logger.i("AuthViewModel", "获取用户信息成功: ${result.data}")
-                        updateUiState { 
+                        updateUiState {
                             it.copy(
                                 userInfo = result.data,
                                 errorMessage = null
@@ -381,7 +388,7 @@ class AuthViewModel(
 
                     is NetworkResult.Error -> {
                         Logger.w("AuthViewModel", "获取用户信息失败: ${result.message}")
-                        updateUiState { 
+                        updateUiState {
                             it.copy(
                                 errorMessage = result.message ?: "获取用户信息失败"
                             )
@@ -399,7 +406,7 @@ class AuthViewModel(
                 }
             } catch (e: Exception) {
                 Logger.e("AuthViewModel", "刷新用户信息过程中发生异常", e)
-                updateUiState { 
+                updateUiState {
                     it.copy(
                         errorMessage = "获取用户信息时发生错误: ${e.message}"
                     )
@@ -424,7 +431,7 @@ class AuthViewModel(
     fun clearLoginResult() {
         updateUiState { it.copy(loginResult = null) }
     }
-    
+
     /**
      * 重置所有状态
      * 新增方法，用于完全重置ViewModel状态
@@ -432,7 +439,7 @@ class AuthViewModel(
     fun resetState() {
         updateUiState { AuthUiState() }
     }
-    
+
     /**
      * 更新UI状态的辅助方法
      * 确保状态更新的一致性

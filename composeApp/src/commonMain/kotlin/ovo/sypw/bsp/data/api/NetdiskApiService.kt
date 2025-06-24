@@ -17,7 +17,7 @@ class NetdiskApiService : BaseApiService() {
 
     companion object {
         private const val TAG = "NetdiskApiService"
-        
+
         // API端点常量
         private const val UPLOAD_ENDPOINT = "/netdisk/upload"
         private const val FILES_ENDPOINT = "/netdisk/files"
@@ -39,7 +39,7 @@ class NetdiskApiService : BaseApiService() {
         mimeType: String = "application/octet-stream"
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "上传文件: $fileName, 大小: ${fileBytes.size} bytes")
-        
+
         return try {
             val formData = MultiPartFormDataContent(
                 formData {
@@ -53,7 +53,7 @@ class NetdiskApiService : BaseApiService() {
                     )
                 }
             )
-            
+
             postWithToken(
                 endpoint = UPLOAD_ENDPOINT,
                 body = formData,
@@ -84,17 +84,20 @@ class NetdiskApiService : BaseApiService() {
         fileName: String? = null,
         fileType: String? = null
     ): NetworkResult<SaResult> {
-        Logger.d(TAG, "获取文件列表: page=$page, size=$size, fileName=$fileName, fileType=$fileType")
-        
+        Logger.d(
+            TAG,
+            "获取文件列表: page=$page, size=$size, fileName=$fileName, fileType=$fileType"
+        )
+
         val parameters = mutableMapOf<String, Any>(
             "page" to page,
             "size" to size
         )
-        
+
         // 添加可选参数
         fileName?.let { parameters["fileName"] = it }
         fileType?.let { parameters["fileType"] = it }
-        
+
         return getWithToken(
             endpoint = FILES_ENDPOINT,
             parameters = parameters,
@@ -113,7 +116,7 @@ class NetdiskApiService : BaseApiService() {
         fileId: Int
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "获取文件详情: fileId=$fileId")
-        
+
         return getWithToken(
             endpoint = "$FILE_DETAIL_ENDPOINT/$fileId",
             token = token
@@ -133,9 +136,9 @@ class NetdiskApiService : BaseApiService() {
         newFileName: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "修改文件名: fileId=$fileId, newFileName=$newFileName")
-        
+
         val updateRequest = NetdiskFileUpdateRequest(fileName = newFileName)
-        
+
         return putWithToken(
             endpoint = "$FILE_DETAIL_ENDPOINT/$fileId",
             body = updateRequest,
@@ -154,7 +157,7 @@ class NetdiskApiService : BaseApiService() {
         fileId: Int
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "删除文件: fileId=$fileId")
-        
+
         return deleteWithToken(
             endpoint = "$FILE_DETAIL_ENDPOINT/$fileId",
             token = token
@@ -172,7 +175,7 @@ class NetdiskApiService : BaseApiService() {
         fileIds: List<Int>
     ): NetworkResult<List<NetworkResult<SaResult>>> {
         Logger.d(TAG, "批量删除文件: fileIds=$fileIds")
-        
+
         return try {
             val results = fileIds.map { fileId ->
                 deleteFile(token, fileId)

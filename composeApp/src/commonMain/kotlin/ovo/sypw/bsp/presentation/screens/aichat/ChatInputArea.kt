@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,7 +21,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -51,7 +49,7 @@ fun ChatInputArea(
     val availableModels by viewModel.availableModels.collectAsState()
     val selectedModel by viewModel.selectedModel.collectAsState()
     val isLoadingModels by viewModel.isLoadingModels.collectAsState()
-    
+
     var isModelDropdownExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -77,10 +75,10 @@ fun ChatInputArea(
                     style = MaterialTheme.typography.bodySmall, // 缩小字体从bodyMedium到bodySmall
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                
+
                 // 模型选择下拉菜单
                 OutlinedButton(
-                    onClick = { 
+                    onClick = {
                         if (!isLoadingModels && availableModels.isNotEmpty()) {
                             isModelDropdownExpanded = true
                         }
@@ -89,30 +87,30 @@ fun ChatInputArea(
                     enabled = !isLoadingModels && availableModels.isNotEmpty()
                 ) {
                     if (isLoadingModels) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(14.dp), // 缩小从16dp到14dp
-                                strokeWidth = 1.5.dp // 缩小线宽从2dp到1.5dp
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(14.dp), // 缩小从16dp到14dp
+                            strokeWidth = 1.5.dp // 缩小线宽从2dp到1.5dp
+                        )
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = selectedModel,
+                                style = MaterialTheme.typography.labelSmall, // 缩小字体从bodySmall到labelSmall
+                                modifier = Modifier.weight(1f)
                             )
-                        } else {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = selectedModel,
-                                    style = MaterialTheme.typography.labelSmall, // 缩小字体从bodySmall到labelSmall
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.ArrowDropDown,
-                                    contentDescription = "选择模型",
-                                    modifier = Modifier.size(14.dp) // 缩小从16dp到14dp
-                                )
-                            }
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "选择模型",
+                                modifier = Modifier.size(14.dp) // 缩小从16dp到14dp
+                            )
                         }
+                    }
                 }
-                
+
                 // 下拉菜单
                 DropdownMenu(
                     expanded = isModelDropdownExpanded,
@@ -134,7 +132,7 @@ fun ChatInputArea(
                     }
                 }
             }
-            
+
             // 输入框和发送按钮
             Row(
                 modifier = Modifier
@@ -150,11 +148,11 @@ fun ChatInputArea(
                     minLines = 1, // 设置最小行数为1行
                     shape = RoundedCornerShape(6.dp), // 进一步减小圆角从8dp到6dp
                     textStyle = MaterialTheme.typography.bodySmall, // 设置输入文字大小
-                    placeholder = { 
+                    placeholder = {
                         Text(
                             "输入您的消息...",
                             style = MaterialTheme.typography.bodySmall // 缩小占位符文字
-                        ) 
+                        )
                     }
                 )
 

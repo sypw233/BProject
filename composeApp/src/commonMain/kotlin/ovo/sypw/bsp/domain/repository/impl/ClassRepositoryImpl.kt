@@ -1,28 +1,28 @@
-package ovo.sypw.bsp.data.repository
+package ovo.sypw.bsp.domain.repository.impl
 
-import ovo.sypw.bsp.data.api.DepartmentApiService
-import ovo.sypw.bsp.data.dto.DepartmentCreateDto
-import ovo.sypw.bsp.data.dto.DepartmentDto
-import ovo.sypw.bsp.data.dto.DepartmentUpdateDto
+import ovo.sypw.bsp.data.api.ClassApiService
+import ovo.sypw.bsp.data.dto.ClassCreateDto
+import ovo.sypw.bsp.data.dto.ClassDto
+import ovo.sypw.bsp.data.dto.ClassUpdateDto
 import ovo.sypw.bsp.data.dto.PageResultDto
 import ovo.sypw.bsp.data.dto.result.NetworkResult
 import ovo.sypw.bsp.data.dto.result.isSuccess
 import ovo.sypw.bsp.data.dto.result.parseData
 import ovo.sypw.bsp.data.storage.TokenStorage
-import ovo.sypw.bsp.domain.repository.DepartmentRepository
+import ovo.sypw.bsp.domain.repository.ClassRepository
 import ovo.sypw.bsp.utils.Logger
 
 /**
- * 部门管理仓库实现类
- * 整合网络API和本地存储，提供完整的部门管理功能
+ * 班级管理仓库实现类
+ * 整合网络API和本地存储，提供完整的班级管理功能
  */
-class DepartmentRepositoryImpl(
-    private val departmentApiService: DepartmentApiService,
+class ClassRepositoryImpl(
+    private val classApiService: ClassApiService,
     private val tokenStorage: TokenStorage
-) : DepartmentRepository {
+) : ClassRepository {
 
     companion object {
-        private const val TAG = "DepartmentRepositoryImpl"
+        private const val TAG = "ClassRepositoryImpl"
     }
 
     /**
@@ -34,43 +34,42 @@ class DepartmentRepositoryImpl(
     }
 
     /**
-     * 获取部门分页列表
+     * 获取班级分页列表
      */
-    override suspend fun getDepartmentPage(
+    override suspend fun getClassPage(
         current: Int,
         size: Int,
         name: String?
-    ): NetworkResult<PageResultDto<DepartmentDto>> {
-//        Logger.d(TAG, "获取部门分页列表: current=$current, size=$size, name=$name")
+    ): NetworkResult<PageResultDto<ClassDto>> {
+//        Logger.d(TAG, "获取班级分页列表: current=$current, size=$size, name=$name")
 
         val token = getAuthToken()
         if (token == null) {
-            Logger.w(TAG, "获取部门分页列表失败: 未找到认证令牌")
+            Logger.w(TAG, "获取班级分页列表失败: 未找到认证令牌")
             return NetworkResult.Error(
                 exception = Exception("未登录"),
                 message = "请先登录"
             )
         }
 
-        return when (val result =
-            departmentApiService.getDepartmentPage(current, size, name, token)) {
+        return when (val result = classApiService.getClassPage(current, size, name, token)) {
             is NetworkResult.Success -> {
-//                Logger.i(TAG, "获取部门分页列表请求成功")
+//                Logger.i(TAG, "获取班级分页列表请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    val pageResult = saResult.parseData<PageResultDto<DepartmentDto>>()
+                    val pageResult = saResult.parseData<PageResultDto<ClassDto>>()
                     if (pageResult != null) {
-//                        Logger.i(TAG, "部门分页数据解析成功: ${pageResult.records.size}条记录")
+//                        Logger.i(TAG, "班级分页数据解析成功: ${pageResult.records.size}条记录")
                         NetworkResult.Success(pageResult)
                     } else {
-                        Logger.w(TAG, "部门分页数据解析失败")
+                        Logger.w(TAG, "班级分页数据解析失败")
                         NetworkResult.Error(
                             exception = Exception("数据解析失败"),
-                            message = "部门数据解析失败"
+                            message = "班级数据解析失败"
                         )
                     }
                 } else {
-                    Logger.w(TAG, "获取部门分页列表失败: ${saResult.msg}")
+                    Logger.w(TAG, "获取班级分页列表失败: ${saResult.msg}")
                     NetworkResult.Error(
                         exception = Exception(saResult.msg),
                         message = saResult.msg
@@ -79,7 +78,7 @@ class DepartmentRepositoryImpl(
             }
 
             is NetworkResult.Error -> {
-                Logger.e(TAG, "获取部门分页列表网络请求失败: ${result.message}")
+                Logger.e(TAG, "获取班级分页列表网络请求失败: ${result.message}")
                 result
             }
 
@@ -89,38 +88,38 @@ class DepartmentRepositoryImpl(
     }
 
     /**
-     * 获取部门详情
+     * 获取班级详情
      */
-    override suspend fun getDepartmentById(id: Int): NetworkResult<DepartmentDto> {
-        Logger.d(TAG, "获取部门详情: id=$id")
+    override suspend fun getClassById(id: Int): NetworkResult<ClassDto> {
+        Logger.d(TAG, "获取班级详情: id=$id")
 
         val token = getAuthToken()
         if (token == null) {
-            Logger.w(TAG, "获取部门详情失败: 未找到认证令牌")
+            Logger.w(TAG, "获取班级详情失败: 未找到认证令牌")
             return NetworkResult.Error(
                 exception = Exception("未登录"),
                 message = "请先登录"
             )
         }
 
-        return when (val result = departmentApiService.getDepartmentById(id, token)) {
+        return when (val result = classApiService.getClassById(id, token)) {
             is NetworkResult.Success -> {
-                Logger.i(TAG, "获取部门详情请求成功")
+                Logger.i(TAG, "获取班级详情请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    val department = saResult.parseData<DepartmentDto>()
-                    if (department != null) {
-                        Logger.i(TAG, "部门详情数据解析成功: ${department.name}")
-                        NetworkResult.Success(department)
+                    val classData = saResult.parseData<ClassDto>()
+                    if (classData != null) {
+                        Logger.i(TAG, "班级详情数据解析成功: ${classData.name}")
+                        NetworkResult.Success(classData)
                     } else {
-                        Logger.w(TAG, "部门详情数据解析失败")
+                        Logger.w(TAG, "班级详情数据解析失败")
                         NetworkResult.Error(
                             exception = Exception("数据解析失败"),
-                            message = "部门详情数据解析失败"
+                            message = "班级详情数据解析失败"
                         )
                     }
                 } else {
-                    Logger.w(TAG, "获取部门详情失败: ${saResult.msg}")
+                    Logger.w(TAG, "获取班级详情失败: ${saResult.msg}")
                     NetworkResult.Error(
                         exception = Exception(saResult.msg),
                         message = saResult.msg
@@ -129,7 +128,7 @@ class DepartmentRepositoryImpl(
             }
 
             is NetworkResult.Error -> {
-                Logger.e(TAG, "获取部门详情网络请求失败: ${result.message}")
+                Logger.e(TAG, "获取班级详情网络请求失败: ${result.message}")
                 result
             }
 
@@ -139,31 +138,31 @@ class DepartmentRepositoryImpl(
     }
 
     /**
-     * 创建部门
+     * 创建班级
      */
-    override suspend fun createDepartment(name: String): NetworkResult<Unit> {
-        Logger.d(TAG, "创建部门: name=$name")
+    override suspend fun createClass(name: String, grade: String): NetworkResult<Unit> {
+        Logger.d(TAG, "创建班级: name=$name, grade=$grade")
 
         val token = getAuthToken()
         if (token == null) {
-            Logger.w(TAG, "创建部门失败: 未找到认证令牌")
+            Logger.w(TAG, "创建班级失败: 未找到认证令牌")
             return NetworkResult.Error(
                 exception = Exception("未登录"),
                 message = "请先登录"
             )
         }
 
-        val createDto = DepartmentCreateDto(name = name)
+        val createDto = ClassCreateDto(name = name, grade = grade)
 
-        return when (val result = departmentApiService.createDepartment(createDto, token)) {
+        return when (val result = classApiService.createClass(createDto, token)) {
             is NetworkResult.Success -> {
-                Logger.i(TAG, "创建部门请求成功")
+                Logger.i(TAG, "创建班级请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    Logger.i(TAG, "部门创建成功: $name")
+                    Logger.i(TAG, "班级创建成功: $name, grade=$grade")
                     NetworkResult.Success(Unit)
                 } else {
-                    Logger.w(TAG, "创建部门失败: ${saResult.msg}")
+                    Logger.w(TAG, "创建班级失败: ${saResult.msg}")
                     NetworkResult.Error(
                         exception = Exception(saResult.msg),
                         message = saResult.msg
@@ -172,7 +171,7 @@ class DepartmentRepositoryImpl(
             }
 
             is NetworkResult.Error -> {
-                Logger.e(TAG, "创建部门网络请求失败: ${result.message}")
+                Logger.e(TAG, "创建班级网络请求失败: ${result.message}")
                 result
             }
 
@@ -182,31 +181,31 @@ class DepartmentRepositoryImpl(
     }
 
     /**
-     * 更新部门
+     * 更新班级
      */
-    override suspend fun updateDepartment(id: Int, name: String): NetworkResult<Unit> {
-        Logger.d(TAG, "更新部门: id=$id, name=$name")
+    override suspend fun updateClass(id: Int, name: String, grade: String): NetworkResult<Unit> {
+        Logger.d(TAG, "更新班级: id=$id, name=$name, grade=$grade")
 
         val token = getAuthToken()
         if (token == null) {
-            Logger.w(TAG, "更新部门失败: 未找到认证令牌")
+            Logger.w(TAG, "更新班级失败: 未找到认证令牌")
             return NetworkResult.Error(
                 exception = Exception("未登录"),
                 message = "请先登录"
             )
         }
 
-        val updateDto = DepartmentUpdateDto(id = id, name = name)
+        val updateDto = ClassUpdateDto(id = id, name = name, grade = grade)
 
-        return when (val result = departmentApiService.updateDepartment(updateDto, token)) {
+        return when (val result = classApiService.updateClass(updateDto, token)) {
             is NetworkResult.Success -> {
-                Logger.i(TAG, "更新部门请求成功")
+                Logger.i(TAG, "更新班级请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    Logger.i(TAG, "部门更新成功: id=$id, name=$name")
+                    Logger.i(TAG, "班级更新成功: id=$id, name=$name, grade=$grade")
                     NetworkResult.Success(Unit)
                 } else {
-                    Logger.w(TAG, "更新部门失败: ${saResult.msg}")
+                    Logger.w(TAG, "更新班级失败: ${saResult.msg}")
                     NetworkResult.Error(
                         exception = Exception(saResult.msg),
                         message = saResult.msg
@@ -215,7 +214,7 @@ class DepartmentRepositoryImpl(
             }
 
             is NetworkResult.Error -> {
-                Logger.e(TAG, "更新部门网络请求失败: ${result.message}")
+                Logger.e(TAG, "更新班级网络请求失败: ${result.message}")
                 result
             }
 
@@ -225,29 +224,29 @@ class DepartmentRepositoryImpl(
     }
 
     /**
-     * 删除部门
+     * 删除班级
      */
-    override suspend fun deleteDepartment(id: Int?): NetworkResult<Unit> {
-        Logger.d(TAG, "删除部门: id=$id")
+    override suspend fun deleteClass(id: Int?): NetworkResult<Unit> {
+        Logger.d(TAG, "删除班级: id=$id")
 
         val token = getAuthToken()
         if (token == null) {
-            Logger.w(TAG, "删除部门失败: 未找到认证令牌")
+            Logger.w(TAG, "删除班级失败: 未找到认证令牌")
             return NetworkResult.Error(
                 exception = Exception("未登录"),
                 message = "请先登录"
             )
         }
 
-        return when (val result = departmentApiService.deleteDepartment(id, token)) {
+        return when (val result = classApiService.deleteClass(id, token)) {
             is NetworkResult.Success -> {
-                Logger.i(TAG, "删除部门请求成功")
+                Logger.i(TAG, "删除班级请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    Logger.i(TAG, "部门删除成功: id=$id")
+                    Logger.i(TAG, "班级删除成功: id=$id")
                     NetworkResult.Success(Unit)
                 } else {
-                    Logger.w(TAG, "删除部门失败: ${saResult.msg}")
+                    Logger.w(TAG, "删除班级失败: ${saResult.msg}")
                     NetworkResult.Error(
                         exception = Exception(saResult.msg),
                         message = saResult.msg
@@ -256,7 +255,7 @@ class DepartmentRepositoryImpl(
             }
 
             is NetworkResult.Error -> {
-                Logger.e(TAG, "删除部门网络请求失败: ${result.message}")
+                Logger.e(TAG, "删除班级网络请求失败: ${result.message}")
                 result
             }
 
@@ -266,29 +265,29 @@ class DepartmentRepositoryImpl(
     }
 
     /**
-     * 批量删除部门
+     * 批量删除班级
      */
-    override suspend fun batchDeleteDepartments(ids: List<Int>): NetworkResult<Unit> {
-        Logger.d(TAG, "批量删除部门: ids=$ids")
+    override suspend fun batchDeleteClasses(ids: List<Int>): NetworkResult<Unit> {
+        Logger.d(TAG, "批量删除班级: ids=$ids")
 
         val token = getAuthToken()
         if (token == null) {
-            Logger.w(TAG, "批量删除部门失败: 未找到认证令牌")
+            Logger.w(TAG, "批量删除班级失败: 未找到认证令牌")
             return NetworkResult.Error(
                 exception = Exception("未登录"),
                 message = "请先登录"
             )
         }
 
-        return when (val result = departmentApiService.batchDeleteDepartments(ids, token)) {
+        return when (val result = classApiService.batchDeleteClasses(ids, token)) {
             is NetworkResult.Success -> {
-                Logger.i(TAG, "批量删除部门请求成功")
+                Logger.i(TAG, "批量删除班级请求成功")
                 val saResult = result.data
                 if (saResult.isSuccess()) {
-                    Logger.i(TAG, "部门批量删除成功: ${ids.size}个部门")
+                    Logger.i(TAG, "班级批量删除成功: ${ids.size}个班级")
                     NetworkResult.Success(Unit)
                 } else {
-                    Logger.w(TAG, "批量删除部门失败: ${saResult.msg}")
+                    Logger.w(TAG, "批量删除班级失败: ${saResult.msg}")
                     NetworkResult.Error(
                         exception = Exception(saResult.msg),
                         message = saResult.msg
@@ -297,7 +296,7 @@ class DepartmentRepositoryImpl(
             }
 
             is NetworkResult.Error -> {
-                Logger.e(TAG, "批量删除部门网络请求失败: ${result.message}")
+                Logger.e(TAG, "批量删除班级网络请求失败: ${result.message}")
                 result
             }
 

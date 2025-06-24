@@ -121,7 +121,8 @@ object FileUploadUtils {
         if (sizeInBytes <= 0) return "0 B"
 
         val units = arrayOf("B", "KB", "MB", "GB", "TB")
-        val digitGroups = (log10(sizeInBytes.toDouble()) / log10(1024.0)).toInt().coerceAtMost(units.size - 1)
+        val digitGroups =
+            (log10(sizeInBytes.toDouble()) / log10(1024.0)).toInt().coerceAtMost(units.size - 1)
 
         val size = sizeInBytes / 1024.0.pow(digitGroups.toDouble())
         return String.format("%.1f %s", size, units[digitGroups])
@@ -155,14 +156,14 @@ object FileUploadUtils {
      */
     fun formatRelativeTime(dateTimeString: String): String {
         return try {
-            val now = Clock.System.now().toEpochMilliseconds()
+            Clock.System.now().toEpochMilliseconds()
             // 简单的时间解析，实际项目中建议使用kotlinx-datetime
-            val timeString = if (dateTimeString.contains('T')) {
+            if (dateTimeString.contains('T')) {
                 dateTimeString.replace('T', ' ').substringBefore('.')
             } else {
                 dateTimeString
             }
-            
+
             // 这里返回格式化的时间，实际实现需要根据具体需求调整
             formatDateTime(dateTimeString)
         } catch (e: Exception) {

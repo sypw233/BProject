@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.presentation.screens
+package ovo.sypw.bsp.presentation.screens.aichat
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -31,14 +31,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
-import ovo.sypw.bsp.presentation.components.ResponsiveListLayout
-import ovo.sypw.bsp.presentation.screens.aichat.ChatInputArea
-import ovo.sypw.bsp.presentation.screens.aichat.ChatMessageList
-import ovo.sypw.bsp.presentation.screens.aichat.ChatSessionSidebar
+import kotlinx.coroutines.launch
 import ovo.sypw.bsp.presentation.viewmodel.AIChatViewModel
 import ovo.sypw.bsp.utils.ResponsiveLayoutConfig
 import ovo.sypw.bsp.utils.ResponsiveUtils
@@ -99,6 +95,7 @@ fun AIChatScreen(
                 )
             }
         }
+
         ResponsiveUtils.ScreenSize.MEDIUM -> {
             // 中屏使用传统侧边栏
             Scaffold(
@@ -114,6 +111,7 @@ fun AIChatScreen(
                 )
             }
         }
+
         ResponsiveUtils.ScreenSize.EXPANDED -> {
             // 大屏使用传统侧边栏
             Scaffold(
@@ -280,7 +278,7 @@ private fun ExpandedChatLayout(
 ) {
     // 侧边栏折叠状态管理
     var isSidebarExpanded by remember { mutableStateOf(true) }
-    
+
     Row(
         modifier = modifier.padding(layoutConfig.screenPadding)
     ) {

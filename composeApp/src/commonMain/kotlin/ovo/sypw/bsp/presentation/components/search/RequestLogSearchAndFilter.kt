@@ -17,7 +17,6 @@ import ovo.sypw.bsp.data.dto.ResponseStatusCategory
 import ovo.sypw.bsp.presentation.components.template.ActiveFiltersRow
 import ovo.sypw.bsp.presentation.components.template.DateRangeInput
 import ovo.sypw.bsp.presentation.components.template.FilterOptionsLazyRow
-import ovo.sypw.bsp.presentation.components.template.FilterOptionsRow
 import ovo.sypw.bsp.presentation.components.template.FilterSection
 import ovo.sypw.bsp.presentation.components.template.RemovableFilterChip
 import ovo.sypw.bsp.presentation.components.template.SearchAndFilterTemplate
@@ -65,7 +64,12 @@ fun RequestLogSearchAndFilter(
                         "username" -> onChange(filterState.copy(selectedUsername = null))
                         "requestMethod" -> onChange(filterState.copy(selectedRequestMethod = null))
                         "responseStatus" -> onChange(filterState.copy(selectedResponseStatus = null))
-                        "responseStatusCategory" -> onChange(filterState.copy(selectedResponseStatusCategory = null))
+                        "responseStatusCategory" -> onChange(
+                            filterState.copy(
+                                selectedResponseStatusCategory = null
+                            )
+                        )
+
                         "ipAddress" -> onChange(filterState.copy(selectedIpAddress = null))
                         "createdAt" -> onChange(
                             filterState.copy(
@@ -73,6 +77,7 @@ fun RequestLogSearchAndFilter(
                                 createdAtEnd = null
                             )
                         )
+
                         else -> {}
                     }
                 }
@@ -210,25 +215,32 @@ fun RequestLogResponseStatusFilter(
                 value = filterState.selectedResponseStatus?.toString() ?: "",
                 onValueChange = { newValue ->
                     val statusCode = newValue.toIntOrNull()
-                    onFilterChange(filterState.copy(
-                        selectedResponseStatus = statusCode,
-                        selectedResponseStatusCategory = null // 清除分类筛选
-                    ))
+                    onFilterChange(
+                        filterState.copy(
+                            selectedResponseStatus = statusCode,
+                            selectedResponseStatusCategory = null // 清除分类筛选
+                        )
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("如: 200, 404, 500") }
             )
-            
+
             // 状态码分类筛选
-            Text("或选择分类:", style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
+            Text(
+                "或选择分类:",
+                style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+            )
             FilterOptionsLazyRow {
                 item {
                     FilterChip(
                         onClick = {
-                            onFilterChange(filterState.copy(
-                                selectedResponseStatusCategory = null,
-                                selectedResponseStatus = null
-                            ))
+                            onFilterChange(
+                                filterState.copy(
+                                    selectedResponseStatusCategory = null,
+                                    selectedResponseStatus = null
+                                )
+                            )
                         },
                         label = { Text("全部") },
                         selected = filterState.selectedResponseStatusCategory == null && filterState.selectedResponseStatus == null
@@ -237,10 +249,12 @@ fun RequestLogResponseStatusFilter(
                 items(ResponseStatusCategory.values().toList()) { category ->
                     FilterChip(
                         onClick = {
-                            onFilterChange(filterState.copy(
-                                selectedResponseStatusCategory = category,
-                                selectedResponseStatus = null // 清除具体状态码
-                            ))
+                            onFilterChange(
+                                filterState.copy(
+                                    selectedResponseStatusCategory = category,
+                                    selectedResponseStatus = null // 清除具体状态码
+                                )
+                            )
                         },
                         label = { Text(category.displayName) },
                         selected = filterState.selectedResponseStatusCategory == category
@@ -333,7 +347,7 @@ fun RequestLogActiveFilters(
                 )
             }
         }
-        
+
         // 响应状态分类筛选
         filterState.selectedResponseStatusCategory?.let { category ->
             item {

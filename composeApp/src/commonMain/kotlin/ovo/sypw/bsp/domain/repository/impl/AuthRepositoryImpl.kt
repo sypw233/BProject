@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.data.repository
+package ovo.sypw.bsp.domain.repository.impl
 
 import kotlinx.serialization.json.Json
 import ovo.sypw.bsp.data.api.AuthApiService

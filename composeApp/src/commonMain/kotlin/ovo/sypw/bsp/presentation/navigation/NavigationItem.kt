@@ -1,11 +1,10 @@
-package ovo.sypw.bsp.navigation
+package ovo.sypw.bsp.presentation.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Announcement
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.CloudQueue
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -25,13 +24,14 @@ data class NavigationItem(
  * 应用页面枚举
  */
 enum class AppScreen(val route: String) {
-//    HOME("home"),
+    //    HOME("home"),
     ANNOUNCEMENTS("announcements"),
     ANNOUNCEMENT_DETAIL("announcement_detail"),
     AI_CHAT("ai_chat"),
     NETDISK("netdisk"),
     PROFILE("profile"),
-//    API_TEST("api_test"),
+
+    //    API_TEST("api_test"),
     ADMIN("admin"),
     LOGIN("login"),
     REGISTER("register"),

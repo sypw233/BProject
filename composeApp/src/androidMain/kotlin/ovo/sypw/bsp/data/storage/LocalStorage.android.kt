@@ -11,15 +11,15 @@ import kotlinx.coroutines.withContext
  */
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class LocalStorage(private val context: Context) {
-    
+
     companion object {
         private const val PREFS_NAME = "bsp_local_storage"
     }
-    
+
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
-    
+
     /**
      * 保存字符串数据
      * @param key 键
@@ -32,7 +32,7 @@ actual class LocalStorage(private val context: Context) {
                 .apply()
         }
     }
-    
+
     /**
      * 获取字符串数据
      * @param key 键
@@ -43,7 +43,7 @@ actual class LocalStorage(private val context: Context) {
             sharedPreferences.getString(key, null)
         }
     }
-    
+
     /**
      * 保存布尔值数据
      * @param key 键
@@ -56,7 +56,7 @@ actual class LocalStorage(private val context: Context) {
                 .apply()
         }
     }
-    
+
     /**
      * 获取布尔值数据
      * @param key 键
@@ -68,7 +68,7 @@ actual class LocalStorage(private val context: Context) {
             sharedPreferences.getBoolean(key, defaultValue)
         }
     }
-    
+
     /**
      * 保存整数数据
      * @param key 键
@@ -81,7 +81,7 @@ actual class LocalStorage(private val context: Context) {
                 .apply()
         }
     }
-    
+
     /**
      * 获取整数数据
      * @param key 键
@@ -93,7 +93,7 @@ actual class LocalStorage(private val context: Context) {
             sharedPreferences.getInt(key, defaultValue)
         }
     }
-    
+
     /**
      * 保存长整数数据
      * @param key 键
@@ -106,7 +106,7 @@ actual class LocalStorage(private val context: Context) {
                 .apply()
         }
     }
-    
+
     /**
      * 获取长整数数据
      * @param key 键
@@ -118,7 +118,7 @@ actual class LocalStorage(private val context: Context) {
             sharedPreferences.getLong(key, defaultValue)
         }
     }
-    
+
     /**
      * 删除指定键的数据
      * @param key 键
@@ -130,7 +130,7 @@ actual class LocalStorage(private val context: Context) {
                 .apply()
         }
     }
-    
+
     /**
      * 清除所有数据
      */
@@ -141,7 +141,7 @@ actual class LocalStorage(private val context: Context) {
                 .apply()
         }
     }
-    
+
     /**
      * 检查是否包含指定键
      * @param key 键

@@ -4,8 +4,8 @@ import io.ktor.client.HttpClient
 import org.koin.dsl.module
 import ovo.sypw.bsp.data.api.ExampleApiService
 import ovo.sypw.bsp.data.api.HttpClientConfig
-import ovo.sypw.bsp.data.repository.ExampleRepositoryImpl
 import ovo.sypw.bsp.domain.repository.ExampleRepository
+import ovo.sypw.bsp.domain.repository.impl.ExampleRepositoryImpl
 
 /**
  * 网络模块依赖注入配置

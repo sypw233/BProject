@@ -34,7 +34,8 @@ class RequestLogViewModel(
 
     // 请求日志详情Dialog状态
     private val _requestLogDetailState = MutableStateFlow(RequestLogDetailState())
-    val requestLogDetailState: StateFlow<RequestLogDetailState> = _requestLogDetailState.asStateFlow()
+    val requestLogDetailState: StateFlow<RequestLogDetailState> =
+        _requestLogDetailState.asStateFlow()
 
     // 请求日志搜索关键词
     private val _requestLogSearchQuery = MutableStateFlow("")
@@ -42,7 +43,8 @@ class RequestLogViewModel(
 
     // 请求日志筛选状态
     private val _requestLogFilterState = MutableStateFlow(RequestLogFilterState())
-    val requestLogFilterState: StateFlow<RequestLogFilterState> = _requestLogFilterState.asStateFlow()
+    val requestLogFilterState: StateFlow<RequestLogFilterState> =
+        _requestLogFilterState.asStateFlow()
 
     // 请求日志分页数据流
     private var _requestLogPagingManager: PagingManager<RequestLogDto>? = null
@@ -54,10 +56,11 @@ class RequestLogViewModel(
      */
     fun toggleFilterExpanded() {
         Logger.d("当前筛选面板展开状态: ${_requestLogFilterState.value.isFilterExpanded}")
-        _requestLogFilterState.value =  _requestLogFilterState.value.copy(
-            isFilterExpanded = ! _requestLogFilterState.value.isFilterExpanded
+        _requestLogFilterState.value = _requestLogFilterState.value.copy(
+            isFilterExpanded = !_requestLogFilterState.value.isFilterExpanded
         )
     }
+
     /**
      * 获取请求日志分页管理器
      */
@@ -120,7 +123,8 @@ class RequestLogViewModel(
         searchQuery: String? = null
     ) {
         viewModelScope.launch {
-            _requestLogState.value = _requestLogState.value.copy(isLoading = true, errorMessage = null)
+            _requestLogState.value =
+                _requestLogState.value.copy(isLoading = true, errorMessage = null)
 
             try {
                 val filterState = _requestLogFilterState.value

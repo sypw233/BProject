@@ -27,17 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
-import ovo.sypw.bsp.navigation.AppScreen
-import ovo.sypw.bsp.navigation.BottomNavigationBar
-import ovo.sypw.bsp.navigation.NavigationManager
-import ovo.sypw.bsp.navigation.SideNavigationBar
-import ovo.sypw.bsp.navigation.getNavigationItems
-import ovo.sypw.bsp.navigation.rememberNavigationManager
-import ovo.sypw.bsp.presentation.screens.AIChatScreen
+import ovo.sypw.bsp.presentation.navigation.AppScreen
+import ovo.sypw.bsp.presentation.navigation.BottomNavigationBar
+import ovo.sypw.bsp.presentation.navigation.NavigationManager
+import ovo.sypw.bsp.presentation.navigation.SideNavigationBar
+import ovo.sypw.bsp.presentation.navigation.getNavigationItems
+import ovo.sypw.bsp.presentation.navigation.rememberNavigationManager
 import ovo.sypw.bsp.presentation.screens.NetdiskScreen
 import ovo.sypw.bsp.presentation.screens.ProfileScreen
 import ovo.sypw.bsp.presentation.screens.admin.AdminScreen
 import ovo.sypw.bsp.presentation.screens.admin.GetAdminTab
+import ovo.sypw.bsp.presentation.screens.aichat.AIChatScreen
 import ovo.sypw.bsp.presentation.screens.announcement.AnnouncementDetailScreen
 import ovo.sypw.bsp.presentation.screens.announcement.PublicAnnouncementScreen
 import ovo.sypw.bsp.presentation.screens.auth.ChangePasswordScreen
@@ -93,12 +93,7 @@ fun App() {
         // 加载自定义字体并创建自定义主题
 //        val contentFontFamily = FontUtils.getDefaultFontFamily()
 //        val customTypography = createCustomTypography(contentFontFamily)
-        MaterialTheme(
-//            typography = MaterialTheme.typography.copy(
-//                font
-//            )
-//            typography = customTypography
-        ) {
+        MaterialTheme {
             AppContent()
         }
     }
@@ -449,7 +444,7 @@ private fun MainContent(
             LaunchedEffect(Unit) {
                 navigationManager.navigateTo(AppScreen.ADMIN.route)
             }
-            AdminScreen(modifier = modifier,layoutConfig=layoutConfig)
+            AdminScreen(modifier = modifier, layoutConfig = layoutConfig)
         }
 
         AppScreen.REGISTER.route -> {
@@ -457,12 +452,12 @@ private fun MainContent(
             LaunchedEffect(Unit) {
                 navigationManager.navigateTo(AppScreen.ADMIN.route)
             }
-            AdminScreen(modifier = modifier,layoutConfig=layoutConfig)
+            AdminScreen(modifier = modifier, layoutConfig = layoutConfig)
         }
 
         else -> {
             // 默认显示首页
-            AdminScreen(modifier = modifier,layoutConfig=layoutConfig)
+            AdminScreen(modifier = modifier, layoutConfig = layoutConfig)
         }
     }
 }

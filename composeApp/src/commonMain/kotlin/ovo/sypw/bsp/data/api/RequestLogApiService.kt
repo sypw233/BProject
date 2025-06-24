@@ -46,13 +46,13 @@ class RequestLogApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "获取请求日志分页列表 - 页码: $current, 大小: $size")
-        
+
         // 构建请求参数
         val parameters = mutableMapOf<String, Any>(
             "current" to current,
             "size" to size
         )
-        
+
         // 添加可选筛选参数
         userId?.let { parameters["userId"] = it }
         username?.takeIf { it.isNotBlank() }?.let { parameters["username"] = it }
@@ -62,23 +62,25 @@ class RequestLogApiService : BaseApiService() {
         ipAddress?.takeIf { it.isNotBlank() }?.let { parameters["ipAddress"] = it }
         createdAtStart?.takeIf { it.isNotBlank() }?.let { parameters["createdAtStart"] = it }
         createdAtEnd?.takeIf { it.isNotBlank() }?.let { parameters["createdAtEnd"] = it }
-        
+
         return try {
             val result = getWithToken(
                 endpoint = REQUEST_LOGS_PAGE_ENDPOINT,
                 token = token,
                 parameters = parameters
             )
-            
+
             when (result) {
                 is NetworkResult.Success -> {
                     Logger.d(TAG, "请求日志分页列表获取成功")
                     result
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "请求日志分页列表获取失败: ${result.message}")
                     result
                 }
+
                 else -> result
             }
         } catch (e: Exception) {
@@ -98,22 +100,24 @@ class RequestLogApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "获取请求日志详情 - ID: $id")
-        
+
         return try {
             val result = getWithToken(
                 endpoint = "/request-logs/$id",
                 token = token
             )
-            
+
             when (result) {
                 is NetworkResult.Success -> {
                     Logger.d(TAG, "请求日志详情获取成功")
                     result
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "请求日志详情获取失败: ${result.message}")
                     result
                 }
+
                 else -> result
             }
         } catch (e: Exception) {
@@ -133,23 +137,25 @@ class RequestLogApiService : BaseApiService() {
         token: String
     ): NetworkResult<SaResult> {
         Logger.d(TAG, "清理请求日志 - 清理日期之前: $beforeDate")
-        
+
         return try {
             val result = deleteWithToken(
                 endpoint = "/request-logs/clean",
                 token = token,
                 parameters = mapOf("beforeDate" to beforeDate)
             )
-            
+
             when (result) {
                 is NetworkResult.Success -> {
                     Logger.d(TAG, "请求日志清理成功")
                     result
                 }
+
                 is NetworkResult.Error -> {
                     Logger.e(TAG, "请求日志清理失败: ${result.message}")
                     result
                 }
+
                 else -> result
             }
         } catch (e: Exception) {

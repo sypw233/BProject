@@ -26,8 +26,11 @@ class LoginUseCase(
         rememberMe: Boolean = false
     ): NetworkResult<LoginResponse> {
         Logger.i("LoginUseCase", "=== 开始执行登录用例 ===")
-        Logger.d("LoginUseCase", "输入参数 - 用户名: '$username', 密码长度: ${password.length}, 记住我: $rememberMe")
-        
+        Logger.d(
+            "LoginUseCase",
+            "输入参数 - 用户名: '$username', 密码长度: ${password.length}, 记住我: $rememberMe"
+        )
+
         try {
             // 输入验证
             Logger.d("LoginUseCase", "开始输入验证")
@@ -47,8 +50,11 @@ class LoginUseCase(
                 username = username.trim(),
                 password = password,
             )
-            Logger.d("LoginUseCase", "authRepository.login 返回结果类型: ${result::class.simpleName}")
-            
+            Logger.d(
+                "LoginUseCase",
+                "authRepository.login 返回结果类型: ${result::class.simpleName}"
+            )
+
             return result
         } catch (e: Exception) {
             Logger.e("LoginUseCase", "登录用例执行过程中发生异常: ${e.message}", e)

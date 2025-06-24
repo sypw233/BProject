@@ -100,10 +100,10 @@ object HttpClientConfig {
                     request.url.host.contains("api")
                 }
             }
-            
+
             // 设置expectSuccess为false，允许手动处理响应状态
             expectSuccess = false
-            
+
             // 安装超时插件 - 流式响应需要无限超时
             install(HttpTimeout) {
                 requestTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS

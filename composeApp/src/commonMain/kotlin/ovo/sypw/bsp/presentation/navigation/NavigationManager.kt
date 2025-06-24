@@ -1,4 +1,4 @@
-package ovo.sypw.bsp.navigation
+package ovo.sypw.bsp.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State

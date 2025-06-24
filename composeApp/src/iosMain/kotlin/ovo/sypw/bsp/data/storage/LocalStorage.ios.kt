@@ -10,9 +10,9 @@ import platform.Foundation.NSUserDefaults
  */
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 actual class LocalStorage {
-    
+
     private val userDefaults = NSUserDefaults.standardUserDefaults
-    
+
     /**
      * 保存字符串数据
      * @param key 键
@@ -24,7 +24,7 @@ actual class LocalStorage {
             userDefaults.synchronize()
         }
     }
-    
+
     /**
      * 获取字符串数据
      * @param key 键
@@ -35,7 +35,7 @@ actual class LocalStorage {
             userDefaults.stringForKey(key)
         }
     }
-    
+
     /**
      * 保存布尔值数据
      * @param key 键
@@ -47,7 +47,7 @@ actual class LocalStorage {
             userDefaults.synchronize()
         }
     }
-    
+
     /**
      * 获取布尔值数据
      * @param key 键
@@ -63,7 +63,7 @@ actual class LocalStorage {
             }
         }
     }
-    
+
     /**
      * 保存整数数据
      * @param key 键
@@ -75,7 +75,7 @@ actual class LocalStorage {
             userDefaults.synchronize()
         }
     }
-    
+
     /**
      * 获取整数数据
      * @param key 键
@@ -91,7 +91,7 @@ actual class LocalStorage {
             }
         }
     }
-    
+
     /**
      * 保存长整数数据
      * @param key 键
@@ -103,7 +103,7 @@ actual class LocalStorage {
             userDefaults.synchronize()
         }
     }
-    
+
     /**
      * 获取长整数数据
      * @param key 键
@@ -119,7 +119,7 @@ actual class LocalStorage {
             }
         }
     }
-    
+
     /**
      * 删除指定键的数据
      * @param key 键
@@ -139,7 +139,7 @@ actual class LocalStorage {
 
         }
     }
-    
+
     /**
      * 检查是否包含指定键
      * @param key 键
