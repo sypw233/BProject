@@ -683,70 +683,6 @@ class ApiIntegrationTest {
 - ✅ **Linux DEB** 包构建
 - ✅ **iOS Framework** 构建 (需要 macOS 环境)
 
-### 触发构建
-
-```bash
-# 创建版本标签触发自动构建
-git tag v1.0.0
-git push origin v1.0.0
-
-# 或手动触发 GitHub Actions
-```
-
-### 手动构建
-
-```bash
-# Android Release
-./gradlew :composeApp:assembleRelease
-
-# iOS Release
-./gradlew :composeApp:iosArm64Archive
-
-# Desktop 可执行文件
-./gradlew :composeApp:createDistributable
-
-# Desktop 安装包 (Windows MSI, macOS DMG, Linux DEB)
-./gradlew :composeApp:packageDistributionForCurrentOS
-
-# 生成所有平台的发布版本
-./gradlew :composeApp:assembleRelease  # Android
-./gradlew :composeApp:packageReleaseDistributionForCurrentOS  # Desktop
-```
-
-### 构建产物
-
-- **Android**: `composeApp/build/outputs/apk/release/`
-- **Desktop**: `composeApp/build/compose/binaries/main/`
-- **iOS**: `composeApp/build/bin/iosArm64/`
-
-## 🔧 开发工具
-
-### 推荐 IDE 插件
-
-- **Kotlin Multiplatform Mobile** - KMM 开发支持
-- **Compose Multiplatform IDE Support** - Compose 预览支持
-- **Ktor** - 网络请求支持
-
-### 代码质量
-
-```bash
-# 代码格式化
-./gradlew ktlintFormat
-
-# 代码检查
-./gradlew ktlintCheck
-
-# 依赖分析
-./gradlew dependencyUpdates
-```
-
-## 🤝 贡献指南
-
-1. Fork 本项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
 
 ### 代码规范
 
@@ -755,16 +691,5 @@ git push origin v1.0.0
 - 添加适当的注释和文档
 - 编写单元测试
 
-## 📄 许可证
 
-本项目基于 MIT 许可证开源 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
-## 📞 联系方式
-
-- 项目地址: [GitHub Repository](https://github.com/yourusername/bProject)
-- 问题反馈: [Issues](https://github.com/yourusername/bProject/issues)
-- 讨论交流: [Discussions](https://github.com/yourusername/bProject/discussions)
-
----
-
-**⭐ 如果这个项目对你有帮助，请给个 Star 支持一下！**
