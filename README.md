@@ -3,7 +3,7 @@
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF.svg?style=flat&logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-4285F4.svg?style=flat&logo=jetpackcompose)](https://github.com/JetBrains/compose-multiplatform)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Build Status](https://github.com/yourusername/bProject/workflows/Build%20All%20Platforms/badge.svg)](https://github.com/yourusername/bProject/actions)
+[![Build Status](https://github.com/sypw233/bProject/workflows/Build%20All%20Platforms/badge.svg)](https://github.com/sypw233/bProject/actions)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/Compose-1.8.2-green.svg?style=flat&logo=jetpackcompose)](https://github.com/JetBrains/compose-multiplatform)
 
